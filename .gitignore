@@ -1,2 +1,4 @@
 node_modules
 nytimes/keys.py
+nytimes/articles
+nytimes/*.json
