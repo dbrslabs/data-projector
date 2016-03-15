@@ -1,4 +1,8 @@
 node_modules
+*.swp
+*.swo
+*.pyc
+
 nytimes/keys.py
 nytimes/articles
 nytimes/*.json
