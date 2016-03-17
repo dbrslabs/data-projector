@@ -2,7 +2,9 @@ node_modules
 *.swp
 *.swo
 *.pyc
+DS_Store
 
 nytimes/keys.py
 nytimes/articles
 nytimes/*.json
+nytimes/data
