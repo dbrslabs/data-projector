@@ -31,11 +31,6 @@ docs = res['docs']
 # request all pages
 for page in xrange(1,pages):
     print 'page:', page
-    if page == 101:
-        from pdb import set_trace
-        set_trace();
-        x = 1
-
     res = get_page(page)
     docs = docs + res['docs']
     # bc: rate limiting
