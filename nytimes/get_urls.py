@@ -25,26 +25,45 @@ def get_page(page, begin_date, end_date):
     })
     check_sleep()
     r = requests.get(apiurl % query)
-    return r.json()['response']
+
+    # default return vals
+    res, good = {}, True
+
+    # attempt json decode
+    try: res = r.json()['response']
+    except ValueError as err:
+        print err
+        print "error decoding json"
+        print "r = ", r
+        good = False
+
+    # verify valid json
+    if good:
+        good = valid_response_json(res,page)
+    return res, good
+
+def valid_response_json(res,page):
+    if (not res or
+        'docs' not in res or
+        not res['docs'] or
+        res['docs'] == [{}] or
+        page > 100
+    ):
+        print "invalid response json", res
+        return False
+    return True
 
 def daterange(start_date, end_date):
     for n in range(int ((end_date - start_date).days)):
         yield start_date + timedelta(n)
 
-#print 'hits:', res['meta']['hits'], 'pages:', pages
-
 def num_pages(page,day,next_day):
     '''derive number of pages associated with a given query'''
-    res = get_page(page, day, next_day)
-    return (int(res['meta']['hits']) / 10) + 1
-
-def short_circuit(res, page):
-    '''short-circuit if no results in response'''
-    if 'docs' not in res: return True
-    if not res['docs']: return True
-    if res['docs'] == [{}]: return True
-    if page > 100: return True
-    return False
+    pages = -1 # error state
+    res, good = get_page(page, day, next_day)
+    if good:
+        pages = (int(res['meta']['hits']) / 10) + 1
+    return pages
 
 sleep_counter = 0
 def check_sleep():
@@ -62,11 +81,10 @@ for idx, day in enumerate(daterange(start_date, end_date)):
     pages = num_pages(0, day, next_day)
     for page in xrange(0, pages):
         print 'page:', page
-        # get page or results from api
-        res = get_page(page, day, next_day)
-        # check if we should emergency move onto next query
-        # so as to not break the script after hours of running
-        if short_circuit(res,page): break
+        # get page of results from api
+        res, good = get_page(page, day, next_day)
+        # simply move on to next page if req was bad
+        if not good: continue
         # save the articles to the db
         for doc in res['docs']:
             print doc['_id'], doc['web_url']
