@@ -52,15 +52,29 @@ class LabeledLineDocs(object):
 if __name__ == "__main__":
     import argparse
     parser = argparse.ArgumentParser(description='Train doc2vec on a corpus')
+    # required
     parser.add_argument('-c','--corpus', required=True, help='path to the corpus file on which to train') 
     parser.add_argument('-o','--output', required=True, help='file path to output trained model')
-    args = parser.parse_args()
+    # doc2vec training parameters - not required
+    parser.add_argument('--min_count', default=1,    required=False, type=int)
+    parser.add_argument('--window',    default=10,   required=False, type=int)
+    parser.add_argument('--size',      default=30,   required=False, type=int)
+    parser.add_argument('--sample',    default=1e-4, required=False, type=float)
+    parser.add_argument('--negative',  default=5,    required=False, type=int)
+    argss = parser.parse_args()
 
     cores = multiprocessing.cpu_count()
     articles = LabeledLineDocs(args.corpus)
 
     # defines model parameters
-    model = Doc2Vec(min_count=1, window=10, size=30, sample=1e-4, negative=5, workers=cores)
+    model = Doc2Vec(
+            min_count=args.min_count,
+            window=args.window,
+            size=args.size,
+            sample=args.sample,
+            negative=args.negative,
+            workers=cores)
+
     # builds the vocabulary
     print 'building vocabulary'
     model.build_vocab(articles.to_array())
