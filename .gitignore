@@ -11,4 +11,6 @@ doc2vec/nytimes/data
 
 doc2vec/guardian/data
 
+doc2vec/venv
+
 *.log
