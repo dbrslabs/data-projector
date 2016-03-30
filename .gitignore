@@ -4,7 +4,11 @@ node_modules
 *.pyc
 DS_Store
 
-nytimes/keys.py
-nytimes/articles
-nytimes/*.json
-nytimes/data
+doc2vec/nytimes/keys.py
+doc2vec/nytimes/articles
+doc2vec/nytimes/*.json
+doc2vec/nytimes/data
+
+doc2vec/guardian/data
+
+*.log
