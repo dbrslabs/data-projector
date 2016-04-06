@@ -10,6 +10,8 @@ import numpy as np
 from gensim import utils
 from gensim.models.doc2vec import TaggedDocument
 from gensim.models import Doc2Vec
+import gensim.models.doc2vec
+assert gensim.models.doc2vec.FAST_VERSION > -1, "this will be painfully slow otherwise"
 
 '''
 doc2vec on flat file of articles 
@@ -60,10 +62,6 @@ class TaggedDocuments(object):
         # split on spaces
         text = utils.to_unicode(text).split()
         return TaggedDocument(words=text, tags=[self.gen_id(idd)])
-
-    def docs_perm(self):
-        shuffle(self.docs)
-        return self.docs
 
     def gen_id(self, idd):
         return 'DOC_%s' % idd
