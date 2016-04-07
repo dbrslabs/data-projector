@@ -1,6 +1,7 @@
 # python libs
-import os, multiprocessing, linecache
+import os, multiprocessing, linecache, argparse, logging
 from random import shuffle
+from pprint import pprint
 import string
 printable = set(string.printable)
 
@@ -57,20 +58,19 @@ class TaggedDocuments(object):
         # split '<id> <text>'
         idd, text = line.split(' ', 1)
         # clean text
+        text = utils.to_unicode(text)
         for fn in self.cleaningfns:
             text = fn(text)
-        # split on spaces
-        text = utils.to_unicode(text).split()
-        return TaggedDocument(words=text, tags=[self.gen_id(idd)])
-
-    def gen_id(self, idd):
-        return 'DOC_%s' % idd
+        # split on spaces and generate id
+        return TaggedDocument(words=text.split(), tags=[str(idd)])
 
 
 if __name__ == "__main__":
-    from pprint import pprint
-    import argparse
+    # setup custom logging
+    logfile = 'logs/get-training-data-{}.log'.format(datetime.now())
+    logging.basicConfig(filename=logfile, level=logging.WARNING)
 
+    # parse cmd line arguments
     parser = argparse.ArgumentParser(description='Train doc2vec on a corpus')
     # required
     parser.add_argument('-c','--corpus', required=True, help='path to the corpus file on which to train') 
@@ -109,5 +109,5 @@ if __name__ == "__main__":
         articles.permute()
         model.train(articles)
 
-    modelfile = "{output}-dm{dm}-mincount{min_count}-window{window}-size{size}-sample{sample}-neg{negative}.d2v".format(arg)
+    modelfile = "{output}-dm{dm}-mincount{min_count}-window{window}-size{size}-sample{sample}-neg{negative}.d2v".format(**arg)
     model.save(modelfile)
