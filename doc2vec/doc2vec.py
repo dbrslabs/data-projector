@@ -85,6 +85,8 @@ if __name__ == "__main__":
     parser.add_argument('--negative',  type=int,   default=0,    help='if > 0, negative sampling will be used, the int for negative specifies how many "noise words" should be drawn (usually between 5-20).')
     # convert Namespace to dict
     arg = vars(parser.parse_args())
+    # get modelfile right away to prevent post-training program failure / bugs
+    modelfile = "{output}-dm{dm}-mincount{min_count}-window{window}-size{size}-sample{sample}-neg{negative}.d2v".format(**arg)
 
     # defines model parameters
     params = { k: arg[k] for k in ['dm','min_count','window','size','sample','negative'] }
@@ -109,5 +111,4 @@ if __name__ == "__main__":
         articles.permute()
         model.train(articles)
 
-    modelfile = "{output}-dm{dm}-mincount{min_count}-window{window}-size{size}-sample{sample}-neg{negative}.d2v".format(**arg)
     model.save(modelfile)
