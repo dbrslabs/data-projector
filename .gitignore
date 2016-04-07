@@ -4,13 +4,13 @@ node_modules
 *.pyc
 DS_Store
 
-doc2vec/nytimes/keys.py
-doc2vec/nytimes/articles
-doc2vec/nytimes/*.json
-doc2vec/nytimes/data
+ml/doc2vec/nytimes/keys.py
+ml/doc2vec/nytimes/articles
+ml/doc2vec/nytimes/*.json
+ml/doc2vec/nytimes/data
 
-doc2vec/guardian/data
+ml/doc2vec/guardian/data
 
-doc2vec/venv
+ml/doc2vec/venv
 
 *.log
