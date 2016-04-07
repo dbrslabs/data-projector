@@ -11,6 +11,6 @@ ml/doc2vec/nytimes/data
 
 ml/doc2vec/guardian/data
 
-ml/doc2vec/venv
+ml/venv
 
 *.log
