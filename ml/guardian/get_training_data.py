@@ -7,7 +7,9 @@ from pymongo import MongoClient
 
 if __name__ == '__main__':
     # setup custom logging
-    logfile = 'logs/get-training-data-{}.log'.format(datetime.now())
+    logfile = '{abspath}/log/{time}.log'.format(
+        abspath = os.path.dirname(os.path.abspath(__file__)),
+        time = datetime.now())
     logging.basicConfig(filename=logfile, level=logging.WARNING)
 
     # parse cmd line arguments
@@ -20,11 +22,18 @@ if __name__ == '__main__':
     client = MongoClient('mongodb://localhost')
     articles = client.guardian.articlesv2
 
+    # create data dir if it doesn't exist
+    thisdir = os.path.abspath(os.path.dirname(__file__))
+    datadir = os.path.join(thisdir,'data')
+    if not os.path.exists(datadir): os.makedirs(datadir)
+
+    # construct filename data will be written to
+    out = os.path.join(datadir,
+        "{output}-sections-{sections}".format(
+            output = arg.output,
+            sections = "-".join(arg.sections) if arg.sections else 'all'))
+
     # open outfile and begin writing articles
-    out = "data/{output}-sections-{sections}".format(
-        output = arg.output,
-        sections = "-".join(arg.sections) if arg.sections else 'all'
-    )
     with open(out, 'w') as outfile:
 
         # construct query from cmd line arguments
