@@ -2,6 +2,7 @@
 import os, multiprocessing, linecache, argparse, logging
 from random import shuffle
 from pprint import pprint
+from datetime import datetime
 import string
 printable = set(string.printable)
 
@@ -23,7 +24,8 @@ stored at data/articles in format:
 '''
 
 class TaggedDocuments(object):
-    ids = []
+    # for now, tag ids are merely string versions of the doc id
+    gen_id = str
 
     def __init__(self, source, cleaningfns=None):
         self.source = source
@@ -32,14 +34,15 @@ class TaggedDocuments(object):
         else: self.cleaningfns = [lambda x: x]
 
         # make sure that keys are unique
+        ids = []
         with utils.smart_open(self.source) as fin:
             for line in fin:
                 # split '<id> <text>' to get id
                 idd = line.split(' ', 1)[0]
-                self.ids.append(self.gen_id(idd))
+                ids.append(self.gen_id(idd))
         # assert all ids are unique
-        assert len(set(self.ids)) == len(self.ids), 'prefixes non-unique'
-        self.numdocs = len(self.ids)
+        assert len(set(ids)) == len(ids), 'prefixes non-unique'
+        self.numdocs = len(ids)
 
         self.indices = xrange(self.numdocs)
     
@@ -62,19 +65,15 @@ class TaggedDocuments(object):
         for fn in self.cleaningfns:
             text = fn(text)
         # split on spaces and generate id
-        return TaggedDocument(words=text.split(), tags=[str(idd)])
+        return TaggedDocument(words=text.split(), tags=[self.gen_id(idd)])
 
 
 if __name__ == "__main__":
-    # setup custom logging
-    logfile = 'logs/get-training-data-{}.log'.format(datetime.now())
-    logging.basicConfig(filename=logfile, level=logging.WARNING)
-
     # parse cmd line arguments
     parser = argparse.ArgumentParser(description='Train doc2vec on a corpus')
     # required
     parser.add_argument('-c','--corpus', required=True, help='path to the corpus file on which to train') 
-    parser.add_argument('-o','--output', required=True, help='file path to output trained model')
+    parser.add_argument('-o','--output', default=None, help='file path to output trained model')
     # doc2vec training parameters - not required.
     # NOTE: all defaults match gensims, except --sample.
     parser.add_argument('--dm',        type=int,   default=1,    help='defines training algorithm. 0: distributed bag-of-words, 1: distributed-memory.')
@@ -85,8 +84,24 @@ if __name__ == "__main__":
     parser.add_argument('--negative',  type=int,   default=0,    help='if > 0, negative sampling will be used, the int for negative specifies how many "noise words" should be drawn (usually between 5-20).')
     # convert Namespace to dict
     arg = vars(parser.parse_args())
+
+    # set output to be the same name as the corpus file if not provided
+    arg['output'] = arg['output'] if arg['output'] else os.path.basename(arg['corpus'])
+
+    # get the directory in which this file resides
+    thisdir = os.path.abspath(os.path.dirname(__file__))
+
+    # setup custom logging
+    logdir = os.path.join(thisdir,'log')
+    if not os.path.exists(logdir): os.makedirs(logdir)
+    logfile = os.path.join(logdir, '{time}.log'.format(thisdir=thisdir, time=datetime.now()))
+    logging.basicConfig(filename=logfile, level=logging.WARNING)
+
     # get modelfile right away to prevent post-training program failure / bugs
-    modelfile = "{output}-dm{dm}-mincount{min_count}-window{window}-size{size}-sample{sample}-neg{negative}.d2v".format(**arg)
+    modelsdir = os.path.join(thisdir,'models/{output}'.format(**arg))
+    if not os.path.exists(modelsdir): os.makedirs(modelsdir)
+    modelfile = os.path.join(modelsdir,
+        "dm{dm}-mincount{min_count}-window{window}-size{size}-sample{sample}-neg{negative}.d2v".format(**arg))
 
     # defines model parameters
     params = { k: arg[k] for k in ['dm','min_count','window','size','sample','negative'] }
