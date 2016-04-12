@@ -182,11 +182,13 @@ if __name__ == '__main__':
     storagedir = os.path.join(vecsdir, os.path.basename(arg.doc2vec))
     if not os.path.exists(storagedir): os.makedirs(storagedir)
 
-    # T - S N E
+    base = os.path.join(storagedir, 'dims{components}-seed{seed}-'.format(**vars(arg)))
+    projection_file = base + 'projection.npy'
+    positions_file = base + 'positions.npy'
 
+    # T - S N E
     if (arg.tsnevecs): # read pre-calculated t-sne vectors and animated positions from disk
-        projection_file = glob(os.path.join(storagedir, '*projection.npy'))[0]
-        positions_file = glob(os.path.join(storagedir, '*positions.npy'))[0]
+        projection_file, positions_file = tsnevecs_paths()
         X_proj = np.load(projection_file)
         positions = np.load(positions_file)
 
@@ -209,9 +211,8 @@ if __name__ == '__main__':
         X_proj = TSNE(arg.components, random_state=arg.seed).fit_transform(X)
 
         # write calculations to disk
-        base = os.path.join(storagedir, 'dims{components}-seed{seed}-'.format(**vars(arg)))
-        with open(base+'projection.npy', 'w') as f: np.save(f, X_proj)
-        with open(base+'positions.npy', 'w') as f: np.save(f, positions)
+        with open(projection_file, 'w') as f: np.save(f, X_proj)
+        with open(positions_file, 'w') as f: np.save(f, positions)
 
     # K - M E A N S
 
