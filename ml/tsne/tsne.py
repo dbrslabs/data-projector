@@ -154,11 +154,16 @@ if __name__ == '__main__':
         time = datetime.now())
     logging.basicConfig(filename=logfile, level=logging.WARNING)
 
+    # C M D L I N E   A R G U M E N T S
+
     # parse cmd line arguments
     parser = argparse.ArgumentParser(description='t-SNE on doc2vec embeddings including visualization of convergence')
     parser.add_argument('-m','--model', required=True, help='path to doc2vec model')
     parser.add_argument('-s','--seed', default=None, help='pass deterministic seed to t-sne')
+    parser.add_argument('-c','--clusters', nargs='+', type=int, default=[], help='range of cluster counts on which to run k-means')
     arg = parser.parse_args()
+
+    # T - S N E
 
     # t-sne random state
     RS = 20150101 if arg.seed else None
@@ -180,12 +185,17 @@ if __name__ == '__main__':
     print 'running t-sne'
     X_proj = TSNE(random_state=RS).fit_transform(X)
 
+    # K - M E A N S
+
     # reshape t-SNE positions for graphing
     X_iter = np.dstack(position.reshape(-1, 2) for position in positions)
 
+    # get range of cluster counts
+    n_clusters_range = range(*arg.clusters) if arg.clusters else range(6,13)
+
     # perform k-means on the document vectors
-    # these high-dimensional clusters will be our coloring scheme after reducing the dimensionality
-    for n_clusters in range(6,13):
+    # these high-dimensional clusters will be our coloring scheme of the dimensionally reduced vectors
+    for n_clusters in n_clusters_range:
         print 'k-means. num clusters:', n_clusters
         kmeans = KMeans(n_clusters=n_clusters,
                         precompute_distances=True, 
