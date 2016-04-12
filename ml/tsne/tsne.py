@@ -3,6 +3,7 @@
 import logging, argparse, os, multiprocessing
 from datetime import datetime
 from functools import partial
+from glob import glob
 
 import numpy as np
 from numpy import linalg
@@ -148,6 +149,8 @@ def make_tsne_frame_mpl(t):
 if __name__ == '__main__':
     from gensim.models import Doc2Vec
 
+    # L O G G I N G
+
     # setup custom logging
     logfile = '{abspath}/logs/{time}.log'.format(
         abspath = os.path.dirname(os.path.abspath(__file__)),
@@ -156,34 +159,59 @@ if __name__ == '__main__':
 
     # C M D L I N E   A R G U M E N T S
 
-    # parse cmd line arguments
     parser = argparse.ArgumentParser(description='t-SNE on doc2vec embeddings including visualization of convergence')
-    parser.add_argument('-m','--model', required=True, help='path to doc2vec model')
-    parser.add_argument('-s','--seed', default=None, help='pass deterministic seed to t-sne')
-    parser.add_argument('-c','--clusters', nargs='+', type=int, default=[], help='range of cluster counts on which to run k-means')
+    parser.add_argument('--doc2vec', required=True, help='file path to (doc2vec) vectors')
+    parser.add_argument('--components', default=2, type=int, help='t-sne dimensionality')
+    parser.add_argument('--tsnevecs', help='directory path to pre-calculated t-SNE vectors and positions')
+    parser.add_argument('--seed', default=20150101, type=int, help='pass deterministic seed to t-sne')
+    parser.add_argument('--clusters', nargs='+', type=int, default=[], help='range of cluster counts on which to run k-means')
     arg = parser.parse_args()
+
+    assert arg.components in [2,3], 't-SNE must have 2 or 3 components'
+
+    # D I R E C T O R Y  P R E P
+
+    # get the directory in which this file resides
+    thisdir = os.path.abspath(os.path.dirname(__file__))
+
+    # create vecs directory for storing outputs
+    vecsdir = os.path.join(thisdir, 'vecs')
+    if not os.path.exists(vecsdir): os.makedirs(vecsdir)
+
+    # create storage directory named after doc2vec file used
+    storagedir = os.path.join(vecsdir, os.path.basename(arg.doc2vec))
+    if not os.path.exists(storagedir): os.makedirs(storagedir)
 
     # T - S N E
 
-    # t-sne random state
-    RS = 20150101 if arg.seed else None
+    if (arg.tsnevecs): # read pre-calculated t-sne vectors and animated positions from disk
+        projection_file = glob(os.path.join(storagedir, '*projection.npy'))[0]
+        positions_file = glob(os.path.join(storagedir, '*positions.npy'))[0]
+        X_proj = np.load(projection_file)
+        positions = np.load(positions_file)
 
-    # load doc2vec model from file path
-    d2v = Doc2Vec.load(arg.model)
+    else: # run t-sne on vectors
+        # load doc2vec vectors from file path
+        d2v = Doc2Vec.load(arg.doc2vec)
 
-    # grab doc2vec embedded representations
-    X = np.vstack([v for v in d2v.docvecs])
+        # grab doc2vec embedded representations
+        X = np.vstack([v for v in d2v.docvecs])
 
-    # record point positions on every iteration of t-SNE
-    global positions
-    positions = []
+        # record point positions on every iteration of t-SNE
+        global positions
+        positions = []
 
-    # monkey patch sklearn's _gradient_descent method to capture point positions during t-sne
-    sklearn.manifold.t_sne._gradient_descent = _gradient_descent
+        # monkey patch sklearn's _gradient_descent method to capture point positions during t-sne
+        sklearn.manifold.t_sne._gradient_descent = _gradient_descent
 
-    # t-SNE!
-    print 'running t-sne'
-    X_proj = TSNE(random_state=RS).fit_transform(X)
+        # t-SNE!
+        print 'running t-sne'
+        X_proj = TSNE(arg.components, random_state=arg.seed).fit_transform(X)
+
+        # write calculations to disk
+        base = os.path.join(storagedir, 'dims{components}-seed{seed}-'.format(**vars(arg)))
+        with open(base+'projection.npy', 'w') as f: np.save(f, X_proj)
+        with open(base+'positions.npy', 'w') as f: np.save(f, positions)
 
     # K - M E A N S
 
