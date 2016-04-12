@@ -38,7 +38,8 @@ import moviepy.editor as mpy
 
 def scatter(x, colors):
     # We choose a color palette with seaborn.
-    palette = np.array(sns.color_palette("hls", 10))
+    n_colors = len(set(colors))
+    palette = np.array(sns.color_palette("hls", n_colors))
 
     # We create a scatter plot.
     f = plt.figure(figsize=(8, 8))
@@ -53,7 +54,7 @@ def scatter(x, colors):
     txts = []
     ''' 
     # TODO fix text.py bug with matplotlib. passing in NaN as labels when doing median
-    for i in range(len(colors)):
+    for i in range(n_colors):
         # Position of each label.
         xtext, ytext = np.median(x[colors == i, :], axis=0)
         txt = ax.text(xtext, ytext, str(i), fontsize=24)
@@ -165,25 +166,35 @@ if __name__ == '__main__':
     # load doc2vec model from file path
     d2v = Doc2Vec.load(arg.model)
 
-    # perform k-means on the document vectors
-    # these high-dimensional clusters will be our coloring scheme after reducing the dimensionality
+    # grab doc2vec embedded representations
     X = np.vstack([v for v in d2v.docvecs])
-    kmeans = KMeans(n_clusters=10,
-                    precompute_distances=True, 
-                    n_jobs=multiprocessing.cpu_count())
-    kmeans.fit(X)
-    y = kmeans.labels_
 
     # record point positions on every iteration of t-SNE
     global positions
     positions = []
-    # monkey patch sklearn's _gradient_descent method to capture point positions
+
+    # monkey patch sklearn's _gradient_descent method to capture point positions during t-sne
     sklearn.manifold.t_sne._gradient_descent = _gradient_descent
+
+    # t-SNE!
+    print 'running t-sne'
     X_proj = TSNE(random_state=RS).fit_transform(X)
 
-    # create scatter plot animation of t-SNE converging
-    # TODO dynamically mkdir for imgs/<d2v-model>/*
+    # reshape t-SNE positions for graphing
     X_iter = np.dstack(position.reshape(-1, 2) for position in positions)
-    f, ax, sc, txts = scatter(X_iter[..., -1], y)
-    animation = mpy.VideoClip(make_tsne_frame_mpl, duration=X_iter.shape[2]/40.)
-    animation.write_gif("imgs/tsne-animation.gif", fps=20)
+
+    # perform k-means on the document vectors
+    # these high-dimensional clusters will be our coloring scheme after reducing the dimensionality
+    for n_clusters in range(6,13):
+        print 'k-means. num clusters:', n_clusters
+        kmeans = KMeans(n_clusters=n_clusters,
+                        precompute_distances=True, 
+                        n_jobs=multiprocessing.cpu_count())
+        kmeans.fit(X)
+        y = kmeans.labels_
+
+        # create scatter plot animation of t-SNE converging
+        f, ax, sc, txts = scatter(X_iter[..., -1], y)
+        animation = mpy.VideoClip(make_tsne_frame_mpl, duration=X_iter.shape[2]/40.)
+        # TODO dynamically mkdir for imgs/<d2v-model>/*
+        animation.write_gif("imgs/tsne-animation-clusters{}.gif".format(n_clusters), fps=20)
