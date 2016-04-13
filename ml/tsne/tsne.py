@@ -24,12 +24,13 @@ from sklearn.utils.extmath import _ravel
 
 # matplotlib for graphics
 import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
 import matplotlib.patheffects as PathEffects
 import matplotlib
 
 # seaborn for pretty plots
 import seaborn as sns
-sns.set_style('darkgrid')
+sns.set_style('white')
 sns.set_palette('muted')
 sns.set_context("notebook", font_scale=1.5, rc={"lines.linewidth": 2.5})
 
@@ -40,12 +41,12 @@ import moviepy.editor as mpy
 def scatter(x, colors):
     # We choose a color palette with seaborn.
     n_colors = len(set(colors))
-    palette = np.array(sns.color_palette("hls", n_colors))
+    palette = np.array(sns.color_palette("husl", n_colors))
 
     # We create a scatter plot.
-    f = plt.figure(figsize=(8, 8))
+    fig = plt.figure(figsize=(8, 8))
     ax = plt.subplot(aspect='equal')
-    sc = ax.scatter(x[:,0], x[:,1], lw=0, s=40, c=palette[colors.astype(np.int)])
+    scat = ax.scatter(x[:,0], x[:,1], lw=0, s=40, c=palette[colors.astype(np.int)])
     plt.xlim(-25, 25)
     plt.ylim(-25, 25)
     ax.axis('off')
@@ -64,7 +65,46 @@ def scatter(x, colors):
             PathEffects.Normal()])
         txts.append(txt)
     '''
-    return f, ax, sc, txts
+    return fig, ax, scat, txts
+
+def scatter3(x, colors):
+    # We choose a color palette with seaborn.
+    n_colors = len(set(colors))
+    palette = np.array(sns.color_palette("hls", n_colors))
+
+    # We create a scatter plot.
+    fig = plt.figure(figsize=(8, 8))
+    ax = plt.subplot(projection='3d', aspect='equal')
+    scat = ax.scatter(x[:,0], x[:,1], x[:,2], lw=0, s=4, c=palette[colors.astype(np.int)])
+
+    # prettyify the graph a bit
+    plt.tick_params(
+            which='both',
+            bottom='off',
+            top='off',
+            labelbottom='off',
+            labeltop='off',
+            labelright='off',
+            labelleft='off',
+            length=0)
+    #ax.axis('off')
+    ax.axis('tight')
+    ax.grid(False)
+
+    # We add the labels for each digit.
+    txts = []
+    ''' 
+    # TODO fix text.py bug with matplotlib. passing in NaN as labels when doing median
+    for i in range(n_colors):
+        # Position of each label.
+        xtext, ytext = np.median(x[colors == i, :], axis=0)
+        txt = ax.text(xtext, ytext, str(i), fontsize=24)
+        txt.set_path_effects([
+            PathEffects.Stroke(linewidth=5, foreground="w"),
+            PathEffects.Normal()])
+        txts.append(txt)
+    '''
+    return fig, ax, scat, txts
 
 def _gradient_descent(objective, p0, it, n_iter, objective_error=None,
                       n_iter_check=1, n_iter_without_progress=50,
@@ -136,16 +176,6 @@ def _gradient_descent(objective, p0, it, n_iter, objective_error=None,
 
     return p, error, i
 
-def make_tsne_frame_mpl(t):
-    i = int(t*40)
-    x = X_iter[..., i]
-    sc.set_offsets(x)
-    for j, txt in zip(range(10), txts):
-        xtext, ytext = np.median(x[y == j, :], axis=0)
-        txt.set_x(xtext)
-        txt.set_y(ytext)
-    return mplfig_to_npimage(f)
-
 if __name__ == '__main__':
     from gensim.models import Doc2Vec
 
@@ -215,7 +245,7 @@ if __name__ == '__main__':
     # K - M E A N S
 
     # reshape t-SNE positions for graphing
-    X_iter = np.dstack(position.reshape(-1, 2) for position in positions)
+    X_iter = np.dstack(position.reshape(-1, arg.components) for position in positions)
 
     # get range of cluster counts
     n_clusters_range = range(*arg.clusters) if arg.clusters else range(6,13)
@@ -231,7 +261,23 @@ if __name__ == '__main__':
         y = kmeans.labels_
 
         # create scatter plot animation of t-SNE converging
-        f, ax, sc, txts = scatter(X_iter[..., -1], y)
-        animation = mpy.VideoClip(make_tsne_frame_mpl, duration=X_iter.shape[2]/40.)
+        fig, ax, scat, txts = scatter3(X_iter[..., -1], y)
+        def make_tsne_frame(t):
+            i = int(t*40)
+            x = X_iter[..., i]
+            if arg.components == 2:
+                scat.set_offsets(x)
+            else: # components = 3D
+                # manually set private offsets bc: matplotlib is stupid
+                x = np.swapaxes(x,0,1).tolist()
+                scat._offsets3d = x
+            ''' TODO
+            for j, txt in zip(range(10), txts):
+                xtext, ytext = np.median(x[y == j, :], axis=0)
+                txt.set_x(xtext)
+                txt.set_y(ytext)
+            '''
+            return mplfig_to_npimage(fig)
+        animation = mpy.VideoClip(make_tsne_frame, duration=X_iter.shape[2]/40.)
         # TODO dynamically mkdir for imgs/<d2v-model>/*
-        animation.write_gif("imgs/tsne-animation-clusters{}.gif".format(n_clusters), fps=20)
+        animation.write_gif("imgs/tsne3-animation-clusters{}.gif".format(n_clusters), fps=20)
