@@ -160,9 +160,9 @@ if __name__ == '__main__':
     # C M D L I N E   A R G U M E N T S
 
     parser = argparse.ArgumentParser(description='t-SNE on doc2vec embeddings including visualization of convergence')
-    parser.add_argument('--doc2vec', required=True, help='file path to (doc2vec) vectors')
+    parser.add_argument('--doc2vec', required=True, help='file path to doc2vec vectors')
     parser.add_argument('--components', default=2, type=int, help='t-sne dimensionality')
-    parser.add_argument('--load', help='use pre-calculated t-SNE vectors and positions. dont run full t-sne')
+    parser.add_argument('--load', action='store_true', help='use pre-calculated t-SNE vectors and positions. dont run full t-sne')
     parser.add_argument('--seed', default=20150101, type=int, help='pass deterministic seed to t-sne')
     parser.add_argument('--clusters', nargs='+', type=int, default=[], help='range of cluster counts on which to run k-means')
     arg = parser.parse_args()
@@ -187,18 +187,16 @@ if __name__ == '__main__':
     positions_file = base + 'positions.npy'
 
     # T - S N E
+
+    # load doc2vec vectors from file path and grab embedded representations
+    d2v = Doc2Vec.load(arg.doc2vec)
+    X = np.vstack([v for v in d2v.docvecs])
+
     if (arg.load): # read in pre-calculated t-sne vectors and animated positions from disk
-        projection_file, positions_file = tsnevecs_paths()
         X_proj = np.load(projection_file)
         positions = np.load(positions_file)
 
-    else: # run t-sne on vectors
-        # load doc2vec vectors from file path
-        d2v = Doc2Vec.load(arg.doc2vec)
-
-        # grab doc2vec embedded representations
-        X = np.vstack([v for v in d2v.docvecs])
-
+    else: # run t-sne on vector space
         # record point positions on every iteration of t-SNE
         global positions
         positions = []
