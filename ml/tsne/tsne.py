@@ -1,6 +1,6 @@
 # augmented from Cyrille Rossant's and O'Reilly's blog post: 
 # https://www.oreilly.com/learning/an-illustrated-introduction-to-the-t-sne-algorithm
-import logging, argparse, os, multiprocessing
+import logging, argparse, os, multiprocessing, json
 from datetime import datetime
 from functools import partial
 from glob import glob
@@ -87,7 +87,7 @@ def scatter3(x, colors):
             labelright='off',
             labelleft='off',
             length=0)
-    #ax.axis('off')
+    ax.axis('off')
     ax.axis('tight')
     ax.grid(False)
 
@@ -194,10 +194,14 @@ if __name__ == '__main__':
     parser.add_argument('--components', default=2, type=int, help='t-sne dimensionality')
     parser.add_argument('--load', action='store_true', help='use pre-calculated t-SNE vectors and positions. dont run full t-sne')
     parser.add_argument('--seed', default=20150101, type=int, help='pass deterministic seed to t-sne')
+    parser.add_argument('--ops', nargs='+', type=str, default=['tojson'], help='operations to perform. presently avail: animate, tojson')
     parser.add_argument('--clusters', nargs='+', type=int, default=[], help='range of cluster counts on which to run k-means')
     arg = parser.parse_args()
 
     assert arg.components in [2,3], 't-SNE must have 2 or 3 components'
+
+    if 'tojson' in arg.ops and arg.components == 2:
+        logging.warning('data-projector requires json point to have 3 components')
 
     # D I R E C T O R Y  P R E P
 
@@ -260,24 +264,35 @@ if __name__ == '__main__':
         kmeans.fit(X)
         y = kmeans.labels_
 
-        # create scatter plot animation of t-SNE converging
-        fig, ax, scat, txts = scatter3(X_iter[..., -1], y)
-        def make_tsne_frame(t):
-            i = int(t*40)
-            x = X_iter[..., i]
-            if arg.components == 2:
-                scat.set_offsets(x)
-            else: # components = 3D
-                # manually set private offsets bc: matplotlib is stupid
-                x = np.swapaxes(x,0,1).tolist()
-                scat._offsets3d = x
-            ''' TODO
-            for j, txt in zip(range(10), txts):
-                xtext, ytext = np.median(x[y == j, :], axis=0)
-                txt.set_x(xtext)
-                txt.set_y(ytext)
-            '''
-            return mplfig_to_npimage(fig)
-        animation = mpy.VideoClip(make_tsne_frame, duration=X_iter.shape[2]/40.)
-        # TODO dynamically mkdir for imgs/<d2v-model>/*
-        animation.write_gif("imgs/tsne3-animation-clusters{}.gif".format(n_clusters), fps=20)
+        # T O   J S O N
+
+        if 'tojson' in arg.ops:
+            with open('data.json', 'w') as out:
+                points, clusters = X_iter[..., -1].tolist(), y.tolist()
+                data = { 'points' : [{'x':p[0], 'y':p[1], 'z':p[2], 'cid':c} for p,c in zip(points,clusters)] }
+                json.dump(data, out)
+
+        # A N I M A T I O N
+
+        if 'animate' in arg.ops:
+            # create scatter plot animation of t-SNE converging
+            fig, ax, scat, txts = scatter3(X_iter[..., -1], y)
+            def make_tsne_frame(t):
+                i = int(t*40)
+                x = X_iter[..., i]
+                if arg.components == 2:
+                    scat.set_offsets(x)
+                else: # components = 3D
+                    # manually set private offsets bc: matplotlib is stupid
+                    x = np.swapaxes(x,0,1).tolist()
+                    scat._offsets3d = x
+                ''' TODO
+                for j, txt in zip(range(10), txts):
+                    xtext, ytext = np.median(x[y == j, :], axis=0)
+                    txt.set_x(xtext)
+                    txt.set_y(ytext)
+                '''
+                return mplfig_to_npimage(fig)
+            animation = mpy.VideoClip(make_tsne_frame, duration=X_iter.shape[2]/40.)
+            # TODO dynamically mkdir for imgs/<d2v-model>/*
+            animation.write_gif("imgs/tsne3-animation-clusters{}.gif".format(n_clusters), fps=20)
