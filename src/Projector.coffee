@@ -383,7 +383,7 @@ class Projector extends Subject
       @particles = new Array()
 
       for p in [0...clusters]
-         material = new THREE.ParticleBasicMaterial( { size: 1.0, sizeAttenuation: false, vertexColors: true } )
+         material = new THREE.ParticleBasicMaterial( { size: 1.4, sizeAttenuation: false, vertexColors: true } )
          @particles[p] = new THREE.ParticleSystem( @points[p], material )
          @box.add( @particles[p] ) # put them in the data cage
 
