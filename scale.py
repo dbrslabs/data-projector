@@ -11,12 +11,14 @@ maxabs = max(map(abs,itertools.chain(*points)))
 scale = 100 / maxabs
 
 # scale data
+import ipdb; ipdb.set_trace();
 data = { 'points': [{
-    'x': scale * point['x'],
-    'y': scale * point['y'],
-    'z': scale * point['z'],
-    'cid': i['cid']
-    } for point in data['points']] }
+            'x'     : point['x'] * scale,
+            'y'     : point['y'] * scale,
+            'z'     : point['z'] * scale,
+            'cid'   : point['cid'],
+            'docid' : point['docid'],
+        } for point in data['points']] }
 
 # output to json
 with open('data.json','w') as fp: json.dump(data,fp)
