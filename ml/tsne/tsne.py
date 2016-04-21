@@ -224,7 +224,8 @@ if __name__ == '__main__':
 
     # load doc2vec vectors from file path and grab embedded representations
     d2v = Doc2Vec.load(arg.doc2vec)
-    X = np.vstack([v for v in d2v.docvecs])
+    docids = d2v.docvecs.doctags.keys()
+    X = np.vstack([d2v.docvecs[tag] for tag in docids])
 
     if (arg.load): # read in pre-calculated t-sne vectors and animated positions from disk
         X_proj = np.load(projection_file)
@@ -269,7 +270,7 @@ if __name__ == '__main__':
         if 'tojson' in arg.ops:
             with open('data.json', 'w') as out:
                 points, clusters = X_iter[..., -1].tolist(), y.tolist()
-                data = { 'points' : [{'x':p[0], 'y':p[1], 'z':p[2], 'cid':c} for p,c in zip(points,clusters)] }
+                data = { 'points' : [{'x':p[0], 'y':p[1], 'z':p[2], 'cid':c, 'docid':d} for p,c,d in zip(points,clusters,docids)] }
                 json.dump(data, out)
 
         # A N I M A T I O N
