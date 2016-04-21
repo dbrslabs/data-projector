@@ -5,6 +5,8 @@ from datetime import datetime
 from functools import partial
 from glob import glob
 
+from pymongo import MongoClient
+
 import numpy as np
 from numpy import linalg
 from numpy.linalg import norm
@@ -193,15 +195,13 @@ if __name__ == '__main__':
     parser.add_argument('--doc2vec', required=True, help='file path to doc2vec vectors')
     parser.add_argument('--components', default=2, type=int, help='t-sne dimensionality')
     parser.add_argument('--load', action='store_true', help='use pre-calculated t-SNE vectors and positions. dont run full t-sne')
+    parser.add_argument('--animate', action='store_true', help='should create gif of t-sne converging for each value of k-means')
     parser.add_argument('--seed', default=20150101, type=int, help='pass deterministic seed to t-sne')
-    parser.add_argument('--ops', nargs='+', type=str, default=['tojson'], help='operations to perform. presently avail: animate, tojson')
     parser.add_argument('--clusters', nargs='+', type=int, default=[], help='range of cluster counts on which to run k-means')
+    parser.add_argument('--host', default='localhost', type=str, help='host where mongo is running')
     arg = parser.parse_args()
 
     assert arg.components in [2,3], 't-SNE must have 2 or 3 components'
-
-    if 'tojson' in arg.ops and arg.components == 2:
-        logging.warning('data-projector requires json point to have 3 components')
 
     # D I R E C T O R Y  P R E P
 
@@ -219,6 +219,11 @@ if __name__ == '__main__':
     base = os.path.join(storagedir, 'dims{components}-seed{seed}-'.format(**vars(arg)))
     projection_file = base + 'projection.npy'
     positions_file = base + 'positions.npy'
+
+    # D B   &   S E T U P
+    # connect to mongoDB on default port
+    client = MongoClient('mongodb://{host}'.format(**vars(arg)))
+    db = client.tsne
 
     # T - S N E
 
@@ -265,17 +270,32 @@ if __name__ == '__main__':
         kmeans.fit(X)
         y = kmeans.labels_
 
-        # T O   J S O N
+        # S A V E _ T O _ M O N G O
 
-        if 'tojson' in arg.ops:
-            with open('data.json', 'w') as out:
-                points, clusters = X_iter[..., -1].tolist(), y.tolist()
-                data = { 'points' : [{'x':p[0], 'y':p[1], 'z':p[2], 'cid':c, 'docid':d} for p,c,d in zip(points,clusters,docids)] }
-                json.dump(data, out)
+        print 'storing in mongo'
+        points, clusters = X_iter[..., -1].tolist(), y.tolist()
+        points = [{
+            'x'       : p[0],
+            'y'       : p[1],
+            'z'       : p[2] if arg.components == 3 else None,
+            'cluster' : c,
+            'document': { 'id': d }
+        } for p,c,d in zip(points,clusters,docids)]
+        # write t-sne data to mongodb
+        query = {
+            'doc2vec'   : arg.doc2vec, 
+            'components': arg.components,
+            'seed'      : arg.seed,
+            'clusters'  : n_clusters,
+        }
+        data = query.copy()
+        data.update({'points': points})
+        update = { '$set': data }
+        db.tsne.update_one(query, update, upsert=True)
 
         # A N I M A T I O N
 
-        if 'animate' in arg.ops:
+        if arg.animate:
             # create scatter plot animation of t-SNE converging
             fig, ax, scat, txts = scatter3(X_iter[..., -1], y)
             def make_tsne_frame(t):
