@@ -11,7 +11,6 @@ maxabs = max(map(abs,itertools.chain(*points)))
 scale = 100 / maxabs
 
 # scale data
-import ipdb; ipdb.set_trace();
 data = { 'points': [{
             'x'     : point['x'] * scale,
             'y'     : point['y'] * scale,
