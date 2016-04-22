@@ -45,11 +45,12 @@ points = []
 for point in data['points']:
     docid = point['document']['id']
     article = articles.find_one({'_id': ObjectId(docid)})
+    # format data-projector expects
     points.append({
         'x': point['x'] * scale,
         'y': point['y'] * scale,
         'z': point['z'] * scale,
-        'cluster': point['cluster'],
+        'cid': point['cluster'],
         'document': {
             'id': docid,
             'title': article['webTitle'],
