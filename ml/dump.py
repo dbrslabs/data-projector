@@ -58,4 +58,5 @@ for point in data['points']:
     })
 
 # output to json
-with open('data.json','w') as fp: json.dump(points,fp)
+with open('data.json','w') as fp:
+    json.dump({'points': points}, fp)
