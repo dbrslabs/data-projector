@@ -157,7 +157,7 @@ DataProjector = (function(_super) {
       case Projector.EVENT_DATA_LOADED:
         return console.log("DataProjector.onProjectorEvent " + type);
       case Projector.EVENT_POINTS_SELECTED:
-        return this.info.display("Selected " + data.points + " points.");
+        return this.info.displayList(data.titles);
       case Projector.EVENT_CLUSTER_SELECTED:
         if (data.id > -1) {
           return this.info.display("Cluster " + data.id + " selected");
@@ -199,6 +199,46 @@ Info = (function(_super) {
 
   Info.prototype.display = function(message) {
     return $('#message').append(message + "<br/>");
+  };
+
+  Info.prototype.displayList = function(messages) {
+    var len, messagesHtml, msg, msgsFormatted, _i, _len;
+    this.clear();
+    Array.prototype.shuffle = function() {
+      return this.sort(function() {
+        return 0.5 - Math.random();
+      });
+    };
+    messages = messages.shuffle().slice(0, 51);
+    len = 60;
+    messages = (function() {
+      var _i, _len, _results;
+      _results = [];
+      for (_i = 0, _len = messages.length; _i < _len; _i++) {
+        msg = messages[_i];
+        _results.push(msg.substring(0, len));
+      }
+      return _results;
+    })();
+    msgsFormatted = [];
+    for (_i = 0, _len = messages.length; _i < _len; _i++) {
+      msg = messages[_i];
+      if (msg.length === len) {
+        msgsFormatted.push(msg + ' ...');
+      } else {
+        msgsFormatted.push(msg);
+      }
+    }
+    messagesHtml = ((function() {
+      var _j, _len1, _results;
+      _results = [];
+      for (_j = 0, _len1 = msgsFormatted.length; _j < _len1; _j++) {
+        msg = msgsFormatted[_j];
+        _results.push(msg + "<br/>");
+      }
+      return _results;
+    })()).join('');
+    return $('#message').append(messagesHtml);
   };
 
   Info.prototype.clear = function() {
@@ -860,6 +900,7 @@ Projector = (function(_super) {
     for (c = _i = 0; 0 <= clusters ? _i < clusters : _i > clusters; c = 0 <= clusters ? ++_i : --_i) {
       this.points[c] = new THREE.Geometry();
       this.points[c].colorsNeedUpdate = true;
+      this.points[c].documents = new Array();
     }
     $.each(data.points, this.processPoint);
     this.particles = new Array();
@@ -884,7 +925,8 @@ Projector = (function(_super) {
     vertex.z = parseFloat(nodeData.z);
     this.points[index].vertices.push(vertex);
     color = this.colors[index].clone();
-    return this.points[index].colors.push(color);
+    this.points[index].colors.push(color);
+    return this.points[index].documents.push(nodeData.document);
   };
 
   Projector.prototype.animate = function() {
@@ -921,8 +963,9 @@ Projector = (function(_super) {
   };
 
   Projector.prototype.updateSelection = function() {
-    var all, cloud, color, counter, i, j, vertex, _i, _j, _ref;
+    var all, cloud, color, counter, document, documentTitles, i, j, vertex, _i, _j, _ref;
     counter = 0;
+    documentTitles = new Array();
     for (i = _i = 0, _ref = this.storage.getClusters(); 0 <= _ref ? _i < _ref : _i > _ref; i = 0 <= _ref ? ++_i : --_i) {
       if (this.particles[i].visible) {
         cloud = this.points[i];
@@ -930,9 +973,14 @@ Projector = (function(_super) {
         for (j = _j = 0; 0 <= all ? _j < all : _j > all; j = 0 <= all ? ++_j : --_j) {
           vertex = cloud.vertices[j];
           color = cloud.colors[j];
+          document = cloud.documents[j];
+          if (!this.selector.isActive()) {
+            documentTitles.push(document.title);
+          }
           if (this.selector.isActive() && this.selector.contains(vertex, Utility.DIRECTION.ALL)) {
             color.setHex(Palette.HIGHLIGHT.getHex());
             counter++;
+            documentTitles.push(document.title);
           } else {
             color.setHex(this.colors[i].getHex());
           }
@@ -941,7 +989,8 @@ Projector = (function(_super) {
       }
     }
     return this.notify(Projector.EVENT_POINTS_SELECTED, {
-      points: counter
+      points: counter,
+      titles: documentTitles
     });
   };
 

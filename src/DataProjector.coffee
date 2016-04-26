@@ -193,7 +193,8 @@ class DataProjector extends Observer
             console.log "DataProjector.onProjectorEvent " + type
          
          when Projector.EVENT_POINTS_SELECTED
-            @info.display "Selected #{data.points} points."
+             #@info.display "Selected #{data.points} points."
+             @info.displayList data.titles,
 
          when Projector.EVENT_CLUSTER_SELECTED
             if data.id > -1

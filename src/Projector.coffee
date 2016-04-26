@@ -373,6 +373,7 @@ class Projector extends Subject
       for c in [0...clusters]
          @points[c] = new THREE.Geometry()
          @points[c].colorsNeedUpdate = true
+         @points[c].documents = new Array()
 
 
       # process JSON data
@@ -409,6 +410,9 @@ class Projector extends Subject
 
       color = @colors[index].clone()
       @points[index].colors.push( color )
+
+      # track corresponding document metadata
+      @points[index].documents.push( nodeData.document )
 
 
    # Rendering loop - animate calls itself forever.
@@ -467,6 +471,7 @@ class Projector extends Subject
       # else set color to original cluster color
 
       counter = 0
+      documentTitles = new Array()
 
       for i in [0...@storage.getClusters()]
          if @particles[i].visible
@@ -475,16 +480,21 @@ class Projector extends Subject
             for j in [0...all]
                vertex = cloud.vertices[j]
                color = cloud.colors[j]
+               document = cloud.documents[j]
+               if not @selector.isActive() 
+                  documentTitles.push( document.title )
                if @selector.isActive() and @selector.contains(vertex, Utility.DIRECTION.ALL) 
                   color.setHex(Palette.HIGHLIGHT.getHex())
                   counter++
+                  documentTitles.push( document.title )
                   # Utility.printVector3(vertex)
                else
                   color.setHex(@colors[i].getHex())
 
             cloud.colorsNeedUpdate = true;
 
-      @notify(Projector.EVENT_POINTS_SELECTED, { points : counter })
+      #@notify(Projector.EVENT_POINTS_SELECTED, { points : counter })
+      @notify(Projector.EVENT_POINTS_SELECTED, { points : counter, titles: documentTitles })
 
 
    updateMouse3D : =>
