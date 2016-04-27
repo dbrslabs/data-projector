@@ -6,6 +6,9 @@
 		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
 
 		<link rel="stylesheet" type="text/css" href="DataProjector.css">
+        <!-- Latest compiled and minified CSS -->
+        <link rel="stylesheet" type="text/css" href="bootstrap/css/bootstrap.css">
+        <link rel="stylesheet" type="text/css" href="bootstrap/css/bootstrap-theme.css">
 	</head>
 	<body>
 
@@ -49,12 +52,33 @@
 		<div id="screenshots">
 		</div>
 
+        <!-- Modal -->
+        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel"></h4>
+              </div>
+              <div class="modal-body">
+                  <div class="similar"></div>
+                  <hr>
+                  <div class="article"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
 		<script src="./jquery-2.0.2.min.js"></script>
 		<script src="./three.min.js"></script>
 		<script src="./TweenLite.min.js"></script>
 		<script src="./TrackballControls.js"></script>
 
 		<script src="./DataProjector.js"></script>
+
+        <!-- Latest compiled and minified JavaScript -->
+		<script src="./bootstrap/js/bootstrap.js"></script>
+        <script src="modal.js"></script>
 
 	</body>
 </html>

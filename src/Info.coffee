@@ -24,24 +24,23 @@ class Info extends Panel
 
       $('#message').append(message + "<br/>")
 
-   # Display list of messages, clearing the console before hand
-   displayList: (messages) ->
+
+   # Display list of documents, clearing the console before hand
+   displayDocuments: (data) ->
+
       this.clear()
-      # shuffle messages array. we don't want to render all 1,000+
+      # shuffle documents array. we don't want to render all 1,000+
       Array::shuffle = -> @sort -> 0.5 - Math.random()
-      messages = messages.shuffle()[0..50]
-      # format msg to be max length
+      documents = data.documents.shuffle()[0..45]
+      # format doc to be max length, conditionally adding ellipsis
       len = 60
-      messages = (msg.substring(0,len) for msg in messages)
-      # conditionally add ellipsis
-      msgsFormatted = []
-      for msg in messages
-          if msg.length == len
-          then msgsFormatted.push(msg + '...')
-          else msgsFormatted.push msg
+      for doc, i in documents
+          title = doc.title.substring(0,len)
+          if title.length == len then title = title + '...'
+          documents[i].title = title
       # format html and add to dom
-      messagesHtml = (msg + "<br/>" for msg in msgsFormatted).join('')
-      $('#message').append(messagesHtml)
+      docsHtml = ("<a data-toggle='modal' data-target='#myModal' data-doc-id='#{doc.id}'>#{doc.title}</a><br/>" for doc in documents).join('')
+      $('#message').append(docsHtml)
 
 
    # Clear the info console.

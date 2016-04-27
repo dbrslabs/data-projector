@@ -471,7 +471,7 @@ class Projector extends Subject
       # else set color to original cluster color
 
       counter = 0
-      documentTitles = new Array()
+      documents = new Array()
 
       for i in [0...@storage.getClusters()]
          if @particles[i].visible
@@ -482,19 +482,18 @@ class Projector extends Subject
                color = cloud.colors[j]
                document = cloud.documents[j]
                if not @selector.isActive() 
-                  documentTitles.push( document.title )
+                  documents.push( document )
                if @selector.isActive() and @selector.contains(vertex, Utility.DIRECTION.ALL) 
                   color.setHex(Palette.HIGHLIGHT.getHex())
                   counter++
-                  documentTitles.push( document.title )
+                  documents.push( document )
                   # Utility.printVector3(vertex)
                else
                   color.setHex(@colors[i].getHex())
 
             cloud.colorsNeedUpdate = true;
 
-      #@notify(Projector.EVENT_POINTS_SELECTED, { points : counter })
-      @notify(Projector.EVENT_POINTS_SELECTED, { points : counter, titles: documentTitles })
+      @notify(Projector.EVENT_POINTS_SELECTED, { documents: documents, points : counter })
 
 
    updateMouse3D : =>

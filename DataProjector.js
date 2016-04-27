@@ -157,7 +157,7 @@ DataProjector = (function(_super) {
       case Projector.EVENT_DATA_LOADED:
         return console.log("DataProjector.onProjectorEvent " + type);
       case Projector.EVENT_POINTS_SELECTED:
-        return this.info.displayList(data.titles);
+        return this.info.displayDocuments(data);
       case Projector.EVENT_CLUSTER_SELECTED:
         if (data.id > -1) {
           return this.info.display("Cluster " + data.id + " selected");
@@ -201,44 +201,34 @@ Info = (function(_super) {
     return $('#message').append(message + "<br/>");
   };
 
-  Info.prototype.displayList = function(messages) {
-    var len, messagesHtml, msg, msgsFormatted, _i, _len;
+  Info.prototype.displayDocuments = function(data) {
+    var doc, docsHtml, documents, i, len, title, _i, _len;
     this.clear();
     Array.prototype.shuffle = function() {
       return this.sort(function() {
         return 0.5 - Math.random();
       });
     };
-    messages = messages.shuffle().slice(0, 51);
+    documents = data.documents.shuffle().slice(0, 46);
     len = 60;
-    messages = (function() {
-      var _i, _len, _results;
-      _results = [];
-      for (_i = 0, _len = messages.length; _i < _len; _i++) {
-        msg = messages[_i];
-        _results.push(msg.substring(0, len));
+    for (i = _i = 0, _len = documents.length; _i < _len; i = ++_i) {
+      doc = documents[i];
+      title = doc.title.substring(0, len);
+      if (title.length === len) {
+        title = title + '...';
       }
-      return _results;
-    })();
-    msgsFormatted = [];
-    for (_i = 0, _len = messages.length; _i < _len; _i++) {
-      msg = messages[_i];
-      if (msg.length === len) {
-        msgsFormatted.push(msg + ' ...');
-      } else {
-        msgsFormatted.push(msg);
-      }
+      documents[i].title = title;
     }
-    messagesHtml = ((function() {
+    docsHtml = ((function() {
       var _j, _len1, _results;
       _results = [];
-      for (_j = 0, _len1 = msgsFormatted.length; _j < _len1; _j++) {
-        msg = msgsFormatted[_j];
-        _results.push(msg + "<br/>");
+      for (_j = 0, _len1 = documents.length; _j < _len1; _j++) {
+        doc = documents[_j];
+        _results.push("<a data-toggle='modal' data-target='#myModal' data-doc-id='" + doc.id + "'>" + doc.title + "</a><br/>");
       }
       return _results;
     })()).join('');
-    return $('#message').append(messagesHtml);
+    return $('#message').append(docsHtml);
   };
 
   Info.prototype.clear = function() {
@@ -963,9 +953,9 @@ Projector = (function(_super) {
   };
 
   Projector.prototype.updateSelection = function() {
-    var all, cloud, color, counter, document, documentTitles, i, j, vertex, _i, _j, _ref;
+    var all, cloud, color, counter, document, documents, i, j, vertex, _i, _j, _ref;
     counter = 0;
-    documentTitles = new Array();
+    documents = new Array();
     for (i = _i = 0, _ref = this.storage.getClusters(); 0 <= _ref ? _i < _ref : _i > _ref; i = 0 <= _ref ? ++_i : --_i) {
       if (this.particles[i].visible) {
         cloud = this.points[i];
@@ -975,12 +965,12 @@ Projector = (function(_super) {
           color = cloud.colors[j];
           document = cloud.documents[j];
           if (!this.selector.isActive()) {
-            documentTitles.push(document.title);
+            documents.push(document);
           }
           if (this.selector.isActive() && this.selector.contains(vertex, Utility.DIRECTION.ALL)) {
             color.setHex(Palette.HIGHLIGHT.getHex());
             counter++;
-            documentTitles.push(document.title);
+            documents.push(document);
           } else {
             color.setHex(this.colors[i].getHex());
           }
@@ -989,8 +979,8 @@ Projector = (function(_super) {
       }
     }
     return this.notify(Projector.EVENT_POINTS_SELECTED, {
-      points: counter,
-      titles: documentTitles
+      documents: documents,
+      points: counter
     });
   };
 
