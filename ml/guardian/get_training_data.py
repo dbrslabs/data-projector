@@ -6,17 +6,17 @@ from datetime import datetime
 from pymongo import MongoClient
 
 if __name__ == '__main__':
-    # setup custom logging
-    logfile = '{abspath}/log/{time}.log'.format(
-        abspath = os.path.dirname(os.path.abspath(__file__)),
-        time = datetime.now())
-    logging.basicConfig(filename=logfile, level=logging.WARNING)
-
     # parse cmd line arguments
     parser = argparse.ArgumentParser(description='Creates doc2vec training data from guardian db')
     parser.add_argument('-o','--output', default="articles", help='file path to output data file')
     parser.add_argument('-s','--sections', nargs='+', type=str, default=[], help='list of sectionsNames for which to search')
     arg = parser.parse_args()
+
+    # setup custom logging
+    logfile = '{abspath}/logs/{time}.log'.format(
+        abspath = os.path.dirname(os.path.abspath(__file__)),
+        time = datetime.now())
+    logging.basicConfig(filename=logfile, level=logging.WARNING)
 
     # connect to mongoDB, get articles collection
     client = MongoClient('mongodb://localhost')
