@@ -896,7 +896,7 @@ Projector = (function(_super) {
     this.particles = new Array();
     for (p = _j = 0; 0 <= clusters ? _j < clusters : _j > clusters; p = 0 <= clusters ? ++_j : --_j) {
       material = new THREE.ParticleBasicMaterial({
-        size: 1.4,
+        size: 3.0,
         sizeAttenuation: false,
         vertexColors: true
       });
