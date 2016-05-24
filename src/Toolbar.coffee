@@ -102,22 +102,22 @@ class Toolbar extends Panel
       @setButtonSelected("#menuButton", true)
       @setButtonSelected("#infoButton", true)
 
-      @setButtonSelected("#perspectiveButton", false)
+      @setButtonSelected("#perspectiveButton", true)
       @setButtonSelected("#orthographicButton", false)
-      @setButtonSelected("#dualButton", true)
+      @setButtonSelected("#dualButton", false)
 
-      @setButtonSelected("#boxButton", true)
-      @setButtonSelected("#viewportButton", true)
+      @setButtonSelected("#boxButton", false)
+      @setButtonSelected("#viewportButton", false)
 
       @setButtonSelected("#selectButton", false)
 
-      @setButtonSelected("#viewTopButton", true)
+      @setButtonSelected("#viewTopButton", false)
       @setButtonSelected("#viewFrontButton", false)
       @setButtonSelected("#viewSideButton", false)
 
       @setButtonSelected("#spinLeftButton", false)
-      @setButtonSelected("#spinStopButton", true)
-      @setButtonSelected("#spinRightButton", false)
+      @setButtonSelected("#spinStopButton", false)
+      @setButtonSelected("#spinRightButton", true)
 
       @setButtonSelected("#animateButton", false)
 

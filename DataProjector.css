@@ -1,26 +1,30 @@
 body {
    color: #909090 !important;
-   font-family: Monospace;
-   font-size: 13px;
-   text-align: center !important;
-
+   font-family: Helvetica, Arial;
+   /*font-size: 1em;*/
+   /*text-align: center !important;*/
    background-color: #000;
-   margin: 0px;
+   /*margin: 0px;*/
    overflow: hidden;
 }
 
-#toolbar {
-   position: absolute;
+/*#toolbar {
+   /*position: absolute;
    top: 10px;
    left: 10px;
    width: 100%;
    text-align: left;
    z-index: 100;
    display:block;
-}
-#toolbar .button { color: #CCCCCC; font-weight: bold; cursor: pointer }
+}*/
 
-#menu {
+#toolbar {
+   padding: 15px;
+}
+
+/*#toolbar .button { color: #CCCCCC; font-weight: bold; cursor: pointer }*/
+
+/*#menu {
    position: absolute;
    top: 100px;
    left: 10px;
@@ -28,12 +32,22 @@ body {
    text-align: left;
    z-index: 101;
    display:block;
-}
-#menu .toggle { color: #CCCCCC; font-weight: bold; cursor: pointer }
+}*/
+/*#menu .toggle { color: #CCCCCC; font-weight: bold; cursor: pointer }
 #menu .button { color: #CCCCCC; font-weight: bold; cursor: pointer }
 #menu .color { color: #CCCCCC; font-weight: bold; cursor: pointer }
+*/
 
-#info {
+#menu {
+   padding: 15px;
+   text-align: center;
+}
+
+#menu .cluster-name {
+   margin-left: 15px;
+}
+
+/*#info {
    position: absolute;
    top: 25px;
    right: 10px;
@@ -42,4 +56,4 @@ body {
    z-index: 102;
    display:block;
 }
-#info .button { color: #CCCCCC; font-weight: bold; cursor: pointer }
+#info .button { color: #CCCCCC; font-weight: bold; cursor: pointer }*/

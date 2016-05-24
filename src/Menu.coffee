@@ -118,7 +118,7 @@ class Menu extends Panel
       # swatch IDs are c0, c1, c2...
 
       for i in [0...@clusters]
-         html = "<span class='toggle' id='t#{i}'>[+]</span><span class='button' id='b#{i}'> Cluster</span><span class='color' id='c#{i}'> #{i} </span><br/>"
+         html = "<span class='toggle' id='t#{i}'>[+]</span><span class='button' id='b#{i}'></span> <span class='color' id='c#{i}'>Cluster #{i} </span>"
          $("#menu").append(html) 
 
       $("#toggleAll").click(@onToggleAll)

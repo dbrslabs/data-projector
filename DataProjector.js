@@ -345,7 +345,7 @@ Menu = (function(_super) {
     this.clusters = clusters;
     this.colors = colors;
     for (i = _i = 0, _ref = this.clusters; 0 <= _ref ? _i < _ref : _i > _ref; i = 0 <= _ref ? ++_i : --_i) {
-      html = "<span class='toggle' id='t" + i + "'>[+]</span><span class='button' id='b" + i + "'> Cluster</span><span class='color' id='c" + i + "'> " + i + " </span><br/>";
+      html = "<span class='toggle' id='t" + i + "'>[+]</span><span class='button' id='b" + i + "'></span> <span class='color' id='c" + i + "'>Cluster " + i + " </span>";
       $("#menu").append(html);
     }
     $("#toggleAll").click(this.onToggleAll);
@@ -586,7 +586,7 @@ Projector = (function(_super) {
 
   Projector.prototype.SCREEN_HEIGHT = window.innerHeight;
 
-  Projector.prototype.mode = Projector.VIEW.DUAL;
+  Projector.prototype.mode = Projector.VIEW.PERSPECTIVE;
 
   Projector.prototype.storage = null;
 
@@ -680,10 +680,12 @@ Projector = (function(_super) {
     this.createOrthographicCamera();
     this.createControls();
     this.createBox();
+    this.box.visible = false;
     this.cameraPerspective.lookAt(this.box.position);
     this.cameraOrthographic.lookAt(this.box.position);
     this.createViews();
     this.updateView(true);
+    this.setViewsVisible(false, false, false);
     this.selector = new Selector(this.box);
     this.createRenderingEngine();
     this.onWindowResize(null);
@@ -1945,18 +1947,18 @@ Toolbar = (function(_super) {
   Toolbar.prototype.initialize = function() {
     this.setButtonSelected("#menuButton", true);
     this.setButtonSelected("#infoButton", true);
-    this.setButtonSelected("#perspectiveButton", false);
+    this.setButtonSelected("#perspectiveButton", true);
     this.setButtonSelected("#orthographicButton", false);
-    this.setButtonSelected("#dualButton", true);
-    this.setButtonSelected("#boxButton", true);
-    this.setButtonSelected("#viewportButton", true);
+    this.setButtonSelected("#dualButton", false);
+    this.setButtonSelected("#boxButton", false);
+    this.setButtonSelected("#viewportButton", false);
     this.setButtonSelected("#selectButton", false);
-    this.setButtonSelected("#viewTopButton", true);
+    this.setButtonSelected("#viewTopButton", false);
     this.setButtonSelected("#viewFrontButton", false);
     this.setButtonSelected("#viewSideButton", false);
     this.setButtonSelected("#spinLeftButton", false);
-    this.setButtonSelected("#spinStopButton", true);
-    this.setButtonSelected("#spinRightButton", false);
+    this.setButtonSelected("#spinStopButton", false);
+    this.setButtonSelected("#spinRightButton", true);
     return this.setButtonSelected("#animateButton", false);
   };
 
