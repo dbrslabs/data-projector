@@ -37,7 +37,7 @@ if __name__ == '__main__':
     out = os.path.join(datadir,
         "{output}-sections-{sections}".format(
             output = arg.output,
-            sections = "-".join(arg.sections) if arg.sections else 'all'))
+            sections = "-".join(arg.sections) if arg.sections else 'all').replace(' ',''))
 
     # open outfile and begin writing articles
     with open(out, 'w') as outfile:
