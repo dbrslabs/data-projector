@@ -1,7 +1,7 @@
-;(function(e,t,n){function i(n,s){if(!t[n]){if(!e[n]){var o=typeof require=="function"&&require;if(!s&&o)return o(n,!0);if(r)return r(n,!0);throw new Error("Cannot find module '"+n+"'")}var u=t[n]={exports:{}};e[n][0].call(u.exports,function(t){var r=e[n][1][t];return i(r?r:t)},u,u.exports)}return t[n].exports}var r=typeof require=="function"&&require;for(var s=0;s<n.length;s++)i(n[s]);return i})({1:[function(require,module,exports){
+(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 var DataProjector, Info, Menu, Observer, Palette, Projector, Storage, Subject, Toolbar, Utility, dataProjector,
-  __hasProp = {}.hasOwnProperty,
-  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+  extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+  hasProp = {}.hasOwnProperty;
 
 Subject = require('./Subject.coffee');
 
@@ -21,8 +21,8 @@ Info = require('./Info.coffee');
 
 Projector = require('./Projector.coffee');
 
-DataProjector = (function(_super) {
-  __extends(DataProjector, _super);
+DataProjector = (function(superClass) {
+  extend(DataProjector, superClass);
 
   DataProjector.prototype.storage = null;
 
@@ -185,13 +185,13 @@ dataProjector = new DataProjector();
 
 },{"./Info.coffee":2,"./Menu.coffee":3,"./Observer.coffee":4,"./Palette.coffee":5,"./Projector.coffee":7,"./Storage.coffee":9,"./Subject.coffee":10,"./Toolbar.coffee":11,"./Utility.coffee":12}],2:[function(require,module,exports){
 var Info, Panel,
-  __hasProp = {}.hasOwnProperty,
-  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+  extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+  hasProp = {}.hasOwnProperty;
 
 Panel = require('./Panel.coffee');
 
-Info = (function(_super) {
-  __extends(Info, _super);
+Info = (function(superClass) {
+  extend(Info, superClass);
 
   function Info(id) {
     Info.__super__.constructor.call(this, id);
@@ -202,7 +202,7 @@ Info = (function(_super) {
   };
 
   Info.prototype.displayDocuments = function(data) {
-    var doc, docsHtml, documents, i, len, title, _i, _len;
+    var doc, docsHtml, documents, i, j, len, len1, title;
     this.clear();
     Array.prototype.shuffle = function() {
       return this.sort(function() {
@@ -211,7 +211,7 @@ Info = (function(_super) {
     };
     documents = data.documents.shuffle().slice(0, 46);
     len = 60;
-    for (i = _i = 0, _len = documents.length; _i < _len; i = ++_i) {
+    for (i = j = 0, len1 = documents.length; j < len1; i = ++j) {
       doc = documents[i];
       title = doc.title.substring(0, len);
       if (title.length === len) {
@@ -220,13 +220,13 @@ Info = (function(_super) {
       documents[i].title = title;
     }
     docsHtml = ((function() {
-      var _j, _len1, _results;
-      _results = [];
-      for (_j = 0, _len1 = documents.length; _j < _len1; _j++) {
-        doc = documents[_j];
-        _results.push("<a data-toggle='modal' data-target='#myModal' data-doc-id='" + doc.id + "'>" + doc.title + "</a><br/>");
+      var k, len2, results;
+      results = [];
+      for (k = 0, len2 = documents.length; k < len2; k++) {
+        doc = documents[k];
+        results.push("<a data-toggle='modal' data-target='#myModal' data-doc-id='" + doc.id + "'>" + doc.title + "</a><br/>");
       }
-      return _results;
+      return results;
     })()).join('');
     return $('#message').append(docsHtml);
   };
@@ -244,14 +244,14 @@ module.exports = Info;
 
 },{"./Panel.coffee":6}],3:[function(require,module,exports){
 var Menu, Panel,
-  __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
-  __hasProp = {}.hasOwnProperty,
-  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+  bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
+  extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+  hasProp = {}.hasOwnProperty;
 
 Panel = require('./Panel.coffee');
 
-Menu = (function(_super) {
-  __extends(Menu, _super);
+Menu = (function(superClass) {
+  extend(Menu, superClass);
 
   Menu.EVENT_TOGGLE_ALL_ON = "EVENT_TOGGLE_ALL_ON";
 
@@ -274,21 +274,21 @@ Menu = (function(_super) {
   Menu.prototype.colors = null;
 
   function Menu(id) {
-    this.onCluster = __bind(this.onCluster, this);
-    this.onToggle = __bind(this.onToggle, this);
-    this.onToggleAll = __bind(this.onToggleAll, this);
+    this.onCluster = bind(this.onCluster, this);
+    this.onToggle = bind(this.onToggle, this);
+    this.onToggleAll = bind(this.onToggleAll, this);
     Menu.__super__.constructor.call(this, id);
   }
 
   Menu.prototype.onToggleAll = function(event) {
-    var i, state, _i, _j, _ref, _ref1;
+    var i, j, k, ref, ref1, state;
     state = $("#toggleAll").text();
     switch (state) {
       case Menu.TOGGLE_OFF:
       case Menu.TOGGLE_MIX:
         $("#toggleAll").text(Menu.TOGGLE_ON);
         $("#toggleAll").prop('checked', true);
-        for (i = _i = 0, _ref = this.clusters; 0 <= _ref ? _i < _ref : _i > _ref; i = 0 <= _ref ? ++_i : --_i) {
+        for (i = j = 0, ref = this.clusters; 0 <= ref ? j < ref : j > ref; i = 0 <= ref ? ++j : --j) {
           $("#t" + String(i)).text(Menu.TOGGLE_ON);
           $("#t" + String(i)).prop('checked', true);
         }
@@ -296,7 +296,7 @@ Menu = (function(_super) {
       case Menu.TOGGLE_ON:
         $("#toggleAll").text(Menu.TOGGLE_OFF);
         $("#toggleAll").prop('checked', false);
-        for (i = _j = 0, _ref1 = this.clusters; 0 <= _ref1 ? _j < _ref1 : _j > _ref1; i = 0 <= _ref1 ? ++_j : --_j) {
+        for (i = k = 0, ref1 = this.clusters; 0 <= ref1 ? k < ref1 : k > ref1; i = 0 <= ref1 ? ++k : --k) {
           $("#t" + String(i)).text(Menu.TOGGLE_OFF);
         }
         return this.notify(Menu.EVENT_TOGGLE_ALL_OFF);
@@ -344,15 +344,15 @@ Menu = (function(_super) {
   };
 
   Menu.prototype.create = function(clusters, colors) {
-    var html, i, _i, _j, _ref, _ref1;
+    var html, i, j, k, ref, ref1;
     this.clusters = clusters;
     this.colors = colors;
-    for (i = _i = 0, _ref = this.clusters; 0 <= _ref ? _i < _ref : _i > _ref; i = 0 <= _ref ? ++_i : --_i) {
+    for (i = j = 0, ref = this.clusters; 0 <= ref ? j < ref : j > ref; i = 0 <= ref ? ++j : --j) {
       html = "<input type='checkbox' class='toggle' id='t" + i + "' checked><span class='button' id='b" + i + "'></span> <span class='color' id='c" + i + "'>Cluster " + i + " </span>";
       $("#menu").append(html);
     }
     $("#toggleAll").click(this.onToggleAll);
-    for (i = _j = 0, _ref1 = this.clusters; 0 <= _ref1 ? _j < _ref1 : _j > _ref1; i = 0 <= _ref1 ? ++_j : --_j) {
+    for (i = k = 0, ref1 = this.clusters; 0 <= ref1 ? k < ref1 : k > ref1; i = 0 <= ref1 ? ++k : --k) {
       $("#t" + String(i)).click(this.onToggle);
       $("#b" + String(i)).click(this.onCluster);
     }
@@ -360,9 +360,9 @@ Menu = (function(_super) {
   };
 
   Menu.prototype.togglesOn = function() {
-    var i, result, state, tag, _i, _ref;
+    var i, j, ref, result, state, tag;
     result = 0;
-    for (i = _i = 0, _ref = this.clusters; 0 <= _ref ? _i < _ref : _i > _ref; i = 0 <= _ref ? ++_i : --_i) {
+    for (i = j = 0, ref = this.clusters; 0 <= ref ? j < ref : j > ref; i = 0 <= ref ? ++j : --j) {
       tag = "#t" + String(i);
       state = $(tag).prop("checked");
       if (state === true) {
@@ -386,29 +386,29 @@ Menu = (function(_super) {
   };
 
   Menu.prototype.updateSwatches = function() {
-    var i, _i, _ref, _results;
-    _results = [];
-    for (i = _i = 0, _ref = this.clusters; 0 <= _ref ? _i < _ref : _i > _ref; i = 0 <= _ref ? ++_i : --_i) {
+    var i, j, ref, results;
+    results = [];
+    for (i = j = 0, ref = this.clusters; 0 <= ref ? j < ref : j > ref; i = 0 <= ref ? ++j : --j) {
       if (i === this.selected) {
-        _results.push($("#c" + String(i)).css('color', Palette.HIGHLIGHT.getStyle()));
+        results.push($("#c" + String(i)).css('color', Palette.HIGHLIGHT.getStyle()));
       } else {
-        _results.push($("#c" + String(i)).css('color', this.colors[i].getStyle()));
+        results.push($("#c" + String(i)).css('color', this.colors[i].getStyle()));
       }
     }
-    return _results;
+    return results;
   };
 
   Menu.prototype.updateButtons = function() {
-    var i, _i, _ref, _results;
-    _results = [];
-    for (i = _i = 0, _ref = this.clusters; 0 <= _ref ? _i < _ref : _i > _ref; i = 0 <= _ref ? ++_i : --_i) {
+    var i, j, ref, results;
+    results = [];
+    for (i = j = 0, ref = this.clusters; 0 <= ref ? j < ref : j > ref; i = 0 <= ref ? ++j : --j) {
       if (i === this.selected) {
-        _results.push($("#b" + String(i)).css('color', Palette.HIGHLIGHT.getStyle()));
+        results.push($("#b" + String(i)).css('color', Palette.HIGHLIGHT.getStyle()));
       } else {
-        _results.push($("#b" + String(i)).css('color', Palette.BUTTON.getStyle()));
+        results.push($("#b" + String(i)).css('color', Palette.BUTTON.getStyle()));
       }
     }
-    return _results;
+    return results;
   };
 
   return Menu;
@@ -455,19 +455,19 @@ Palette = (function() {
   }
 
   Palette.prototype.generate = function(size) {
-    var color, hue, i, lightness, saturation, step, _i, _results;
+    var color, hue, i, j, lightness, ref, results, saturation, step;
     hue = 0;
     saturation = 0.7;
     lightness = 0.45;
     step = 1 / size;
-    _results = [];
-    for (i = _i = 0; 0 <= size ? _i < size : _i > size; i = 0 <= size ? ++_i : --_i) {
+    results = [];
+    for (i = j = 0, ref = size; 0 <= ref ? j < ref : j > ref; i = 0 <= ref ? ++j : --j) {
       hue = (i + 1) * step;
       color = new THREE.Color();
       color.setHSL(hue, saturation, lightness);
-      _results.push(this.colors.push(color));
+      results.push(this.colors.push(color));
     }
-    return _results;
+    return results;
   };
 
   Palette.prototype.getColors = function() {
@@ -475,20 +475,20 @@ Palette = (function() {
   };
 
   Palette.prototype.print = function() {
-    var c, css, hsl, hue, i, lightness, saturation, _i, _len, _ref, _results;
+    var c, css, hsl, hue, i, j, len, lightness, ref, results, saturation;
     i = 0;
-    _ref = this.colors;
-    _results = [];
-    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-      c = _ref[_i];
+    ref = this.colors;
+    results = [];
+    for (j = 0, len = ref.length; j < len; j++) {
+      c = ref[j];
       css = c.getStyle();
       hsl = c.getHSL();
       hue = hsl.h.toFixed(1);
       saturation = hsl.s.toFixed(1);
       lightness = hsl.l.toFixed(1);
-      _results.push(console.log(i++ + " > " + hue + " : " + saturation + " : " + lightness + " | " + css));
+      results.push(console.log(i++ + " > " + hue + " : " + saturation + " : " + lightness + " | " + css));
     }
-    return _results;
+    return results;
   };
 
   return Palette;
@@ -500,13 +500,13 @@ module.exports = Palette;
 
 },{}],6:[function(require,module,exports){
 var Panel, Subject,
-  __hasProp = {}.hasOwnProperty,
-  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+  extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+  hasProp = {}.hasOwnProperty;
 
 Subject = require('./Subject.coffee');
 
-Panel = (function(_super) {
-  __extends(Panel, _super);
+Panel = (function(superClass) {
+  extend(Panel, superClass);
 
   Panel.EVENT_PANEL_SHOWN = "EVENT_PANEL_SHOWN";
 
@@ -549,9 +549,9 @@ module.exports = Panel;
 
 },{"./Subject.coffee":10}],7:[function(require,module,exports){
 var Palette, Projector, Selector, Subject, Utility,
-  __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
-  __hasProp = {}.hasOwnProperty,
-  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+  bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
+  extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+  hasProp = {}.hasOwnProperty;
 
 Subject = require('./Subject.coffee');
 
@@ -561,8 +561,8 @@ Palette = require('./Palette.coffee');
 
 Selector = require('./Selector.coffee');
 
-Projector = (function(_super) {
-  __extends(Projector, _super);
+Projector = (function(superClass) {
+  extend(Projector, superClass);
 
   Projector.EVENT_DATA_LOADED = "EVENT_DATA_LOADED";
 
@@ -638,44 +638,44 @@ Projector = (function(_super) {
   Projector.prototype.timeStamp = 0;
 
   function Projector() {
-    this.clustersVisible = __bind(this.clustersVisible, this);
-    this.startTimer = __bind(this.startTimer, this);
-    this.updatePoints = __bind(this.updatePoints, this);
-    this.toggleClusterSelection = __bind(this.toggleClusterSelection, this);
-    this.setAllClustersVisible = __bind(this.setAllClustersVisible, this);
-    this.toggleClusterVisibility = __bind(this.toggleClusterVisibility, this);
-    this.getSpinStep = __bind(this.getSpinStep, this);
-    this.spinCamera = __bind(this.spinCamera, this);
-    this.setSpin = __bind(this.setSpin, this);
-    this.toggleAnimation = __bind(this.toggleAnimation, this);
-    this.changeView = __bind(this.changeView, this);
-    this.setViewsVisible = __bind(this.setViewsVisible, this);
-    this.updateView = __bind(this.updateView, this);
-    this.resetCamera = __bind(this.resetCamera, this);
-    this.updateMouse3D = __bind(this.updateMouse3D, this);
-    this.updateSelection = __bind(this.updateSelection, this);
-    this.render = __bind(this.render, this);
-    this.animate = __bind(this.animate, this);
-    this.processPoint = __bind(this.processPoint, this);
-    this.load = __bind(this.load, this);
-    this.createRenderingEngine = __bind(this.createRenderingEngine, this);
-    this.createViews = __bind(this.createViews, this);
-    this.createBox = __bind(this.createBox, this);
-    this.createControls = __bind(this.createControls, this);
-    this.createOrthographicCamera = __bind(this.createOrthographicCamera, this);
-    this.createPerspectiveCamera = __bind(this.createPerspectiveCamera, this);
-    this.addUIListeners = __bind(this.addUIListeners, this);
-    this.getImage = __bind(this.getImage, this);
-    this.toggleSelector = __bind(this.toggleSelector, this);
-    this.toggleViewport = __bind(this.toggleViewport, this);
-    this.toggleBox = __bind(this.toggleBox, this);
-    this.setColors = __bind(this.setColors, this);
-    this.setMode = __bind(this.setMode, this);
-    this.onTimer = __bind(this.onTimer, this);
-    this.onMouseUp = __bind(this.onMouseUp, this);
-    this.onMouseMove = __bind(this.onMouseMove, this);
-    this.onMouseDown = __bind(this.onMouseDown, this);
-    this.onWindowResize = __bind(this.onWindowResize, this);
+    this.clustersVisible = bind(this.clustersVisible, this);
+    this.startTimer = bind(this.startTimer, this);
+    this.updatePoints = bind(this.updatePoints, this);
+    this.toggleClusterSelection = bind(this.toggleClusterSelection, this);
+    this.setAllClustersVisible = bind(this.setAllClustersVisible, this);
+    this.toggleClusterVisibility = bind(this.toggleClusterVisibility, this);
+    this.getSpinStep = bind(this.getSpinStep, this);
+    this.spinCamera = bind(this.spinCamera, this);
+    this.setSpin = bind(this.setSpin, this);
+    this.toggleAnimation = bind(this.toggleAnimation, this);
+    this.changeView = bind(this.changeView, this);
+    this.setViewsVisible = bind(this.setViewsVisible, this);
+    this.updateView = bind(this.updateView, this);
+    this.resetCamera = bind(this.resetCamera, this);
+    this.updateMouse3D = bind(this.updateMouse3D, this);
+    this.updateSelection = bind(this.updateSelection, this);
+    this.render = bind(this.render, this);
+    this.animate = bind(this.animate, this);
+    this.processPoint = bind(this.processPoint, this);
+    this.load = bind(this.load, this);
+    this.createRenderingEngine = bind(this.createRenderingEngine, this);
+    this.createViews = bind(this.createViews, this);
+    this.createBox = bind(this.createBox, this);
+    this.createControls = bind(this.createControls, this);
+    this.createOrthographicCamera = bind(this.createOrthographicCamera, this);
+    this.createPerspectiveCamera = bind(this.createPerspectiveCamera, this);
+    this.addUIListeners = bind(this.addUIListeners, this);
+    this.getImage = bind(this.getImage, this);
+    this.toggleSelector = bind(this.toggleSelector, this);
+    this.toggleViewport = bind(this.toggleViewport, this);
+    this.toggleBox = bind(this.toggleBox, this);
+    this.setColors = bind(this.setColors, this);
+    this.setMode = bind(this.setMode, this);
+    this.onTimer = bind(this.onTimer, this);
+    this.onMouseUp = bind(this.onMouseUp, this);
+    this.onMouseMove = bind(this.onMouseMove, this);
+    this.onMouseDown = bind(this.onMouseDown, this);
+    this.onWindowResize = bind(this.onWindowResize, this);
     Projector.__super__.constructor.call(this);
     this.addUIListeners();
     this.scene = new THREE.Scene();
@@ -887,21 +887,21 @@ Projector = (function(_super) {
   };
 
   Projector.prototype.load = function(storage) {
-    var c, clusters, data, material, p, _i, _j;
+    var c, clusters, data, k, l, material, p, ref, ref1;
     this.storage = storage;
     data = this.storage.getData();
     clusters = this.storage.getClusters();
     this.points = new Array();
-    for (c = _i = 0; 0 <= clusters ? _i < clusters : _i > clusters; c = 0 <= clusters ? ++_i : --_i) {
+    for (c = k = 0, ref = clusters; 0 <= ref ? k < ref : k > ref; c = 0 <= ref ? ++k : --k) {
       this.points[c] = new THREE.Geometry();
       this.points[c].colorsNeedUpdate = true;
       this.points[c].documents = new Array();
     }
     $.each(data.points, this.processPoint);
     this.particles = new Array();
-    for (p = _j = 0; 0 <= clusters ? _j < clusters : _j > clusters; p = 0 <= clusters ? ++_j : --_j) {
+    for (p = l = 0, ref1 = clusters; 0 <= ref1 ? l < ref1 : l > ref1; p = 0 <= ref1 ? ++l : --l) {
       material = new THREE.ParticleBasicMaterial({
-        size: 3.0,
+        size: 2.0,
         sizeAttenuation: false,
         vertexColors: true
       });
@@ -958,14 +958,14 @@ Projector = (function(_super) {
   };
 
   Projector.prototype.updateSelection = function() {
-    var all, cloud, color, counter, document, documents, i, j, vertex, _i, _j, _ref;
+    var all, cloud, color, counter, document, documents, i, j, k, l, ref, ref1, vertex;
     counter = 0;
     documents = new Array();
-    for (i = _i = 0, _ref = this.storage.getClusters(); 0 <= _ref ? _i < _ref : _i > _ref; i = 0 <= _ref ? ++_i : --_i) {
+    for (i = k = 0, ref = this.storage.getClusters(); 0 <= ref ? k < ref : k > ref; i = 0 <= ref ? ++k : --k) {
       if (this.particles[i].visible) {
         cloud = this.points[i];
         all = cloud.vertices.length;
-        for (j = _j = 0; 0 <= all ? _j < all : _j > all; j = 0 <= all ? ++_j : --_j) {
+        for (j = l = 0, ref1 = all; 0 <= ref1 ? l < ref1 : l > ref1; j = 0 <= ref1 ? ++l : --l) {
           vertex = cloud.vertices[j];
           color = cloud.colors[j];
           document = cloud.documents[j];
@@ -1130,14 +1130,14 @@ Projector = (function(_super) {
   };
 
   Projector.prototype.setAllClustersVisible = function(visible) {
-    var p, _i, _len, _ref, _results;
-    _ref = this.particles;
-    _results = [];
-    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-      p = _ref[_i];
-      _results.push(p.visible = visible);
+    var k, len, p, ref, results;
+    ref = this.particles;
+    results = [];
+    for (k = 0, len = ref.length; k < len; k++) {
+      p = ref[k];
+      results.push(p.visible = visible);
     }
-    return _results;
+    return results;
   };
 
   Projector.prototype.toggleClusterSelection = function(index) {
@@ -1164,10 +1164,10 @@ Projector = (function(_super) {
   };
 
   Projector.prototype.updatePoints = function(index, color) {
-    var all, cloud, i, _i;
+    var all, cloud, i, k, ref;
     cloud = this.points[index];
     all = cloud.vertices.length;
-    for (i = _i = 0; 0 <= all ? _i < all : _i > all; i = 0 <= all ? ++_i : --_i) {
+    for (i = k = 0, ref = all; 0 <= ref ? k < ref : k > ref; i = 0 <= ref ? ++k : --k) {
       cloud.colors[i].setHex(color);
     }
     return this.points[index].colorsNeedUpdate = true;
@@ -1179,11 +1179,11 @@ Projector = (function(_super) {
   };
 
   Projector.prototype.clustersVisible = function() {
-    var cloud, result, _i, _len, _ref;
+    var cloud, k, len, ref, result;
     result = 0;
-    _ref = this.particles;
-    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-      cloud = _ref[_i];
+    ref = this.particles;
+    for (k = 0, len = ref.length; k < len; k++) {
+      cloud = ref[k];
       if (cloud.visible) {
         result++;
       }
@@ -1200,7 +1200,7 @@ module.exports = Projector;
 
 },{"./Palette.coffee":5,"./Selector.coffee":8,"./Subject.coffee":10,"./Utility.coffee":12}],8:[function(require,module,exports){
 var Palette, Selector, Utility,
-  __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
+  bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
 Utility = require('./Utility.coffee');
 
@@ -1228,8 +1228,8 @@ Selector = (function() {
   Selector.prototype.max = null;
 
   function Selector(parent) {
-    this.toggle = __bind(this.toggle, this);
-    this.isActive = __bind(this.isActive, this);
+    this.toggle = bind(this.toggle, this);
+    this.isActive = bind(this.isActive, this);
     this.mouseStart = new THREE.Vector3();
     this.mouse = new THREE.Vector3();
     this.mouseEnd = new THREE.Vector3();
@@ -1252,8 +1252,8 @@ Selector = (function() {
     return this.active;
   };
 
-  Selector.prototype.setDirection = function(direction) {
-    this.direction = direction;
+  Selector.prototype.setDirection = function(direction1) {
+    this.direction = direction1;
     return console.log("Selector.setDirection " + this.direction);
   };
 
@@ -1265,8 +1265,8 @@ Selector = (function() {
     return this.setActive(!this.active);
   };
 
-  Selector.prototype.start = function(mouse) {
-    this.mouse = mouse;
+  Selector.prototype.start = function(mouse1) {
+    this.mouse = mouse1;
     this.setActive(true);
     if (!this.contains(mouse, this.direction)) {
       return this.mouseStart = mouse;
@@ -1304,8 +1304,8 @@ Selector = (function() {
     return start;
   };
 
-  Selector.prototype.update = function(mouse) {
-    this.mouse = mouse;
+  Selector.prototype.update = function(mouse1) {
+    this.mouse = mouse1;
     switch (this.direction) {
       case Utility.DIRECTION.TOP:
         this.selectorTop.geometry.vertices[0].x = this.mouseStart.x;
@@ -1480,10 +1480,10 @@ Selector = (function() {
   };
 
   Selector.prototype.getMinX = function(selector) {
-    var i, minX, vertices, _i;
+    var i, j, minX, vertices;
     vertices = selector.geometry.vertices;
     minX = vertices[0].x;
-    for (i = _i = 1; _i <= 4; i = ++_i) {
+    for (i = j = 1; j <= 4; i = ++j) {
       if (vertices[i].x < minX) {
         minX = vertices[i].x;
       }
@@ -1492,10 +1492,10 @@ Selector = (function() {
   };
 
   Selector.prototype.getMaxX = function(selector) {
-    var i, maxX, vertices, _i;
+    var i, j, maxX, vertices;
     vertices = selector.geometry.vertices;
     maxX = vertices[0].x;
-    for (i = _i = 1; _i <= 4; i = ++_i) {
+    for (i = j = 1; j <= 4; i = ++j) {
       if (vertices[i].x > maxX) {
         maxX = vertices[i].x;
       }
@@ -1504,10 +1504,10 @@ Selector = (function() {
   };
 
   Selector.prototype.getMinY = function(selector) {
-    var i, minY, vertices, _i;
+    var i, j, minY, vertices;
     vertices = selector.geometry.vertices;
     minY = vertices[0].y;
-    for (i = _i = 1; _i <= 4; i = ++_i) {
+    for (i = j = 1; j <= 4; i = ++j) {
       if (vertices[i].y < minY) {
         minY = vertices[i].y;
       }
@@ -1516,10 +1516,10 @@ Selector = (function() {
   };
 
   Selector.prototype.getMaxY = function(selector) {
-    var i, maxY, vertices, _i;
+    var i, j, maxY, vertices;
     vertices = selector.geometry.vertices;
     maxY = vertices[0].y;
-    for (i = _i = 1; _i <= 4; i = ++_i) {
+    for (i = j = 1; j <= 4; i = ++j) {
       if (vertices[i].y > maxY) {
         maxY = vertices[i].y;
       }
@@ -1528,10 +1528,10 @@ Selector = (function() {
   };
 
   Selector.prototype.getMinZ = function(selector) {
-    var i, minZ, vertices, _i;
+    var i, j, minZ, vertices;
     vertices = selector.geometry.vertices;
     minZ = vertices[0].z;
-    for (i = _i = 1; _i <= 4; i = ++_i) {
+    for (i = j = 1; j <= 4; i = ++j) {
       if (vertices[i].z < minZ) {
         minZ = vertices[i].z;
       }
@@ -1540,10 +1540,10 @@ Selector = (function() {
   };
 
   Selector.prototype.getMaxZ = function(selector) {
-    var i, maxZ, vertices, _i;
+    var i, j, maxZ, vertices;
     vertices = selector.geometry.vertices;
     maxZ = vertices[0].z;
-    for (i = _i = 1; _i <= 4; i = ++_i) {
+    for (i = j = 1; j <= 4; i = ++j) {
       if (vertices[i].z > maxZ) {
         maxZ = vertices[i].z;
       }
@@ -1591,15 +1591,15 @@ module.exports = Selector;
 
 },{"./Palette.coffee":5,"./Utility.coffee":12}],9:[function(require,module,exports){
 var Storage, Subject,
-  __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
-  __hasProp = {}.hasOwnProperty,
-  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
-  __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
+  bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
+  extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+  hasProp = {}.hasOwnProperty,
+  indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
 Subject = require('./Subject.coffee');
 
-Storage = (function(_super) {
-  __extends(Storage, _super);
+Storage = (function(superClass) {
+  extend(Storage, superClass);
 
   Storage.EVENT_DATAFILE_READY = "EVENT_DATAFILE_READY";
 
@@ -1622,10 +1622,10 @@ Storage = (function(_super) {
   Storage.prototype.saved = 0;
 
   function Storage() {
-    this.processPoint = __bind(this.processPoint, this);
-    this.onSaveResponse = __bind(this.onSaveResponse, this);
-    this.onJSON = __bind(this.onJSON, this);
-    this.onDatafile = __bind(this.onDatafile, this);
+    this.processPoint = bind(this.processPoint, this);
+    this.onSaveResponse = bind(this.onSaveResponse, this);
+    this.onJSON = bind(this.onJSON, this);
+    this.onDatafile = bind(this.onDatafile, this);
     Storage.__super__.constructor.call(this);
     this.clusterIDs = new Array();
   }
@@ -1671,8 +1671,8 @@ Storage = (function(_super) {
   };
 
   Storage.prototype.processPoint = function(nodeName, nodeData) {
-    var _ref;
-    if (_ref = nodeData.cid, __indexOf.call(this.clusterIDs, _ref) < 0) {
+    var ref;
+    if (ref = nodeData.cid, indexOf.call(this.clusterIDs, ref) < 0) {
       this.clusterIDs.push(nodeData.cid);
       this.clusters = this.clusterIDs.length;
     }
@@ -1729,17 +1729,17 @@ Subject = (function() {
   };
 
   Subject.prototype.notify = function(type, data) {
-    var o, _i, _len, _ref, _results;
+    var i, len, o, ref, results;
     if (data == null) {
       data = null;
     }
-    _ref = this.observers;
-    _results = [];
-    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-      o = _ref[_i];
-      _results.push(o.update(this, type, data));
+    ref = this.observers;
+    results = [];
+    for (i = 0, len = ref.length; i < len; i++) {
+      o = ref[i];
+      results.push(o.update(this, type, data));
     }
-    return _results;
+    return results;
   };
 
   return Subject;
@@ -1751,9 +1751,9 @@ module.exports = Subject;
 
 },{}],11:[function(require,module,exports){
 var Palette, Panel, Toolbar, Utility,
-  __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
-  __hasProp = {}.hasOwnProperty,
-  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+  bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
+  extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+  hasProp = {}.hasOwnProperty;
 
 Utility = require('./Utility.coffee');
 
@@ -1761,8 +1761,8 @@ Panel = require('./Panel.coffee');
 
 Palette = require('./Palette.coffee');
 
-Toolbar = (function(_super) {
-  __extends(Toolbar, _super);
+Toolbar = (function(superClass) {
+  extend(Toolbar, superClass);
 
   Toolbar.EVENT_MENU = "EVENT_MENU";
 
@@ -1801,30 +1801,30 @@ Toolbar = (function(_super) {
   Toolbar.prototype.dispatcher = null;
 
   function Toolbar(id) {
-    this.setAnimateButtonSelected = __bind(this.setAnimateButtonSelected, this);
-    this.setSpinButtonSelected = __bind(this.setSpinButtonSelected, this);
-    this.setViewButtonSelected = __bind(this.setViewButtonSelected, this);
-    this.setSelectButtonSelected = __bind(this.setSelectButtonSelected, this);
-    this.setViewportButtonSelected = __bind(this.setViewportButtonSelected, this);
-    this.setBoxButtonSelected = __bind(this.setBoxButtonSelected, this);
-    this.blinkClearButton = __bind(this.blinkClearButton, this);
-    this.blinkResetButton = __bind(this.blinkResetButton, this);
-    this.setCameraButtonSelected = __bind(this.setCameraButtonSelected, this);
-    this.setInfoButtonSelected = __bind(this.setInfoButtonSelected, this);
-    this.setMenuButtonSelected = __bind(this.setMenuButtonSelected, this);
-    this.unblinkButton = __bind(this.unblinkButton, this);
-    this.blinkButton = __bind(this.blinkButton, this);
-    this.setButtonSelected = __bind(this.setButtonSelected, this);
-    this.initialize = __bind(this.initialize, this);
-    this.createDispatcher = __bind(this.createDispatcher, this);
-    this.onClick = __bind(this.onClick, this);
-    this.onKeyDown = __bind(this.onKeyDown, this);
-    var item, _i, _len, _ref;
+    this.setAnimateButtonSelected = bind(this.setAnimateButtonSelected, this);
+    this.setSpinButtonSelected = bind(this.setSpinButtonSelected, this);
+    this.setViewButtonSelected = bind(this.setViewButtonSelected, this);
+    this.setSelectButtonSelected = bind(this.setSelectButtonSelected, this);
+    this.setViewportButtonSelected = bind(this.setViewportButtonSelected, this);
+    this.setBoxButtonSelected = bind(this.setBoxButtonSelected, this);
+    this.blinkClearButton = bind(this.blinkClearButton, this);
+    this.blinkResetButton = bind(this.blinkResetButton, this);
+    this.setCameraButtonSelected = bind(this.setCameraButtonSelected, this);
+    this.setInfoButtonSelected = bind(this.setInfoButtonSelected, this);
+    this.setMenuButtonSelected = bind(this.setMenuButtonSelected, this);
+    this.unblinkButton = bind(this.unblinkButton, this);
+    this.blinkButton = bind(this.blinkButton, this);
+    this.setButtonSelected = bind(this.setButtonSelected, this);
+    this.initialize = bind(this.initialize, this);
+    this.createDispatcher = bind(this.createDispatcher, this);
+    this.onClick = bind(this.onClick, this);
+    this.onKeyDown = bind(this.onKeyDown, this);
+    var i, item, len, ref;
     Toolbar.__super__.constructor.call(this, id);
     this.createDispatcher();
-    _ref = this.dispatcher;
-    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-      item = _ref[_i];
+    ref = this.dispatcher;
+    for (i = 0, len = ref.length; i < len; i++) {
+      item = ref[i];
       $(item.id).click({
         type: item.type
       }, this.onClick);
@@ -1834,22 +1834,22 @@ Toolbar = (function(_super) {
   }
 
   Toolbar.prototype.onKeyDown = function(event) {
-    var item, modifier, _i, _len, _ref, _results;
+    var i, item, len, modifier, ref, results;
     modifier = Utility.NO_KEY;
     if (event.shiftKey) {
       modifier = Utility.SHIFT_KEY;
     }
-    _ref = this.dispatcher;
-    _results = [];
-    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-      item = _ref[_i];
+    ref = this.dispatcher;
+    results = [];
+    for (i = 0, len = ref.length; i < len; i++) {
+      item = ref[i];
       if ((item.key === event.keyCode) && (item.modifier === modifier)) {
-        _results.push(this.notify(item.type));
+        results.push(this.notify(item.type));
       } else {
-        _results.push(void 0);
+        results.push(void 0);
       }
     }
-    return _results;
+    return results;
   };
 
   Toolbar.prototype.onClick = function(event) {
@@ -2085,5 +2085,4 @@ Utility = (function() {
 module.exports = Utility;
 
 
-},{}]},{},[1])
-;
+},{}]},{},[1]);
