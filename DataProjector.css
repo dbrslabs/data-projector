@@ -19,7 +19,11 @@ body {
 }*/
 
 #toolbar {
-   padding: 15px;
+   
+}
+
+.navbar-right {
+   margin-right: 15px;
 }
 
 /*#toolbar .button { color: #CCCCCC; font-weight: bold; cursor: pointer }*/
@@ -45,6 +49,10 @@ body {
 
 #menu .cluster-name {
    margin-left: 15px;
+}
+
+#buttonAll {
+   color: #000;
 }
 
 /*#info {

@@ -287,12 +287,15 @@ Menu = (function(_super) {
       case Menu.TOGGLE_OFF:
       case Menu.TOGGLE_MIX:
         $("#toggleAll").text(Menu.TOGGLE_ON);
+        $("#toggleAll").prop('checked', true);
         for (i = _i = 0, _ref = this.clusters; 0 <= _ref ? _i < _ref : _i > _ref; i = 0 <= _ref ? ++_i : --_i) {
           $("#t" + String(i)).text(Menu.TOGGLE_ON);
+          $("#t" + String(i)).prop('checked', true);
         }
         return this.notify(Menu.EVENT_TOGGLE_ALL_ON);
       case Menu.TOGGLE_ON:
         $("#toggleAll").text(Menu.TOGGLE_OFF);
+        $("#toggleAll").prop('checked', false);
         for (i = _j = 0, _ref1 = this.clusters; 0 <= _ref1 ? _j < _ref1 : _j > _ref1; i = 0 <= _ref1 ? ++_j : --_j) {
           $("#t" + String(i)).text(Menu.TOGGLE_OFF);
         }
@@ -345,7 +348,7 @@ Menu = (function(_super) {
     this.clusters = clusters;
     this.colors = colors;
     for (i = _i = 0, _ref = this.clusters; 0 <= _ref ? _i < _ref : _i > _ref; i = 0 <= _ref ? ++_i : --_i) {
-      html = "<span class='toggle' id='t" + i + "'>[+]</span><span class='button' id='b" + i + "'></span> <span class='color' id='c" + i + "'>Cluster " + i + " </span>";
+      html = "<input type='checkbox' class='toggle' id='t" + i + "' checked><span class='button' id='b" + i + "'></span> <span class='color' id='c" + i + "'>Cluster " + i + " </span>";
       $("#menu").append(html);
     }
     $("#toggleAll").click(this.onToggleAll);
@@ -361,8 +364,8 @@ Menu = (function(_super) {
     result = 0;
     for (i = _i = 0, _ref = this.clusters; 0 <= _ref ? _i < _ref : _i > _ref; i = 0 <= _ref ? ++_i : --_i) {
       tag = "#t" + String(i);
-      state = $(tag).text();
-      if (state === Menu.TOGGLE_ON) {
+      state = $(tag).prop("checked");
+      if (state === true) {
         result++;
       }
     }
@@ -1852,6 +1855,14 @@ Toolbar = (function(_super) {
   Toolbar.prototype.onClick = function(event) {
     return this.notify(event.data.type);
   };
+
+  $('.btn-toggle').click(function() {
+    $(this).find('.btn').toggleClass('active');
+    if ($(this).find('.btn-primary').size() > 0) {
+      $(this).find('.btn').toggleClass('btn-primary');
+    }
+    $(this).find('.btn').toggleClass('btn-default');
+  });
 
   Toolbar.prototype.createDispatcher = function() {
     return this.dispatcher = [

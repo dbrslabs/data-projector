@@ -50,15 +50,18 @@ class Menu extends Panel
          when Menu.TOGGLE_OFF, Menu.TOGGLE_MIX # turn all on
 
             $("#toggleAll").text(Menu.TOGGLE_ON)
+            $("#toggleAll").prop('checked', true) # new new new
 
             for i in [0...@clusters]
                $("#t" + String(i)).text(Menu.TOGGLE_ON)
+               $("#t" + String(i)).prop('checked', true);
 
             @notify(Menu.EVENT_TOGGLE_ALL_ON)   
 
          when Menu.TOGGLE_ON # turn all off
 
             $("#toggleAll").text(Menu.TOGGLE_OFF)
+            $("#toggleAll").prop('checked', false)
 
             for i in [0...@clusters]
                $("#t" + String(i)).text(Menu.TOGGLE_OFF)
@@ -118,7 +121,8 @@ class Menu extends Panel
       # swatch IDs are c0, c1, c2...
 
       for i in [0...@clusters]
-         html = "<span class='toggle' id='t#{i}'>[+]</span><span class='button' id='b#{i}'></span> <span class='color' id='c#{i}'>Cluster #{i} </span>"
+         #html = "<span class='toggle' id='t#{i}'>[+]</span><span class='button' id='b#{i}'></span> <span class='color' id='c#{i}'>Cluster #{i} </span>"
+         html = "<input type='checkbox' class='toggle' id='t#{i}' checked><span class='button' id='b#{i}'></span> <span class='color' id='c#{i}'>Cluster #{i} </span>"
          $("#menu").append(html) 
 
       $("#toggleAll").click(@onToggleAll)
@@ -137,8 +141,9 @@ class Menu extends Panel
 
       for i in [0...@clusters]
          tag = "#t" + String(i)
-         state = $(tag).text()
-         if state is Menu.TOGGLE_ON then result++
+         state = $(tag).prop("checked") #$(tag).text()
+         #if state is Menu.TOGGLE_ON then result++
+         if state is true then result++
 
       return result
 
