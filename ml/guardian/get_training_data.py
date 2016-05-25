@@ -9,7 +9,13 @@ if __name__ == '__main__':
     # parse cmd line arguments
     parser = argparse.ArgumentParser(description='Creates doc2vec training data from guardian db')
     parser.add_argument('-o','--output', default="articles", help='file path to output data file')
-    parser.add_argument('-s','--sections', nargs='+', type=str, default=[], help='list of sectionsNames for which to search')
+    parser.add_argument('-s','--sections', nargs='+', type=str, default=[], 
+        help=('list of sectionsNames for which to search. '
+            'sections with >10k articles (see: sections.json): '
+            'World news, Sport, Football, Media, Business, UK news, Opinion, Politics, Music, '
+            'Life and Style, Society, Books, Film, Technology, Money, Education, Environment, '
+            'US news, Travel, Stage, Culture, News, Global, From the Guardian, Art and design, '
+            'Television & radio, Science, Fashion, From the Observer, Australia news'))
     arg = parser.parse_args()
 
     # setup custom logging
