@@ -70,6 +70,11 @@ class Toolbar extends Panel
    onClick : (event) =>
       @notify(event.data.type)
 
+   $('.btn-toggle').click ->
+      $(this).find('.btn').toggleClass 'active'
+      if $(this).find('.btn-primary').size() > 0
+         $(this).find('.btn').toggleClass 'btn-primary'
+      $(this).find('.btn').toggleClass 'btn-default'
 
    # M E T H O D S
 

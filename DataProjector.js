@@ -293,6 +293,7 @@ Menu = (function(superClass) {
         return this.notify(Menu.EVENT_TOGGLE_ALL_ON);
       case Menu.TOGGLE_ON:
         $("#toggleAll").text(Menu.TOGGLE_OFF);
+        $('#t' + String(i)).prop('checked', true);
         for (i = k = 0, ref1 = this.clusters; 0 <= ref1 ? k < ref1 : k > ref1; i = 0 <= ref1 ? ++k : --k) {
           $("#t" + String(i)).text(Menu.TOGGLE_OFF);
         }
@@ -345,7 +346,7 @@ Menu = (function(superClass) {
     this.clusters = clusters;
     this.colors = colors;
     for (i = j = 0, ref = this.clusters; 0 <= ref ? j < ref : j > ref; i = 0 <= ref ? ++j : --j) {
-      html = "<span class='toggle' id='t" + i + "'>[+]</span><span class='button' id='b" + i + "'> Cluster</span><span class='color' id='c" + i + "'> " + i + " </span><br/>";
+      html = "<input type='checkbox' class='toggle' id='t" + i + "' checked><span class='button' id='b" + i + "'></span> <span class='color' id='c" + i + "'>Cluster " + i + " </span>";
       $("#menu").append(html);
     }
     $("#toggleAll").click(this.onToggleAll);
@@ -361,8 +362,8 @@ Menu = (function(superClass) {
     result = 0;
     for (i = j = 0, ref = this.clusters; 0 <= ref ? j < ref : j > ref; i = 0 <= ref ? ++j : --j) {
       tag = "#t" + String(i);
-      state = $(tag).text();
-      if (state === Menu.TOGGLE_ON) {
+      state = $(tag).prop("checked");
+      if (state === true) {
         result++;
       }
     }
@@ -1850,6 +1851,14 @@ Toolbar = (function(superClass) {
   Toolbar.prototype.onClick = function(event) {
     return this.notify(event.data.type);
   };
+
+  $('.btn-toggle').click(function() {
+    $(this).find('.btn').toggleClass('active');
+    if ($(this).find('.btn-primary').size() > 0) {
+      $(this).find('.btn').toggleClass('btn-primary');
+    }
+    return $(this).find('.btn').toggleClass('btn-default');
+  });
 
   Toolbar.prototype.createDispatcher = function() {
     return this.dispatcher = [
