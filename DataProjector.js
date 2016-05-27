@@ -587,7 +587,7 @@ Projector = (function(superClass) {
 
   Projector.prototype.SCREEN_HEIGHT = window.innerHeight;
 
-  Projector.prototype.mode = Projector.VIEW.DUAL;
+  Projector.prototype.mode = Projector.VIEW.PERSPECTIVE;
 
   Projector.prototype.storage = null;
 

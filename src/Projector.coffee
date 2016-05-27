@@ -36,7 +36,7 @@ class Projector extends Subject
    SCREEN_WIDTH : window.innerWidth
    SCREEN_HEIGHT : window.innerHeight
 
-   mode : Projector.VIEW.DUAL # starting default
+   mode : Projector.VIEW.PERSPECTIVE # starting default
 
    storage : null # reference to the data storage
 
