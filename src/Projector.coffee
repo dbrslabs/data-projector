@@ -96,12 +96,15 @@ class Projector extends Subject
       @createControls() # trackball simulation controls
 
       @createBox() # bounding box for the data
+      # @box.visible = false # hide cube
 
       @cameraPerspective.lookAt( @box.position )
       @cameraOrthographic.lookAt( @box.position )
 
       @createViews()
       @updateView(true)
+
+      @setViewsVisible(false, false, false); # hide square
 
       @selector = new Selector(@box) # 3D rubber band selector
 

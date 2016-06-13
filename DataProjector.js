@@ -685,6 +685,7 @@ Projector = (function(superClass) {
     this.cameraOrthographic.lookAt(this.box.position);
     this.createViews();
     this.updateView(true);
+    this.setViewsVisible(false, false, false);
     this.selector = new Selector(this.box);
     this.createRenderingEngine();
     this.onWindowResize(null);
@@ -1813,7 +1814,6 @@ Toolbar = (function(superClass) {
     this.setButtonSelected = bind(this.setButtonSelected, this);
     this.initialize = bind(this.initialize, this);
     this.createDispatcher = bind(this.createDispatcher, this);
-    this.onClick = bind(this.onClick, this);
     this.onKeyDown = bind(this.onKeyDown, this);
     var i, item, len, ref;
     Toolbar.__super__.constructor.call(this, id);
@@ -1848,12 +1848,7 @@ Toolbar = (function(superClass) {
     return results;
   };
 
-  Toolbar.prototype.onClick = function(event) {
-    return this.notify(event.data.type);
-  };
-
   $('.btn-toggle').click(function() {
-    $(this).find('.btn').toggleClass('active');
     if ($(this).find('.btn-primary').size() > 0) {
       $(this).find('.btn').toggleClass('btn-primary');
     }
