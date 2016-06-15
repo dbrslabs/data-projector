@@ -1,82 +1,82 @@
 <!DOCTYPE html>
 <html lang="en">
-	<head>
-		<title>Datacratic : DataProjector</title>
-		<meta charset="utf-8">
-		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <head>
+        <title>Datacratic : DataProjector</title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
 
-		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
-		<link rel="stylesheet" type="text/css" href="DataProjector.css">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+        <link rel="stylesheet" type="text/css" href="DataProjector.css">
         <!-- Latest compiled and minified CSS -->
         <!-- <link rel="stylesheet" type="text/css" href="bootstrap/css/bootstrap.css">
         <link rel="stylesheet" type="text/css" href="bootstrap/css/bootstrap-theme.css"> -->
-	</head>
-	<body>
-		<nav class="navbar navbar-default navbar-fixed-top" id="toolbar">
+    </head>
+    <body>
+        <nav class="navbar navbar-default navbar-fixed-top" id="toolbar">
             <div class="container-fluid">
-				<div class="navbar-header">
-					<div class="navbar-brand">Guardian Document Visualization</div>
-				</div>
-				<div class="collapse navbar-collapse">
-					<div class="navbar-text navbar-right">
-						<label>Show Articles</label>
-						<div class="btn-group btn-toggle" id="showArticlesButton">
-							<button class="btn btn-default">ON</button>
-							<button class="btn btn-primary">OFF</button>
-						</div>
-						&nbsp;
-						<label>Animation</label>
-						<div class="btn-group btn-toggle" id="animateToggleButton">
-							<button class="btn btn-primary">ON</button>
-							<button class="btn btn-default">OFF</button>
-						</div>
-					</div>
-				</div>
-				<!-- <div id="toolbar"> -->
-				<!-- Display: -->
-				<span class="button hidden" id="menuButton">[M]enu</span>
-				<span class="button hidden" id="infoButton">[I]nfo</span>
-			   <!-- Camera: -->
-			   <span class="button hidden" id="perspectiveButton">[P]erspective</span>
-				<span class="button hidden" id="orthographicButton">[O]rthographic</span>
-				<span class="button hidden" id="dualButton">[D]ual</span>
-			   <span class="button hidden" id="resetButton">[R]eset</span>
-				<!-- Tools: -->
-			   <span class="button hidden" id="clearButton">[C]lear</span>
-			   <span class="button hidden" id="boxButton">[B]ox</span>
-			   <span class="button hidden" id="selectButton">[S]elect</span>
-			   <span class="button hidden" id="viewportButton">[V]iewport</span>
-			   <span class="button hidden" id="viewTopButton">[1]Top</span>
-			   <span class="button hidden" id="viewFrontButton">[2]Front</span>
-			   <span class="button hidden" id="viewSideButton">[3]Side</span>
-			   <span class="button hidden" id="spinLeftButton">[&lt;]Left</span>
-			   <span class="button hidden" id="spinStopButton">[ ]Stop</span>
-			   <span class="button hidden" id="spinRightButton">[&gt;]Right</span>
-			   <span class="button hidden" id="animateButton">[A]nimate</span>
-				<!-- </div> -->
-			</div>
-		</nav>
+                <div class="navbar-header">
+                    <div class="navbar-brand">Guardian Document Visualization</div>
+                </div>
+                <div class="collapse navbar-collapse">
+                    <div class="navbar-text navbar-right">
+                        <label>Show Articles</label>
+                        <div class="btn-group btn-toggle" id="showArticlesButton">
+                            <button class="btn btn-default">ON</button>
+                            <button class="btn btn-primary">OFF</button>
+                        </div>
+                        &nbsp;
+                        <label>Animation</label>
+                        <div class="btn-group btn-toggle" id="animateToggleButton">
+                            <button class="btn btn-primary">ON</button>
+                            <button class="btn btn-default">OFF</button>
+                        </div>
+                    </div>
+                </div>
+                <!-- <div id="toolbar"> -->
+                <!-- Display: -->
+                <span class="button hidden" id="menuButton">[M]enu</span>
+                <span class="button hidden" id="infoButton">[I]nfo</span>
+               <!-- Camera: -->
+               <span class="button hidden" id="perspectiveButton">[P]erspective</span>
+                <span class="button hidden" id="orthographicButton">[O]rthographic</span>
+                <span class="button hidden" id="dualButton">[D]ual</span>
+               <span class="button hidden" id="resetButton">[R]eset</span>
+                <!-- Tools: -->
+               <span class="button hidden" id="clearButton">[C]lear</span>
+               <span class="button hidden" id="boxButton">[B]ox</span>
+               <span class="button hidden" id="selectButton">[S]elect</span>
+               <span class="button hidden" id="viewportButton">[V]iewport</span>
+               <span class="button hidden" id="viewTopButton">[1]Top</span>
+               <span class="button hidden" id="viewFrontButton">[2]Front</span>
+               <span class="button hidden" id="viewSideButton">[3]Side</span>
+               <span class="button hidden" id="spinLeftButton">[&lt;]Left</span>
+               <span class="button hidden" id="spinStopButton">[ ]Stop</span>
+               <span class="button hidden" id="spinRightButton">[&gt;]Right</span>
+               <span class="button hidden" id="animateButton">[A]nimate</span>
+                <!-- </div> -->
+            </div>
+        </nav>
 
-		<div class="hidden" id="info">
-		   --- Info Console ---<br/><br/>
-		   <span id="message"></span><br/>
-		</div>
+        <div class="hidden" id="info">
+           --- Info Console ---<br/><br/>
+           <span id="message"></span><br/>
+        </div>
 
-		<div id="container">
-		</div>
+        <div id="container">
+        </div>
 
-		<div id="screenshots">
-		</div>
+        <div id="screenshots">
+        </div>
 
-		<!-- <div id="menu">
-			--- Main Menu ---<br/><br/>
-			Clusters:<br/><br/>
-			<span class="toggle" id="toggleAll">[+]</span><span class="button" id="buttonAll"> All</span><br/>
-		</div> -->
+        <!-- <div id="menu">
+            --- Main Menu ---<br/><br/>
+            Clusters:<br/><br/>
+            <span class="toggle" id="toggleAll">[+]</span><span class="button" id="buttonAll"> All</span><br/>
+        </div> -->
 
-		<nav class="navbar navbar-default navbar-fixed-bottom" id="menu">
-			<!-- Clusters: <span class="toggle" id="toggleAll">[+]</span><span class="button" id="buttonAll"> All</span> -->
-			Clusters: <input type="checkbox" class="toggle" id="toggleAll" checked /><span class="button" id="buttonAll"> All</span>
+        <nav class="navbar navbar-default navbar-fixed-bottom" id="menu">
+            <!-- Clusters: <span class="toggle" id="toggleAll">[+]</span><span class="button" id="buttonAll"> All</span> -->
+            Clusters: <input type="checkbox" class="toggle" id="toggleAll" checked /><span class="button" id="buttonAll"> All</span>
         </nav>
 
         <!-- Modal -->
@@ -96,18 +96,18 @@
           </div>
         </div>
 
-		<script src="./jquery-2.0.2.min.js"></script>
+        <script src="./jquery-2.0.2.min.js"></script>
         <script src="./node_modules/three/build/three.min.js"></script>
-		<script src="./TweenLite.min.js"></script>
-		<script src="./TrackballControls.js"></script>
-		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+        <script src="./TweenLite.min.js"></script>
+        <script src="./TrackballControls.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
 
-		<script src="./DataProjector.js"></script>
+        <script src="./DataProjector.js"></script>
 
         <!-- Latest compiled and minified JavaScript -->
-		<!--<script src="./bootstrap/js/bootstrap.js"></script>-->
-		
+        <!--<script src="./bootstrap/js/bootstrap.js"></script>-->
+        
         <script src="modal.js"></script>
 
-	</body>
+    </body>
 </html>
