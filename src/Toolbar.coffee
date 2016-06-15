@@ -75,8 +75,19 @@ class Toolbar extends Panel
       if $(this).find('.btn-primary').size() > 0
          $(this).find('.btn').toggleClass 'btn-primary'
       $(this).find('.btn').toggleClass 'btn-default'
+   
+    $('#showArticlesButton').click ->
+        if $(this).find('.btn-primary').text() == 'SHOW'
+           alert 'Show articles'
+        else
+           alert 'Put articles away'
+   
+   $('#animateToggleButton').click ->
+      if $(this).find('.btn-primary').text() == 'ON'
+         alert 'Spin dem dots'
+      else
+         alert 'STAHP'
 
-    
 
    # M E T H O D S
 

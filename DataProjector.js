@@ -1855,6 +1855,22 @@ Toolbar = (function(superClass) {
     return $(this).find('.btn').toggleClass('btn-default');
   });
 
+  $('#showArticlesButton').click(function() {
+    if ($(this).find('.btn-primary').text() === 'SHOW') {
+      return alert('Show articles');
+    } else {
+      return alert('Put articles away');
+    }
+  });
+
+  $('#animateToggleButton').click(function() {
+    if ($(this).find('.btn-primary').text() === 'ON') {
+      return alert('Spin dem dots');
+    } else {
+      return alert('STAHP');
+    }
+  });
+
   Toolbar.prototype.createDispatcher = function() {
     return this.dispatcher = [
       {
