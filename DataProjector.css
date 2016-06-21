@@ -1,7 +1,7 @@
 body {
    color: #909090 !important;
    /*font-family: Monospace;*/
-   font-family: Helvetica, Arial;
+   font-family: 'PT Sans', Helvetica, Arial;
    /*font-size: 13px;*/
    /*text-align: center !important;*/
 
@@ -20,6 +20,16 @@ body {
    display:block;
 }*/
 /*#toolbar .button { color: #CCCCCC; font-weight: bold; cursor: pointer }*/
+.navbar-brand {
+   padding: 22px;
+   font-weight: bold;
+}
+
+.navbar-text label {
+   /*margin-bottom: 0;*/
+   margin-left: 10px;
+   margin-right: 5px;
+}
 
 .navbar-right {
    margin-right: 15px;
