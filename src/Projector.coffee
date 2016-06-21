@@ -117,6 +117,27 @@ class Projector extends Subject
 
    # E V E N T   H A N D L E R S
 
+   # New controls! ~ .dh
+   $('.btn-toggle').click ->
+      #$(this).find('.btn').toggleClass 'active'
+      if $(this).find('.btn-primary').size() > 0
+         $(this).find('.btn').toggleClass 'btn-primary'
+      $(this).find('.btn').toggleClass 'btn-default'
+   
+    $('#showArticlesButton').click ->
+        if $(this).find('.btn-primary').text() == 'SHOW'
+           alert 'Show articles'
+        else
+           alert 'Put articles away'
+
+   $('#animateToggleButton').click ->
+      if $(this).find('.btn-primary').text() == 'ON'
+         #alert 'Spin dem dots'
+         @toggleAnimation()
+      else
+         #alert 'STAHP'
+         @toggleAnimation()
+
    # Make updates related to window size changes.
    # Also used when view configuration is switched.
    onWindowResize : (event) =>

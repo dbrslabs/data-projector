@@ -692,6 +692,29 @@ Projector = (function(superClass) {
     this.animate();
   }
 
+  $('.btn-toggle').click(function() {
+    if ($(this).find('.btn-primary').size() > 0) {
+      $(this).find('.btn').toggleClass('btn-primary');
+    }
+    return $(this).find('.btn').toggleClass('btn-default');
+  });
+
+  $('#showArticlesButton').click(function() {
+    if ($(this).find('.btn-primary').text() === 'SHOW') {
+      return alert('Show articles');
+    } else {
+      return alert('Put articles away');
+    }
+  });
+
+  $('#animateToggleButton').click(function() {
+    if ($(this).find('.btn-primary').text() === 'ON') {
+      return this.toggleAnimation();
+    } else {
+      return this.toggleAnimation();
+    }
+  });
+
   Projector.prototype.onWindowResize = function(event) {
     this.SCREEN_WIDTH = window.innerWidth;
     this.SCREEN_HEIGHT = window.innerHeight;
@@ -1814,6 +1837,7 @@ Toolbar = (function(superClass) {
     this.setButtonSelected = bind(this.setButtonSelected, this);
     this.initialize = bind(this.initialize, this);
     this.createDispatcher = bind(this.createDispatcher, this);
+    this.onClick = bind(this.onClick, this);
     this.onKeyDown = bind(this.onKeyDown, this);
     var i, item, len, ref;
     Toolbar.__super__.constructor.call(this, id);
@@ -1848,28 +1872,9 @@ Toolbar = (function(superClass) {
     return results;
   };
 
-  $('.btn-toggle').click(function() {
-    if ($(this).find('.btn-primary').size() > 0) {
-      $(this).find('.btn').toggleClass('btn-primary');
-    }
-    return $(this).find('.btn').toggleClass('btn-default');
-  });
-
-  $('#showArticlesButton').click(function() {
-    if ($(this).find('.btn-primary').text() === 'SHOW') {
-      return alert('Show articles');
-    } else {
-      return alert('Put articles away');
-    }
-  });
-
-  $('#animateToggleButton').click(function() {
-    if ($(this).find('.btn-primary').text() === 'ON') {
-      return alert('Spin dem dots');
-    } else {
-      return alert('STAHP');
-    }
-  });
+  Toolbar.prototype.onClick = function(event) {
+    return this.notify(event.data.type);
+  };
 
   Toolbar.prototype.createDispatcher = function() {
     return this.dispatcher = [
@@ -1958,6 +1963,11 @@ Toolbar = (function(superClass) {
         key: 65,
         modifier: Utility.NO_KEY,
         type: Toolbar.EVENT_ANIMATE
+      }, {
+        id: "#animateToggleButton",
+        key: 65,
+        modifier: Utility.NO_KEY,
+        type: Toolbar.EVENT_ANIMATE
       }
     ];
   };
@@ -1977,7 +1987,7 @@ Toolbar = (function(superClass) {
     this.setButtonSelected("#spinLeftButton", false);
     this.setButtonSelected("#spinStopButton", true);
     this.setButtonSelected("#spinRightButton", false);
-    return this.setButtonSelected("#animateButton", false);
+    return this.setButtonSelected("#animateButton", true);
   };
 
   Toolbar.prototype.setButtonSelected = function(id, selected) {

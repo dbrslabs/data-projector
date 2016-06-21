@@ -65,28 +65,12 @@ class Toolbar extends Panel
       for item in @dispatcher
          if (item.key is event.keyCode) and (item.modifier is modifier) then @notify(item.type)
 
-
-
-   #onClick : (event) =>
-   #   @notify(event.data.type) # Not using baroque homemade event dispatcher system anymore
-
-   $('.btn-toggle').click ->
-      #$(this).find('.btn').toggleClass 'active'
-      if $(this).find('.btn-primary').size() > 0
-         $(this).find('.btn').toggleClass 'btn-primary'
-      $(this).find('.btn').toggleClass 'btn-default'
    
-    $('#showArticlesButton').click ->
-        if $(this).find('.btn-primary').text() == 'SHOW'
-           alert 'Show articles'
-        else
-           alert 'Put articles away'
-   
-   $('#animateToggleButton').click ->
-      if $(this).find('.btn-primary').text() == 'ON'
-         alert 'Spin dem dots'
-      else
-         alert 'STAHP'
+   onClick : (event) =>
+      @notify(event.data.type) # Not using baroque homemade event dispatcher system anymore
+
+
+   # NOTE: Can't stop/start spin animation for the vizualtion from here. ~ .dh
 
 
    # M E T H O D S
@@ -113,6 +97,7 @@ class Toolbar extends Panel
                       { id : "#spinStopButton", key : 32, modifier : Utility.NO_KEY, type : Toolbar.EVENT_SPIN_STOP },
                       { id : "#spinRightButton", key : 39, modifier : Utility.NO_KEY, type : Toolbar.EVENT_SPIN_RIGHT },
                       { id : "#animateButton", key : 65, modifier : Utility.NO_KEY, type : Toolbar.EVENT_ANIMATE },
+                      { id : "#animateToggleButton", key : 65, modifier : Utility.NO_KEY, type : Toolbar.EVENT_ANIMATE },
                     ]
 
    initialize : =>
@@ -137,7 +122,8 @@ class Toolbar extends Panel
       @setButtonSelected("#spinStopButton", true)
       @setButtonSelected("#spinRightButton", false)
 
-      @setButtonSelected("#animateButton", false)
+      @setButtonSelected("#animateButton", true)
+      #@setButtonSelected("#animateToggleButton", true)
 
 
    setButtonSelected : (id, selected) =>
