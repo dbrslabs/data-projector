@@ -1,5 +1,5 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-var DataProjector, Info, Menu, Observer, Palette, Projector, Storage, Subject, Toolbar, Utility, dataProjector,
+var DataProjector, Info, Menu, Modal, Observer, Palette, Projector, Storage, Subject, Toolbar, Utility, dataProjector,
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
   hasProp = {}.hasOwnProperty;
 
@@ -19,6 +19,8 @@ Menu = require('./Menu.coffee');
 
 Info = require('./Info.coffee');
 
+Modal = require('./Modal.coffee');
+
 Projector = require('./Projector.coffee');
 
 DataProjector = (function(superClass) {
@@ -31,6 +33,8 @@ DataProjector = (function(superClass) {
   DataProjector.prototype.menu = null;
 
   DataProjector.prototype.info = null;
+
+  DataProjector.prototype.modal = null;
 
   DataProjector.prototype.projector = null;
 
@@ -48,6 +52,8 @@ DataProjector = (function(superClass) {
     this.menu.attach(this);
     this.info = new Info('#info');
     this.info.attach(this);
+    this.modal = new Modal('#myModal');
+    this.modal.attach(this);
     this.projector = new Projector();
     this.projector.attach(this);
   }
@@ -79,7 +85,7 @@ DataProjector = (function(superClass) {
   };
 
   DataProjector.prototype.onToolbarEvent = function(type, data) {
-    var state;
+    var state, visible;
     switch (type) {
       case Toolbar.EVENT_MENU:
         state = this.menu.toggle();
@@ -132,6 +138,9 @@ DataProjector = (function(superClass) {
       case Toolbar.EVENT_ANIMATE:
         state = this.projector.toggleAnimation();
         return this.toolbar.setAnimateButtonSelected(state);
+      case Toolbar.EVENT_SHOW_DOCUMENTS:
+        visible = this.projector.getVisibleDocuments();
+        return this.modal.displayDocumentsList(visible.documents);
       case Toolbar.EVENT_PRINT:
         this.storage.saveImage(this.projector.getImage());
         return this.toolbar.blinkPrintButton();
@@ -183,7 +192,7 @@ DataProjector = (function(superClass) {
 dataProjector = new DataProjector();
 
 
-},{"./Info.coffee":2,"./Menu.coffee":3,"./Observer.coffee":4,"./Palette.coffee":5,"./Projector.coffee":7,"./Storage.coffee":9,"./Subject.coffee":10,"./Toolbar.coffee":11,"./Utility.coffee":12}],2:[function(require,module,exports){
+},{"./Info.coffee":2,"./Menu.coffee":3,"./Modal.coffee":4,"./Observer.coffee":5,"./Palette.coffee":6,"./Projector.coffee":8,"./Storage.coffee":10,"./Subject.coffee":11,"./Toolbar.coffee":12,"./Utility.coffee":13}],2:[function(require,module,exports){
 var Info, Panel,
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
   hasProp = {}.hasOwnProperty;
@@ -242,7 +251,7 @@ Info = (function(superClass) {
 module.exports = Info;
 
 
-},{"./Panel.coffee":6}],3:[function(require,module,exports){
+},{"./Panel.coffee":7}],3:[function(require,module,exports){
 var Menu, Panel,
   bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
@@ -416,7 +425,101 @@ Menu = (function(superClass) {
 module.exports = Menu;
 
 
-},{"./Panel.coffee":6}],4:[function(require,module,exports){
+},{"./Panel.coffee":7}],4:[function(require,module,exports){
+var Modal, Panel,
+  extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+  hasProp = {}.hasOwnProperty;
+
+Panel = require('./Panel.coffee');
+
+Modal = (function(superClass) {
+  extend(Modal, superClass);
+
+  Modal.prototype.modal = null;
+
+  function Modal(id) {
+    Modal.__super__.constructor.call(this, id);
+    this.modal = {
+      title: {
+        id: "#myModalLabel"
+      },
+      similar: {
+        id: "#myModalBody .similar"
+      },
+      document: {
+        id: "#myModalBody .article"
+      }
+    };
+  }
+
+  Modal.prototype.clear = function() {
+    this.setTitle("");
+    this.setDocumentHTML("");
+    return this.setSimilarDocuments([]);
+  };
+
+  Modal.prototype.setTitle = function(title) {
+    return $(this.modal.title.id).text(title);
+  };
+
+  Modal.prototype.setDocumentHTML = function(document) {
+    $(this.modal.document.id).text(document);
+    return $(this.modal.document.id).html(document);
+  };
+
+  Modal.prototype.setSimilarDocuments = function(documents) {
+    var d, html, j, len1;
+    html = "";
+    for (j = 0, len1 = documents.length; j < len1; j++) {
+      d = documents[j];
+      html += "<a class='similar' data-doc-id='" + d.id + "'>" + d.title + "</a><br/>";
+    }
+    $(this.modal.similar.id).text(html);
+    return $(this.modal.similar.id).append(html);
+  };
+
+  Modal.prototype.displayDocumentsList = function(documents) {
+    var doc, docs, docsHtml, i, j, len, len1, title;
+    this.clear();
+    Array.prototype.shuffle = function() {
+      return this.sort(function() {
+        return 0.5 - Math.random();
+      });
+    };
+    docs = documents.shuffle().slice(0, 46);
+    len = 60;
+    for (i = j = 0, len1 = docs.length; j < len1; i = ++j) {
+      doc = docs[i];
+      title = doc.title.substring(0, len);
+      if (title.length === len) {
+        title = title + '...';
+      }
+      docs[i].title = title;
+    }
+    docsHtml = ((function() {
+      var k, len2, results;
+      results = [];
+      for (k = 0, len2 = docs.length; k < len2; k++) {
+        doc = docs[k];
+        results.push("<a data-toggle='modal' data-target='#myModal' data-doc-id='" + doc.id + "'>" + doc.title + "</a><br/>");
+      }
+      return results;
+    })()).join('');
+    return this.setDocumentHTML(docsHtml);
+  };
+
+  Modal.prototype.displayDocumentContents = function(document) {
+    return console.log('TODO display document', document);
+  };
+
+  return Modal;
+
+})(Panel);
+
+module.exports = Modal;
+
+
+},{"./Panel.coffee":7}],5:[function(require,module,exports){
 var Observer;
 
 Observer = (function() {
@@ -431,7 +534,7 @@ Observer = (function() {
 module.exports = Observer;
 
 
-},{}],5:[function(require,module,exports){
+},{}],6:[function(require,module,exports){
 var Palette;
 
 Palette = (function() {
@@ -496,7 +599,7 @@ Palette = (function() {
 module.exports = Palette;
 
 
-},{}],6:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
 var Panel, Subject,
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
   hasProp = {}.hasOwnProperty;
@@ -545,7 +648,7 @@ Panel = (function(superClass) {
 module.exports = Panel;
 
 
-},{"./Subject.coffee":10}],7:[function(require,module,exports){
+},{"./Subject.coffee":11}],8:[function(require,module,exports){
 var Palette, Projector, Selector, Subject, Utility,
   bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
@@ -652,6 +755,7 @@ Projector = (function(superClass) {
     this.resetCamera = bind(this.resetCamera, this);
     this.updateMouse3D = bind(this.updateMouse3D, this);
     this.updateSelection = bind(this.updateSelection, this);
+    this.getVisibleDocuments = bind(this.getVisibleDocuments, this);
     this.render = bind(this.render, this);
     this.animate = bind(this.animate, this);
     this.processPoint = bind(this.processPoint, this);
@@ -977,6 +1081,31 @@ Projector = (function(superClass) {
     }
   };
 
+  Projector.prototype.getVisibleDocuments = function() {
+    var all, cloud, document, documents, i, j, k, l, ref, ref1, vertex;
+    documents = new Array();
+    for (i = k = 0, ref = this.storage.getClusters(); 0 <= ref ? k < ref : k > ref; i = 0 <= ref ? ++k : --k) {
+      if (this.particles[i].visible) {
+        cloud = this.points[i];
+        all = cloud.vertices.length;
+        for (j = l = 0, ref1 = all; 0 <= ref1 ? l < ref1 : l > ref1; j = 0 <= ref1 ? ++l : --l) {
+          vertex = cloud.vertices[j];
+          document = cloud.documents[j];
+          if (!this.selector.isActive()) {
+            documents.push(document);
+          }
+          if (this.selector.isActive() && this.selector.contains(vertex, Utility.DIRECTION.ALL)) {
+            documents.push(document);
+          }
+        }
+        cloud.colorsNeedUpdate = true;
+      }
+    }
+    return {
+      documents: documents
+    };
+  };
+
   Projector.prototype.updateSelection = function() {
     var all, cloud, color, counter, document, documents, i, j, k, l, ref, ref1, vertex;
     counter = 0;
@@ -1218,7 +1347,7 @@ Projector = (function(superClass) {
 module.exports = Projector;
 
 
-},{"./Palette.coffee":5,"./Selector.coffee":8,"./Subject.coffee":10,"./Utility.coffee":12}],8:[function(require,module,exports){
+},{"./Palette.coffee":6,"./Selector.coffee":9,"./Subject.coffee":11,"./Utility.coffee":13}],9:[function(require,module,exports){
 var Palette, Selector, Utility,
   bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
@@ -1609,7 +1738,7 @@ Selector = (function() {
 module.exports = Selector;
 
 
-},{"./Palette.coffee":5,"./Utility.coffee":12}],9:[function(require,module,exports){
+},{"./Palette.coffee":6,"./Utility.coffee":13}],10:[function(require,module,exports){
 var Storage, Subject,
   bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
@@ -1726,7 +1855,7 @@ Storage = (function(superClass) {
 module.exports = Storage;
 
 
-},{"./Subject.coffee":10}],10:[function(require,module,exports){
+},{"./Subject.coffee":11}],11:[function(require,module,exports){
 var Subject;
 
 Subject = (function() {
@@ -1769,7 +1898,7 @@ Subject = (function() {
 module.exports = Subject;
 
 
-},{}],11:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 var Palette, Panel, Toolbar, Utility,
   bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
@@ -1817,6 +1946,8 @@ Toolbar = (function(superClass) {
   Toolbar.EVENT_SPIN_RIGHT = "EVENT_SPIN_RIGHT";
 
   Toolbar.EVENT_ANIMATE = "EVENT_ANIMATE";
+
+  Toolbar.EVENT_SHOW_DOCUMENTS = "EVENT_SHOW_DOCUMENTS";
 
   Toolbar.prototype.dispatcher = null;
 
@@ -1924,11 +2055,6 @@ Toolbar = (function(superClass) {
         modifier: Utility.NO_KEY,
         type: Toolbar.EVENT_VIEWPORT
       }, {
-        id: "#selectButton",
-        key: 83,
-        modifier: Utility.NO_KEY,
-        type: Toolbar.EVENT_SELECT
-      }, {
         id: "#viewTopButton",
         key: 49,
         modifier: Utility.NO_KEY,
@@ -1968,6 +2094,11 @@ Toolbar = (function(superClass) {
         key: 65,
         modifier: Utility.NO_KEY,
         type: Toolbar.EVENT_ANIMATE
+      }, {
+        id: "#toggleArticlesButton",
+        key: 0,
+        modifier: Utility.NO_KEY,
+        type: Toolbar.EVENT_SHOW_DOCUMENTS
       }
     ];
   };
@@ -2066,7 +2197,7 @@ Toolbar = (function(superClass) {
 module.exports = Toolbar;
 
 
-},{"./Palette.coffee":5,"./Panel.coffee":6,"./Utility.coffee":12}],12:[function(require,module,exports){
+},{"./Palette.coffee":6,"./Panel.coffee":7,"./Utility.coffee":13}],13:[function(require,module,exports){
 var Utility;
 
 Utility = (function() {

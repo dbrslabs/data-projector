@@ -22,7 +22,10 @@
                 <div class="collapse navbar-collapse">
                     <div class="navbar-text navbar-right">
                         <label>Show Articles</label>
-                        <div class="btn-group btn-toggle" id="showArticlesButton">
+                        <div class="btn-group btn-toggle" 
+                             id="toggleArticlesButton" 
+                             data-toggle="modal" 
+                             data-target="#myModal">
                             <button class="btn btn-default">SHOW</button>
                             <button class="btn btn-primary">HIDE</button>
                         </div>
@@ -89,7 +92,7 @@
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                 <h4 class="modal-title" id="myModalLabel"></h4>
               </div>
-              <div class="modal-body">
+              <div class="modal-body" id="myModalBody">
                   <div class="similar"></div>
                   <hr>
                   <div class="article"></div>

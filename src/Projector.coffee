@@ -124,6 +124,7 @@ class Projector extends Subject
          $(this).find('.btn').toggleClass 'btn-primary'
       $(this).find('.btn').toggleClass 'btn-default'
    
+    # TODO delete
     $('#showArticlesButton').click ->
         if $(this).find('.btn-primary').text() == 'SHOW'
            alert 'Show articles'
@@ -483,6 +484,34 @@ class Projector extends Subject
             @cameraOrthographic.rotation.z = 0
             @renderer.setViewport( @SCREEN_WIDTH/2, 0, @SCREEN_WIDTH/2, @SCREEN_HEIGHT )
             @renderer.render( @scene, @cameraOrthographic )
+
+
+   getVisibleDocuments : =>
+
+      # algorithm:
+      # loop through all clusters
+      # if cluster is visible then process it
+      # for each point check if it's inside selection
+      # if inside (and selector is active) set color to highlight
+      # else set color to original cluster color
+
+      documents = new Array()
+
+      for i in [0...@storage.getClusters()]
+         if @particles[i].visible
+            cloud = @points[i]
+            all = cloud.vertices.length
+            for j in [0...all]
+               vertex = cloud.vertices[j]
+               document = cloud.documents[j]
+               if not @selector.isActive() 
+                  documents.push( document )
+               if @selector.isActive() and @selector.contains(vertex, Utility.DIRECTION.ALL) 
+                  documents.push( document )
+
+            cloud.colorsNeedUpdate = true;
+
+      return { documents: documents }
 
 
    updateSelection : =>

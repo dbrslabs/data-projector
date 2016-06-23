@@ -29,7 +29,7 @@ class Toolbar extends Panel
    @EVENT_SPIN_STOP : "EVENT_SPIN_STOP"
    @EVENT_SPIN_RIGHT : "EVENT_SPIN_RIGHT"
    @EVENT_ANIMATE : "EVENT_ANIMATE"
-
+   @EVENT_SHOW_DOCUMENTS: "EVENT_SHOW_DOCUMENTS"
 
    # M E M B E R S
    
@@ -89,7 +89,7 @@ class Toolbar extends Panel
                       { id : "#clearButton", key : 67, modifier : Utility.NO_KEY, type : Toolbar.EVENT_CLEAR },
                       { id : "#boxButton", key : 66, modifier : Utility.NO_KEY, type : Toolbar.EVENT_BOX },
                       { id : "#viewportButton", key : 86, modifier : Utility.NO_KEY, type : Toolbar.EVENT_VIEWPORT },
-                      { id : "#selectButton", key : 83, modifier : Utility.NO_KEY, type : Toolbar.EVENT_SELECT },
+                    # { id : "#selectButton", key : 83, modifier : Utility.NO_KEY, type : Toolbar.EVENT_SELECT },
                       { id : "#viewTopButton", key : 49, modifier : Utility.NO_KEY, type : Toolbar.EVENT_VIEW_TOP },
                       { id : "#viewFrontButton", key : 50, modifier : Utility.NO_KEY, type : Toolbar.EVENT_VIEW_FRONT },
                       { id : "#viewSideButton", key : 51, modifier : Utility.NO_KEY, type : Toolbar.EVENT_VIEW_SIDE },
@@ -98,6 +98,7 @@ class Toolbar extends Panel
                       { id : "#spinRightButton", key : 39, modifier : Utility.NO_KEY, type : Toolbar.EVENT_SPIN_RIGHT },
                       { id : "#animateButton", key : 65, modifier : Utility.NO_KEY, type : Toolbar.EVENT_ANIMATE },
                       { id : "#animateToggleButton", key : 65, modifier : Utility.NO_KEY, type : Toolbar.EVENT_ANIMATE },
+                      { id : "#toggleArticlesButton", key : 0, modifier : Utility.NO_KEY, type : Toolbar.EVENT_SHOW_DOCUMENTS },
                     ]
 
    initialize : =>

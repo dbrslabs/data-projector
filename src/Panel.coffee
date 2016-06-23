@@ -2,11 +2,12 @@
 # Tomasz (Tomek) Zemla
 # tomek@datacratic.com
 
-# Base abstract class for all UI panels. There are four classes derived from Panel:
+# Base abstract class for all UI panels. There are five classes derived from Panel:
 # Menu - main application menu (left)
 # Console - main output/info area (right)
 # ToolBar - top window control
 # StatusBar - bottom window helper
+# Modal - bottom window helper
 
 Subject = require('./Subject.coffee')
 

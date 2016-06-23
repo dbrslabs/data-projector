@@ -33,6 +33,7 @@ function setArticle(modal, documentId) {
   });
 }
 
+/* TODO pull into src/Modal.coffee
 $('#myModal').on('show.bs.modal', function(event) {
   var anchor = $(event.relatedTarget) // anchor that triggered the modal
   var documentId = anchor.data('doc-id') // Extract info from data-* attributes
@@ -49,3 +50,4 @@ $('.similar').on('click', function(event) {
   setArticle(modal, documentId);
   setMostSimilar(modal, documentId);
 })
+*/
