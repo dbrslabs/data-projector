@@ -2,7 +2,7 @@
 
 # mongo
 from pymongo import MongoClient
-client = MongoClient('mongodb://ec2-54-88-15-234.compute-1.amazonaws.com')
+client = MongoClient('mongodb://52.5.180.63') # elastic ip of mongo-dev
 db = client.guardian.articlesv2
 from bson.objectid import ObjectId
 
