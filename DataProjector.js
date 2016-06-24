@@ -427,6 +427,7 @@ module.exports = Menu;
 
 },{"./Panel.coffee":7}],4:[function(require,module,exports){
 var Modal, Panel,
+  bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
   hasProp = {}.hasOwnProperty;
 
@@ -438,6 +439,7 @@ Modal = (function(superClass) {
   Modal.prototype.modal = null;
 
   function Modal(id) {
+    this.onClickDocument = bind(this.onClickDocument, this);
     Modal.__super__.constructor.call(this, id);
     this.modal = {
       title: {
@@ -448,8 +450,12 @@ Modal = (function(superClass) {
       },
       document: {
         id: "#myModalBody .article"
+      },
+      hr: {
+        id: "#myModalBody hr"
       }
     };
+    $(id).on('click', '.document', this.onClickDocument);
   }
 
   Modal.prototype.clear = function() {
@@ -463,7 +469,7 @@ Modal = (function(superClass) {
   };
 
   Modal.prototype.setDocumentHTML = function(document) {
-    $(this.modal.document.id).text(document);
+    $(this.modal.document.id).text("");
     return $(this.modal.document.id).html(document);
   };
 
@@ -472,15 +478,18 @@ Modal = (function(superClass) {
     html = "";
     for (j = 0, len1 = documents.length; j < len1; j++) {
       d = documents[j];
-      html += "<a class='similar' data-doc-id='" + d.id + "'>" + d.title + "</a><br/>";
+      html += "<a class='document' data-doc-id='" + d.id + "'>" + d.title + "</a><br/>";
     }
-    $(this.modal.similar.id).text(html);
+    $(this.modal.similar.id).text("");
     return $(this.modal.similar.id).append(html);
   };
 
   Modal.prototype.displayDocumentsList = function(documents) {
     var doc, docs, docsHtml, i, j, len, len1, title;
     this.clear();
+    this.setTitle("Random Set of the Currently Visible Documents");
+    $(this.modal.similar.id).hide();
+    $(this.modal.hr.id).hide();
     Array.prototype.shuffle = function() {
       return this.sort(function() {
         return 0.5 - Math.random();
@@ -501,15 +510,52 @@ Modal = (function(superClass) {
       results = [];
       for (k = 0, len2 = docs.length; k < len2; k++) {
         doc = docs[k];
-        results.push("<a data-toggle='modal' data-target='#myModal' data-doc-id='" + doc.id + "'>" + doc.title + "</a><br/>");
+        results.push("<a class='document' data-doc-id='" + doc.id + "'>" + doc.title + "</a><br/>");
       }
       return results;
     })()).join('');
     return this.setDocumentHTML(docsHtml);
   };
 
-  Modal.prototype.displayDocumentContents = function(document) {
-    return console.log('TODO display document', document);
+  Modal.prototype.displayDocument = function(docId) {
+    $(this.modal.similar.id).show();
+    $(this.modal.hr.id).show();
+    this.getDocumentContents(docId, (function(_this) {
+      return function(data) {
+        _this.setTitle(data.title);
+        return _this.setDocumentHTML(data.html);
+      };
+    })(this));
+    return this.getSimilarDocuments(docId, (function(_this) {
+      return function(data) {
+        return _this.setSimilarDocuments(data.most_similar);
+      };
+    })(this));
+  };
+
+  Modal.prototype.onClickDocument = function(event) {
+    var docId;
+    event.preventDefault();
+    docId = $(event.target).data('doc-id');
+    return this.displayDocument(docId);
+  };
+
+  Modal.prototype.getDocumentContents = function(id, callback) {
+    return $.ajax({
+      url: 'http://localhost:5000/doc/' + id,
+      type: 'GET',
+      contentType: 'application/json',
+      success: callback
+    });
+  };
+
+  Modal.prototype.getSimilarDocuments = function(id, callback) {
+    return $.ajax({
+      url: 'http://localhost:5000/doc/' + id + '/most_similar',
+      type: 'GET',
+      contentType: 'application/json',
+      success: callback
+    });
   };
 
   return Modal;
