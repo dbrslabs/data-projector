@@ -124,20 +124,13 @@ class Projector extends Subject
          $(this).find('.btn').toggleClass 'btn-primary'
       $(this).find('.btn').toggleClass 'btn-default'
    
-    # TODO delete
-    $('#showArticlesButton').click ->
-        if $(this).find('.btn-primary').text() == 'SHOW'
-           alert 'Show articles'
-        else
-           alert 'Put articles away'
-
-   $('#animateToggleButton').click ->
-      if $(this).find('.btn-primary').text() == 'ON'
-         #alert 'Spin dem dots'
-         @toggleAnimation()
-      else
-         #alert 'STAHP'
-         @toggleAnimation()
+   #$('#animateToggleButton').click ->
+   #   if $(this).find('.btn-primary').text() == 'ON'
+   #      #alert 'Spin dem dots'
+   #      @toggleAnimation()
+   #   else
+   #      #alert 'STAHP'
+   #      @toggleAnimation()
 
    # Make updates related to window size changes.
    # Also used when view configuration is switched.
@@ -632,6 +625,16 @@ class Projector extends Subject
          @setAllClustersVisible(true)
 
       return @animateOn   
+
+
+   toggleSpin : =>
+
+      if @spinOn
+         @setSpin(Projector.SPIN.RIGHT)
+      else
+         @setSpin(Projector.SPIN.NONE)
+
+      @spinOn = not @spinOn
 
 
    setSpin : (@spin) =>

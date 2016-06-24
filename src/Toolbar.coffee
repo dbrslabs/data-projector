@@ -29,6 +29,7 @@ class Toolbar extends Panel
    @EVENT_SPIN_STOP : "EVENT_SPIN_STOP"
    @EVENT_SPIN_RIGHT : "EVENT_SPIN_RIGHT"
    @EVENT_ANIMATE : "EVENT_ANIMATE"
+   @EVENT_SPIN_TOGGLE : "EVENT_SPIN_TOGGLE"
    @EVENT_SHOW_DOCUMENTS: "EVENT_SHOW_DOCUMENTS"
 
    # M E M B E R S
@@ -67,11 +68,7 @@ class Toolbar extends Panel
 
    
    onClick : (event) =>
-      @notify(event.data.type) # Not using baroque homemade event dispatcher system anymore
-
-
-   # NOTE: Can't stop/start spin animation for the vizualtion from here. ~ .dh
-
+      @notify(event.data.type)
 
    # M E T H O D S
 
@@ -96,8 +93,8 @@ class Toolbar extends Panel
                       { id : "#spinLeftButton", key : 37, modifier : Utility.NO_KEY, type : Toolbar.EVENT_SPIN_LEFT },
                       { id : "#spinStopButton", key : 32, modifier : Utility.NO_KEY, type : Toolbar.EVENT_SPIN_STOP },
                       { id : "#spinRightButton", key : 39, modifier : Utility.NO_KEY, type : Toolbar.EVENT_SPIN_RIGHT },
-                      { id : "#animateButton", key : 65, modifier : Utility.NO_KEY, type : Toolbar.EVENT_ANIMATE },
-                      { id : "#animateToggleButton", key : 65, modifier : Utility.NO_KEY, type : Toolbar.EVENT_ANIMATE },
+                    # { id : "#animateButton", key : 65, modifier : Utility.NO_KEY, type : Toolbar.EVENT_ANIMATE },
+                      { id : "#toggleSpinButton", key : 0, modifier : Utility.NO_KEY, type : Toolbar.EVENT_SPIN_TOGGLE },
                       { id : "#toggleArticlesButton", key : 0, modifier : Utility.NO_KEY, type : Toolbar.EVENT_SHOW_DOCUMENTS },
                     ]
 
@@ -123,8 +120,8 @@ class Toolbar extends Panel
       @setButtonSelected("#spinStopButton", true)
       @setButtonSelected("#spinRightButton", false)
 
-      @setButtonSelected("#animateButton", true)
-      #@setButtonSelected("#animateToggleButton", true)
+      #@setButtonSelected("#animateButton", true)
+      #@setButtonSelected("#animateSpinButton", true)
 
 
    setButtonSelected : (id, selected) =>

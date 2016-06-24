@@ -138,6 +138,8 @@ DataProjector = (function(superClass) {
       case Toolbar.EVENT_ANIMATE:
         state = this.projector.toggleAnimation();
         return this.toolbar.setAnimateButtonSelected(state);
+      case Toolbar.EVENT_SPIN_TOGGLE:
+        return this.projector.toggleSpin();
       case Toolbar.EVENT_SHOW_DOCUMENTS:
         visible = this.projector.getVisibleDocuments();
         return this.modal.displayDocumentsList(visible.documents);
@@ -794,6 +796,7 @@ Projector = (function(superClass) {
     this.getSpinStep = bind(this.getSpinStep, this);
     this.spinCamera = bind(this.spinCamera, this);
     this.setSpin = bind(this.setSpin, this);
+    this.toggleSpin = bind(this.toggleSpin, this);
     this.toggleAnimation = bind(this.toggleAnimation, this);
     this.changeView = bind(this.changeView, this);
     this.setViewsVisible = bind(this.setViewsVisible, this);
@@ -847,22 +850,6 @@ Projector = (function(superClass) {
       $(this).find('.btn').toggleClass('btn-primary');
     }
     return $(this).find('.btn').toggleClass('btn-default');
-  });
-
-  $('#showArticlesButton').click(function() {
-    if ($(this).find('.btn-primary').text() === 'SHOW') {
-      return alert('Show articles');
-    } else {
-      return alert('Put articles away');
-    }
-  });
-
-  $('#animateToggleButton').click(function() {
-    if ($(this).find('.btn-primary').text() === 'ON') {
-      return this.toggleAnimation();
-    } else {
-      return this.toggleAnimation();
-    }
   });
 
   Projector.prototype.onWindowResize = function(event) {
@@ -1267,6 +1254,15 @@ Projector = (function(superClass) {
       this.setAllClustersVisible(true);
     }
     return this.animateOn;
+  };
+
+  Projector.prototype.toggleSpin = function() {
+    if (this.spinOn) {
+      this.setSpin(Projector.SPIN.RIGHT);
+    } else {
+      this.setSpin(Projector.SPIN.NONE);
+    }
+    return this.spinOn = !this.spinOn;
   };
 
   Projector.prototype.setSpin = function(spin) {
@@ -1993,6 +1989,8 @@ Toolbar = (function(superClass) {
 
   Toolbar.EVENT_ANIMATE = "EVENT_ANIMATE";
 
+  Toolbar.EVENT_SPIN_TOGGLE = "EVENT_SPIN_TOGGLE";
+
   Toolbar.EVENT_SHOW_DOCUMENTS = "EVENT_SHOW_DOCUMENTS";
 
   Toolbar.prototype.dispatcher = null;
@@ -2131,15 +2129,10 @@ Toolbar = (function(superClass) {
         modifier: Utility.NO_KEY,
         type: Toolbar.EVENT_SPIN_RIGHT
       }, {
-        id: "#animateButton",
-        key: 65,
+        id: "#toggleSpinButton",
+        key: 0,
         modifier: Utility.NO_KEY,
-        type: Toolbar.EVENT_ANIMATE
-      }, {
-        id: "#animateToggleButton",
-        key: 65,
-        modifier: Utility.NO_KEY,
-        type: Toolbar.EVENT_ANIMATE
+        type: Toolbar.EVENT_SPIN_TOGGLE
       }, {
         id: "#toggleArticlesButton",
         key: 0,
@@ -2163,8 +2156,7 @@ Toolbar = (function(superClass) {
     this.setButtonSelected("#viewSideButton", false);
     this.setButtonSelected("#spinLeftButton", false);
     this.setButtonSelected("#spinStopButton", true);
-    this.setButtonSelected("#spinRightButton", false);
-    return this.setButtonSelected("#animateButton", true);
+    return this.setButtonSelected("#spinRightButton", false);
   };
 
   Toolbar.prototype.setButtonSelected = function(id, selected) {

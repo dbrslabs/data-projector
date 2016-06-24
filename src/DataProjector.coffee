@@ -164,6 +164,9 @@ class DataProjector extends Observer
             state = @projector.toggleAnimation()
             @toolbar.setAnimateButtonSelected(state)
 
+         when Toolbar.EVENT_SPIN_TOGGLE
+            @projector.toggleSpin()
+
          when Toolbar.EVENT_SHOW_DOCUMENTS
             visible = @projector.getVisibleDocuments()
             @modal.displayDocumentsList(visible.documents)
