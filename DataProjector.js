@@ -272,17 +272,19 @@ Menu = (function(superClass) {
 
   Menu.EVENT_CLUSTER_ID = "EVENT_CLUSTER_ID";
 
-  Menu.TOGGLE_ON = "[+]";
+  Menu.TOGGLE_ON = true;
 
-  Menu.TOGGLE_OFF = "[-]";
+  Menu.TOGGLE_OFF = false;
 
-  Menu.TOGGLE_MIX = "[/]";
+  Menu.TOGGLE_MIX = false;
 
   Menu.prototype.clusters = 0;
 
   Menu.prototype.selected = -1;
 
   Menu.prototype.colors = null;
+
+  Menu.prototype.allId = '#toggleAll';
 
   function Menu(id) {
     this.onCluster = bind(this.onCluster, this);
@@ -292,21 +294,22 @@ Menu = (function(superClass) {
   }
 
   Menu.prototype.onToggleAll = function(event) {
-    var i, j, k, ref, ref1, state;
-    state = $("#toggleAll").text();
+    var i, j, k, ref, ref1, state, tag;
+    state = this.getState(this.allId);
     switch (state) {
-      case Menu.TOGGLE_OFF:
-      case Menu.TOGGLE_MIX:
-        $("#toggleAll").text(Menu.TOGGLE_ON);
+      case Menu.TOGGLE_ON:
+        this.setState(this.allId, Menu.TOGGLE_ON);
         for (i = j = 0, ref = this.clusters; 0 <= ref ? j < ref : j > ref; i = 0 <= ref ? ++j : --j) {
-          $("#t" + String(i)).text(Menu.TOGGLE_ON);
+          tag = '#t' + String(i);
+          this.setState(tag, Menu.TOGGLE_ON);
         }
         return this.notify(Menu.EVENT_TOGGLE_ALL_ON);
-      case Menu.TOGGLE_ON:
-        $("#toggleAll").text(Menu.TOGGLE_OFF);
-        $('#t' + String(i)).prop('checked', true);
+      case Menu.TOGGLE_OFF:
+      case Menu.TOGGLE_MIX:
+        this.setState(this.allId, Menu.TOGGLE_OFF);
         for (i = k = 0, ref1 = this.clusters; 0 <= ref1 ? k < ref1 : k > ref1; i = 0 <= ref1 ? ++k : --k) {
-          $("#t" + String(i)).text(Menu.TOGGLE_OFF);
+          tag = '#t' + String(i);
+          this.setState(tag, Menu.TOGGLE_OFF);
         }
         return this.notify(Menu.EVENT_TOGGLE_ALL_OFF);
     }
@@ -341,13 +344,13 @@ Menu = (function(superClass) {
   Menu.prototype.doToggle = function(index) {
     var state, tag;
     tag = "#t" + String(index);
-    state = $(tag).text();
+    state = this.getState(tag);
     switch (state) {
-      case Menu.TOGGLE_ON:
-        $(tag).text(Menu.TOGGLE_OFF);
-        break;
       case Menu.TOGGLE_OFF:
-        $(tag).text(Menu.TOGGLE_ON);
+        this.setState(tag, Menu.TOGGLE_OFF);
+        break;
+      case Menu.TOGGLE_ON:
+        this.setState(tag, Menu.TOGGLE_ON);
     }
     return this.updateMasterToggle();
   };
@@ -360,7 +363,7 @@ Menu = (function(superClass) {
       html = "<input type='checkbox' class='toggle' id='t" + i + "' checked><span class='button' id='b" + i + "'></span> <span class='color' id='c" + i + "'>Cluster " + i + " </span>";
       $("#menu").append(html);
     }
-    $("#toggleAll").click(this.onToggleAll);
+    $(this.allId).click(this.onToggleAll);
     for (i = k = 0, ref1 = this.clusters; 0 <= ref1 ? k < ref1 : k > ref1; i = 0 <= ref1 ? ++k : --k) {
       $("#t" + String(i)).click(this.onToggle);
       $("#b" + String(i)).click(this.onCluster);
@@ -373,12 +376,20 @@ Menu = (function(superClass) {
     result = 0;
     for (i = j = 0, ref = this.clusters; 0 <= ref ? j < ref : j > ref; i = 0 <= ref ? ++j : --j) {
       tag = "#t" + String(i);
-      state = $(tag).prop("checked");
-      if (state === true) {
+      state = this.getState(tag);
+      if (state === Menu.TOGGLE_ON) {
         result++;
       }
     }
     return result;
+  };
+
+  Menu.prototype.setState = function(tag, state) {
+    return $(tag).prop('checked', state);
+  };
+
+  Menu.prototype.getState = function(tag) {
+    return $(tag).prop('checked');
   };
 
   Menu.prototype.updateMasterToggle = function() {
@@ -386,11 +397,11 @@ Menu = (function(superClass) {
     shown = this.togglesOn();
     switch (shown) {
       case 0:
-        return $("#toggleAll").text(Menu.TOGGLE_OFF);
+        return this.setState(this.allId, Menu.TOGGLE_OFF);
       case this.clusters:
-        return $("#toggleAll").text(Menu.TOGGLE_ON);
+        return this.setState(this.allId, Menu.TOGGLE_ON);
       default:
-        return $("#toggleAll").text(Menu.TOGGLE_MIX);
+        return this.setState(this.allId, Menu.TOGGLE_MIX);
     }
   };
 

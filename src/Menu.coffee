@@ -18,9 +18,9 @@ class Menu extends Panel
 
    # C O N S T A N T S
 
-   @TOGGLE_ON : "[+]"
-   @TOGGLE_OFF : "[-]"
-   @TOGGLE_MIX : "[/]"
+   @TOGGLE_ON :  true
+   @TOGGLE_OFF : false
+   @TOGGLE_MIX : false
 
    # M E M B E R S
 
@@ -29,6 +29,8 @@ class Menu extends Panel
    selected : -1 # currently selected cluster
 
    colors : null # set of colors to use
+
+   allId : '#toggleAll'
 
 
    # C O N S T R U C T O R
@@ -43,26 +45,27 @@ class Menu extends Panel
    # Toggle visibility of all clusters at once. 
    onToggleAll : (event) =>
 
-      state = $("#toggleAll").text()
+      state = @getState @allId
 
       switch state
 
-         when Menu.TOGGLE_OFF, Menu.TOGGLE_MIX # turn all on
+         when Menu.TOGGLE_ON # turn all on
 
-            $("#toggleAll").text(Menu.TOGGLE_ON)
+            @setState @allId, Menu.TOGGLE_ON
 
             for i in [0...@clusters]
-               $("#t" + String(i)).text(Menu.TOGGLE_ON)
+               tag = '#t' + String(i)
+               @setState tag, Menu.TOGGLE_ON
 
             @notify(Menu.EVENT_TOGGLE_ALL_ON)   
 
-         when Menu.TOGGLE_ON # turn all off
+         when Menu.TOGGLE_OFF, Menu.TOGGLE_MIX # turn all off
 
-            $("#toggleAll").text(Menu.TOGGLE_OFF)
-            $('#t' + String(i)).prop 'checked', true
+            @setState @allId, Menu.TOGGLE_OFF
 
             for i in [0...@clusters]
-               $("#t" + String(i)).text(Menu.TOGGLE_OFF)
+               tag = '#t' + String(i)
+               @setState tag, Menu.TOGGLE_OFF
 
             @notify(Menu.EVENT_TOGGLE_ALL_OFF)   
 
@@ -95,15 +98,15 @@ class Menu extends Panel
    doToggle : (index) ->
 
       tag = "#t" + String(index)
-      state = $(tag).text()
+      state = @getState tag
 
       switch state
 
-         when Menu.TOGGLE_ON
-            $(tag).text(Menu.TOGGLE_OFF)
-
          when Menu.TOGGLE_OFF
-            $(tag).text(Menu.TOGGLE_ON)
+            @setState tag, Menu.TOGGLE_OFF
+
+         when Menu.TOGGLE_ON
+            @setState tag, Menu.TOGGLE_ON
 
       @updateMasterToggle()
 
@@ -124,7 +127,7 @@ class Menu extends Panel
 
          $("#menu").append(html) 
 
-      $("#toggleAll").click(@onToggleAll)
+      $(@allId).click(@onToggleAll)
 
       for i in [0...@clusters]
          $("#t" + String(i)).click( @onToggle )
@@ -140,14 +143,24 @@ class Menu extends Panel
 
       for i in [0...@clusters]
          tag = "#t" + String(i)
-         #state = $(tag).text()
-         state = $(tag).prop("checked") #$(tag).text()
-         #if state is Menu.TOGGLE_ON then result++
-         if state is true then result++
+         state = @getState tag
+         if state is Menu.TOGGLE_ON then result++
 
       return result
 
+
+
+   setState: (tag, state) ->
+
+      return $(tag).prop 'checked', state
       
+
+
+   getState: (tag) ->
+
+      return $(tag).prop 'checked'
+      
+
 
    # Based on the state of all cluster toggles, set the master toggle.
    updateMasterToggle : () ->      
@@ -155,9 +168,9 @@ class Menu extends Panel
       shown = @togglesOn()
 
       switch shown
-         when 0 then $("#toggleAll").text(Menu.TOGGLE_OFF)
-         when @clusters then $("#toggleAll").text(Menu.TOGGLE_ON)
-         else $("#toggleAll").text(Menu.TOGGLE_MIX)
+         when 0 then @setState @allId, Menu.TOGGLE_OFF
+         when @clusters then @setState @allId, Menu.TOGGLE_ON
+         else @setState @allId, Menu.TOGGLE_MIX
 
 
    # Swatches have IDs: c0, c1, c2...
