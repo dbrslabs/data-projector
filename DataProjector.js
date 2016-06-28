@@ -745,7 +745,7 @@ Projector = (function(superClass) {
 
   Projector.SPIN_STEP = Utility.DEGREE / 10;
 
-  Projector.prototype.SCREEN_WIDTH = window.innerWidth;
+  Projector.prototype.SCREEN_WIDTH = window.innerWidth - $('#sidebar-wrapper').width();
 
   Projector.prototype.SCREEN_HEIGHT = window.innerHeight;
 
@@ -864,7 +864,7 @@ Projector = (function(superClass) {
   });
 
   Projector.prototype.onWindowResize = function(event) {
-    this.SCREEN_WIDTH = window.innerWidth;
+    this.SCREEN_WIDTH = window.innerWidth - $('#sidebar-wrapper').width();
     this.SCREEN_HEIGHT = window.innerHeight;
     console.log("Screen " + this.SCREEN_WIDTH + " x " + this.SCREEN_HEIGHT);
     if (this.renderer != null) {

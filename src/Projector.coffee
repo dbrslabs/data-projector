@@ -33,7 +33,7 @@ class Projector extends Subject
    # M E M B E R S
 
    # these are pseudo constants which are redefined when browser resizes
-   SCREEN_WIDTH : window.innerWidth
+   SCREEN_WIDTH : window.innerWidth - $('#sidebar-wrapper').width()
    SCREEN_HEIGHT : window.innerHeight
 
    mode : Projector.VIEW.PERSPECTIVE # starting default
@@ -128,7 +128,7 @@ class Projector extends Subject
    # Also used when view configuration is switched.
    onWindowResize : (event) =>
 
-      @SCREEN_WIDTH = window.innerWidth
+      @SCREEN_WIDTH = window.innerWidth - $('#sidebar-wrapper').width()
       @SCREEN_HEIGHT = window.innerHeight
 
       console.log "Screen #{@SCREEN_WIDTH} x #{@SCREEN_HEIGHT}"
