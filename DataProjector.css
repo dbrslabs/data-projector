@@ -185,12 +185,11 @@ body {
     display: inline-block;
 }
 
+.navbar-header {
+     width: 100%;
+}
 
 @media(min-width:768px) {
-    #menu-toggle {
-        display: none;
-    }
-
     #wrapper {
         padding-right: 250px;
     }
@@ -200,7 +199,7 @@ body {
     }
 
     #sidebar-wrapper {
-        width: 550px;
+        width: 400px;
     }
 
     #wrapper.toggled #sidebar-wrapper {

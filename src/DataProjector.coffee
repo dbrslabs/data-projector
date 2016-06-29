@@ -165,6 +165,9 @@ class DataProjector extends Observer
             @toolbar.setAnimateButtonSelected(state)
 
          when Toolbar.EVENT_SPIN_TOGGLE
+            spinning = not @projector.spinOn # slightly hacky, sorry
+            icon = (style) -> $('#toggleSpinButton button i').attr 'class', style
+            if spinning then icon 'fa fa-play' else icon 'fa fa-pause'
             @projector.toggleSpin()
 
          when Toolbar.EVENT_SHOW_DOCUMENTS
