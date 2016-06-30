@@ -56,7 +56,7 @@ class Modal extends Panel
 
       html = ""
       for d in documents
-         html += "<a class='document' data-doc-id='" + d.id + "'>" + d.title + "</a><br/>"
+         html += "<a class='document' data-doc-id='" + d.id + "'>" + d.title + "</a><br />"
       $(@modal.similar.id).text("")
       $(@modal.similar.id).append(html)
 
@@ -72,7 +72,7 @@ class Modal extends Panel
    displayDocumentsList: (documents) ->
 
       @clear()
-      @setTitle "Random Set of the Currently Visible Documents"
+      @setTitle "Random Document Sample in Selected Clusters"
 
       # if mobile, toggle sidepanel visibility
       if Utility.isMobile() then @toggleHidden() 

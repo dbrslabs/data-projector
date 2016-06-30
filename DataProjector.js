@@ -1715,7 +1715,7 @@ Modal = (function(superClass) {
     html = "";
     for (j = 0, len1 = documents.length; j < len1; j++) {
       d = documents[j];
-      html += "<a class='document' data-doc-id='" + d.id + "'>" + d.title + "</a><br/>";
+      html += "<a class='document' data-doc-id='" + d.id + "'>" + d.title + "</a><br />";
     }
     $(this.modal.similar.id).text("");
     return $(this.modal.similar.id).append(html);
@@ -1728,7 +1728,7 @@ Modal = (function(superClass) {
   Modal.prototype.displayDocumentsList = function(documents) {
     var doc, docs, docsHtml, i, j, len, len1, title;
     this.clear();
-    this.setTitle("Random Set of the Currently Visible Documents");
+    this.setTitle("Random Document Sample in Selected Clusters");
     if (Utility.isMobile()) {
       this.toggleHidden();
     }
