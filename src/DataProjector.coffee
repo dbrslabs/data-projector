@@ -173,6 +173,9 @@ class DataProjector extends Observer
          when Toolbar.EVENT_SHOW_DOCUMENTS
             visible = @projector.getVisibleDocuments()
             @sidepanel.displayDocumentsList(visible.documents)
+            # if mobile, toggle sidepanel visibility
+            if Utility.isMobile() then @sidepanel.toggleHidden() 
+
 
          when Toolbar.EVENT_PRINT
             @storage.saveImage(@projector.getImage())
@@ -238,7 +241,8 @@ class DataProjector extends Observer
       @onToolbarEvent(Toolbar.EVENT_SPIN_RIGHT)
 
       # show visible docs in sidepanel so not initially blank
-      @toolbar.notify(Toolbar.EVENT_SHOW_DOCUMENTS)
+      visible = @projector.getVisibleDocuments()
+      @sidepanel.displayDocumentsList(visible.documents)
 
 
 

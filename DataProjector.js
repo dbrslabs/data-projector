@@ -151,7 +151,11 @@ DataProjector = (function(superClass) {
         return this.projector.toggleSpin();
       case Toolbar.EVENT_SHOW_DOCUMENTS:
         visible = this.projector.getVisibleDocuments();
-        return this.sidepanel.displayDocumentsList(visible.documents);
+        this.sidepanel.displayDocumentsList(visible.documents);
+        if (Utility.isMobile()) {
+          return this.sidepanel.toggleHidden();
+        }
+        break;
       case Toolbar.EVENT_PRINT:
         this.storage.saveImage(this.projector.getImage());
         return this.toolbar.blinkPrintButton();
@@ -188,13 +192,15 @@ DataProjector = (function(superClass) {
   };
 
   DataProjector.prototype.initialize = function() {
+    var visible;
     this.palette = new Palette(this.storage.getClusters());
     this.colors = this.palette.getColors();
     this.menu.create(this.storage.getClusters(), this.palette.getColors());
     this.projector.setColors(this.colors);
     this.projector.load(this.storage);
     this.onToolbarEvent(Toolbar.EVENT_SPIN_RIGHT);
-    return this.toolbar.notify(Toolbar.EVENT_SHOW_DOCUMENTS);
+    visible = this.projector.getVisibleDocuments();
+    return this.sidepanel.displayDocumentsList(visible.documents);
   };
 
   return DataProjector;
@@ -1730,9 +1736,6 @@ Modal = (function(superClass) {
     var doc, docs, docsHtml, i, j, len, len1, title;
     this.clear();
     this.setTitle("Random Document Sample in Selected Clusters");
-    if (Utility.isMobile()) {
-      this.toggleHidden();
-    }
     $(this.modal.similar.id).hide();
     $(this.modal.hr.id).hide();
     Array.prototype.shuffle = function() {
@@ -1741,7 +1744,7 @@ Modal = (function(superClass) {
       });
     };
     docs = documents.shuffle().slice(0, 46);
-    len = 57;
+    len = 47;
     for (i = j = 0, len1 = docs.length; j < len1; i = ++j) {
       doc = docs[i];
       title = doc.title.substring(0, len);

@@ -74,9 +74,6 @@ class Modal extends Panel
       @clear()
       @setTitle "Random Document Sample in Selected Clusters"
 
-      # if mobile, toggle sidepanel visibility
-      if Utility.isMobile() then @toggleHidden() 
-
       # hide similar documents section
       $(@modal.similar.id).hide()
       $(@modal.hr.id).hide()
@@ -85,7 +82,7 @@ class Modal extends Panel
       Array::shuffle = -> @sort -> 0.5 - Math.random()
       docs = documents.shuffle()[0..45]
       # format doc to be max length, conditionally adding ellipsis
-      len = 57
+      len = 47
       for doc, i in docs
           title = doc.title.substring(0,len)
           if title.length == len then title = title + '...'
