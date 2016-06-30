@@ -193,7 +193,8 @@ DataProjector = (function(superClass) {
     this.menu.create(this.storage.getClusters(), this.palette.getColors());
     this.projector.setColors(this.colors);
     this.projector.load(this.storage);
-    return this.onToolbarEvent(Toolbar.EVENT_SPIN_RIGHT);
+    this.onToolbarEvent(Toolbar.EVENT_SPIN_RIGHT);
+    return this.toolbar.notify(Toolbar.EVENT_SHOW_DOCUMENTS);
   };
 
   return DataProjector;
