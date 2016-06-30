@@ -2,7 +2,7 @@ node_modules
 *.swp
 *.swo
 *.pyc
-DS_Store
+.DS_Store
 
 ml/nytimes/keys.py
 ml/nytimes/articles
