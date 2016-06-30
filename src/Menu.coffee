@@ -49,22 +49,22 @@ class Menu extends Panel
 
       switch state
 
-         when Menu.TOGGLE_ON # turn all on
+         when Menu.TOGGLE_OFF, Menu.TOGGLE_MIX # turn all on
 
             @setState @allId, Menu.TOGGLE_ON
 
             for i in [0...@clusters]
-               tag = '#t' + String(i)
+               tag = '#c' + String(i)
                @setState tag, Menu.TOGGLE_ON
 
             @notify(Menu.EVENT_TOGGLE_ALL_ON)   
 
-         when Menu.TOGGLE_OFF, Menu.TOGGLE_MIX # turn all off
+         when Menu.TOGGLE_ON # turn all off
 
             @setState @allId, Menu.TOGGLE_OFF
 
             for i in [0...@clusters]
-               tag = '#t' + String(i)
+               tag = '#c' + String(i)
                @setState tag, Menu.TOGGLE_OFF
 
             @notify(Menu.EVENT_TOGGLE_ALL_OFF)   
@@ -73,7 +73,7 @@ class Menu extends Panel
    onToggle : (event) =>
 
       identifier = event.target.id 
-      id = identifier.replace("t", "")
+      id = identifier.replace("c", "")
       index = parseInt(id)
 
       @doToggle(index)
@@ -97,16 +97,16 @@ class Menu extends Panel
    # Flip toggle given by its index. 
    doToggle : (index) ->
 
-      tag = "#t" + String(index)
+      tag = "#c" + String(index)
       state = @getState tag
 
       switch state
 
          when Menu.TOGGLE_OFF
-            @setState tag, Menu.TOGGLE_OFF
+            @setState tag, Menu.TOGGLE_ON
 
          when Menu.TOGGLE_ON
-            @setState tag, Menu.TOGGLE_ON
+            @setState tag, Menu.TOGGLE_OFF
 
       @updateMasterToggle()
 
@@ -122,8 +122,13 @@ class Menu extends Panel
       # swatch IDs are c0, c1, c2...
 
       for i in [0...@clusters]
-         #html = "<span class='toggle' id='t#{i}'>[+]</span><span class='button' id='b#{i}'> Cluster</span><span class='color' id='c#{i}'> 
-         html = "<input type='checkbox' class='toggle' id='t#{i}' checked><span class='button' id='b#{i}'></span> <span class='color' id='c#{i}'>Cluster #{i} </span>"
+         #html = "<span class='toggle' id='t#{i}'>[+]</span>
+                  #<span class='button' id='b#{i}'> Cluster</span>
+                  #<span class='color' id='c#{i}'> 
+         #html = "<input type='checkbox' class='toggle' id='t#{i}' checked>
+                     #<span class='button' id='b#{i}'></span> 
+                     #<span class='color' id='c#{i}'>Cluster #{i} </span>"
+         html = "<button href='#' id='c#{i}' class='btn btn-circle checked'></button>"
 
          $("#menu").append(html) 
 
@@ -131,6 +136,7 @@ class Menu extends Panel
 
       for i in [0...@clusters]
          $("#t" + String(i)).click( @onToggle )
+         $("#c" + String(i)).click( @onToggle )
          $("#b" + String(i)).click( @onCluster )
 
       @updateSwatches()  
@@ -142,7 +148,7 @@ class Menu extends Panel
       result = 0
 
       for i in [0...@clusters]
-         tag = "#t" + String(i)
+         tag = "#c" + String(i)
          state = @getState tag
          if state is Menu.TOGGLE_ON then result++
 
@@ -150,15 +156,28 @@ class Menu extends Panel
 
 
 
-   setState: (tag, state) ->
+   setState: (tag, checked) ->
 
-      return $(tag).prop 'checked', state
+      if checked
+         $(tag).addClass 'checked'
+         # if not allId, get color else get all-clusters color
+         if tag isnt @allId
+            id = tag.replace("#c", "")
+            index = parseInt(id)
+            color = @colors[index].getStyle()
+         else
+            color = 'lightgrey'
+         $(tag).css 'background-color', color
+      else
+         # if uncheck, make circle into a ring
+         $(tag).removeClass 'checked'
+         $(tag).css 'background-color', 'white'
       
 
 
    getState: (tag) ->
 
-      return $(tag).prop 'checked'
+      return $(tag).hasClass 'checked'
       
 
 
@@ -176,11 +195,15 @@ class Menu extends Panel
    # Swatches have IDs: c0, c1, c2...
    updateSwatches : ->
 
+      $(@allId).css 'background-color', 'lightgrey'
+
       for i in [0...@clusters]
          if i is @selected
             $("#c" + String(i)).css( 'color', Palette.HIGHLIGHT.getStyle() )
          else
-            $("#c" + String(i)).css( 'color', @colors[i].getStyle() )
+            #$("#c" + String(i)).css( 'color', @colors[i].getStyle() )
+            $("#c" + String(i)).css 'background-color', @colors[i].getStyle()
+            $("#c" + String(i)).css 'border-color', @colors[i].getStyle()
 
 
    # Cluster buttons have IDs: b0, b1, b2...

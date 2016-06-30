@@ -313,18 +313,18 @@ Menu = (function(superClass) {
     var i, j, k, ref, ref1, state, tag;
     state = this.getState(this.allId);
     switch (state) {
-      case Menu.TOGGLE_ON:
+      case Menu.TOGGLE_OFF:
+      case Menu.TOGGLE_MIX:
         this.setState(this.allId, Menu.TOGGLE_ON);
         for (i = j = 0, ref = this.clusters; 0 <= ref ? j < ref : j > ref; i = 0 <= ref ? ++j : --j) {
-          tag = '#t' + String(i);
+          tag = '#c' + String(i);
           this.setState(tag, Menu.TOGGLE_ON);
         }
         return this.notify(Menu.EVENT_TOGGLE_ALL_ON);
-      case Menu.TOGGLE_OFF:
-      case Menu.TOGGLE_MIX:
+      case Menu.TOGGLE_ON:
         this.setState(this.allId, Menu.TOGGLE_OFF);
         for (i = k = 0, ref1 = this.clusters; 0 <= ref1 ? k < ref1 : k > ref1; i = 0 <= ref1 ? ++k : --k) {
-          tag = '#t' + String(i);
+          tag = '#c' + String(i);
           this.setState(tag, Menu.TOGGLE_OFF);
         }
         return this.notify(Menu.EVENT_TOGGLE_ALL_OFF);
@@ -334,7 +334,7 @@ Menu = (function(superClass) {
   Menu.prototype.onToggle = function(event) {
     var id, identifier, index;
     identifier = event.target.id;
-    id = identifier.replace("t", "");
+    id = identifier.replace("c", "");
     index = parseInt(id);
     this.doToggle(index);
     return this.notify(Menu.EVENT_TOGGLE_ID, {
@@ -359,14 +359,14 @@ Menu = (function(superClass) {
 
   Menu.prototype.doToggle = function(index) {
     var state, tag;
-    tag = "#t" + String(index);
+    tag = "#c" + String(index);
     state = this.getState(tag);
     switch (state) {
       case Menu.TOGGLE_OFF:
-        this.setState(tag, Menu.TOGGLE_OFF);
+        this.setState(tag, Menu.TOGGLE_ON);
         break;
       case Menu.TOGGLE_ON:
-        this.setState(tag, Menu.TOGGLE_ON);
+        this.setState(tag, Menu.TOGGLE_OFF);
     }
     return this.updateMasterToggle();
   };
@@ -376,12 +376,13 @@ Menu = (function(superClass) {
     this.clusters = clusters;
     this.colors = colors;
     for (i = j = 0, ref = this.clusters; 0 <= ref ? j < ref : j > ref; i = 0 <= ref ? ++j : --j) {
-      html = "<input type='checkbox' class='toggle' id='t" + i + "' checked><span class='button' id='b" + i + "'></span> <span class='color' id='c" + i + "'>Cluster " + i + " </span>";
+      html = "<button href='#' id='c" + i + "' class='btn btn-circle checked'></button>";
       $("#menu").append(html);
     }
     $(this.allId).click(this.onToggleAll);
     for (i = k = 0, ref1 = this.clusters; 0 <= ref1 ? k < ref1 : k > ref1; i = 0 <= ref1 ? ++k : --k) {
       $("#t" + String(i)).click(this.onToggle);
+      $("#c" + String(i)).click(this.onToggle);
       $("#b" + String(i)).click(this.onCluster);
     }
     return this.updateSwatches();
@@ -391,7 +392,7 @@ Menu = (function(superClass) {
     var i, j, ref, result, state, tag;
     result = 0;
     for (i = j = 0, ref = this.clusters; 0 <= ref ? j < ref : j > ref; i = 0 <= ref ? ++j : --j) {
-      tag = "#t" + String(i);
+      tag = "#c" + String(i);
       state = this.getState(tag);
       if (state === Menu.TOGGLE_ON) {
         result++;
@@ -400,12 +401,26 @@ Menu = (function(superClass) {
     return result;
   };
 
-  Menu.prototype.setState = function(tag, state) {
-    return $(tag).prop('checked', state);
+  Menu.prototype.setState = function(tag, checked) {
+    var color, id, index;
+    if (checked) {
+      $(tag).addClass('checked');
+      if (tag !== this.allId) {
+        id = tag.replace("#c", "");
+        index = parseInt(id);
+        color = this.colors[index].getStyle();
+      } else {
+        color = 'lightgrey';
+      }
+      return $(tag).css('background-color', color);
+    } else {
+      $(tag).removeClass('checked');
+      return $(tag).css('background-color', 'white');
+    }
   };
 
   Menu.prototype.getState = function(tag) {
-    return $(tag).prop('checked');
+    return $(tag).hasClass('checked');
   };
 
   Menu.prototype.updateMasterToggle = function() {
@@ -423,12 +438,14 @@ Menu = (function(superClass) {
 
   Menu.prototype.updateSwatches = function() {
     var i, j, ref, results;
+    $(this.allId).css('background-color', 'lightgrey');
     results = [];
     for (i = j = 0, ref = this.clusters; 0 <= ref ? j < ref : j > ref; i = 0 <= ref ? ++j : --j) {
       if (i === this.selected) {
         results.push($("#c" + String(i)).css('color', Palette.HIGHLIGHT.getStyle()));
       } else {
-        results.push($("#c" + String(i)).css('color', this.colors[i].getStyle()));
+        $("#c" + String(i)).css('background-color', this.colors[i].getStyle());
+        results.push($("#c" + String(i)).css('border-color', this.colors[i].getStyle()));
       }
     }
     return results;
