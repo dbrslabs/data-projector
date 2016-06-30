@@ -237,5 +237,9 @@ class DataProjector extends Observer
       @projector.load(@storage) # load data for visualization
       @onToolbarEvent(Toolbar.EVENT_SPIN_RIGHT)
 
+      # show visible docs in sidepanel so not initially blank
+      @toolbar.notify(Toolbar.EVENT_SHOW_DOCUMENTS)
+
+
 
 dataProjector = new DataProjector() # run!
