@@ -1740,7 +1740,7 @@ Modal = (function(superClass) {
       });
     };
     docs = documents.shuffle().slice(0, 46);
-    len = 60;
+    len = 57;
     for (i = j = 0, len1 = docs.length; j < len1; i = ++j) {
       doc = docs[i];
       title = doc.title.substring(0, len);

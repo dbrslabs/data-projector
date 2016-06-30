@@ -116,10 +116,12 @@ body {
     -moz-transition: all 0.5s ease;
     -o-transition: all 0.5s ease;
     transition: all 0.5s ease;
+    padding-top: 64px;
+    padding-left: 14px;
 }
 
 #wrapper.toggled #sidebar-wrapper {
-    width: 250px;
+    width: 350px;
 }
 
 #page-content-wrapper {
@@ -181,10 +183,6 @@ body {
     background: none;
 }
 
-#menu-toggle {
-    display: inline-block;
-}
-
 .navbar-header {
      width: 100%;
 }
@@ -200,7 +198,7 @@ body {
     }
 
     #sidebar-wrapper {
-        width: 400px;
+        width: 450px;
     }
 
     #wrapper.toggled #sidebar-wrapper {

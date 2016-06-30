@@ -85,7 +85,7 @@ class Modal extends Panel
       Array::shuffle = -> @sort -> 0.5 - Math.random()
       docs = documents.shuffle()[0..45]
       # format doc to be max length, conditionally adding ellipsis
-      len = 60
+      len = 57
       for doc, i in docs
           title = doc.title.substring(0,len)
           if title.length == len then title = title + '...'
