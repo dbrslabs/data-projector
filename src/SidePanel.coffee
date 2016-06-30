@@ -1,7 +1,7 @@
-
-# Controls application info console on the right side of the application window.
+# Controls application document presentation in the side panel
 
 Panel = require('./Panel.coffee')
+Utility = require('./Utility.coffee')
 
 class Modal extends Panel
 
@@ -19,10 +19,10 @@ class Modal extends Panel
       super(id)
 
       @modal = 
-         title:    { id : "#myModalLabel" }
-         similar:  { id : "#myModalBody .similar" }
-         document: { id : "#myModalBody .article" }
-         hr :      { id : "#myModalBody hr" }
+         title:    { id : "#sidePanelTitle" }
+         similar:  { id : "#sidePanelBody .similar" }
+         document: { id : "#sidePanelBody .article" }
+         hr :      { id : "#sidePanelBody hr" }
 
       # handle clicking document links
       $(id).on 'click', '.document', @onClickDocument
@@ -62,11 +62,20 @@ class Modal extends Panel
 
 
 
+   toggleHidden: ->
+
+      $("#wrapper").toggleClass "toggled"
+
+
+
    # display a list of documents
    displayDocumentsList: (documents) ->
 
       @clear()
       @setTitle "Random Set of the Currently Visible Documents"
+
+      # if mobile, toggle sidepanel visibility
+      if Utility.isMobile() then @toggleHidden() 
 
       # hide similar documents section
       $(@modal.similar.id).hide()
@@ -135,3 +144,4 @@ class Modal extends Panel
 
 
 module.exports = Modal
+

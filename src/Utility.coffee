@@ -21,8 +21,13 @@ class Utility
    @CTRL_KEY : "CTRL_KEY"
    @ALT_KEY : "ALT_KEY"
 
+   # screen sizes in px
+   @SCREEN : { MOBILE: 768 }
 
    # S T A T I C   M E T H O D S   
+
+   @isMobile: -> window.innerWidth <= @SCREEN.MOBILE
+
 
    # Debug utility. Prints out THREE.Vector3 component values.
    @printVector3: (vector) ->

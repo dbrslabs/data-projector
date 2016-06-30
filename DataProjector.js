@@ -1,5 +1,5 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-var DataProjector, Info, Menu, Modal, Observer, Palette, Projector, SidePanel, Storage, Subject, Toolbar, Utility, dataProjector,
+var DataProjector, Info, Menu, Observer, Palette, Projector, SidePanel, Storage, Subject, Toolbar, Utility, dataProjector,
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
   hasProp = {}.hasOwnProperty;
 
@@ -19,8 +19,6 @@ Menu = require('./Menu.coffee');
 
 Info = require('./Info.coffee');
 
-Modal = require('./Modal.coffee');
-
 SidePanel = require('./SidePanel.coffee');
 
 Projector = require('./Projector.coffee');
@@ -35,8 +33,6 @@ DataProjector = (function(superClass) {
   DataProjector.prototype.menu = null;
 
   DataProjector.prototype.info = null;
-
-  DataProjector.prototype.modal = null;
 
   DataProjector.prototype.sidepanel = null;
 
@@ -56,8 +52,6 @@ DataProjector = (function(superClass) {
     this.menu.attach(this);
     this.info = new Info('#info');
     this.info.attach(this);
-    this.modal = new Modal('#myModal');
-    this.modal.attach(this);
     this.sidepanel = new SidePanel('#sidebar-wrapper');
     this.sidepanel.attach(this);
     this.projector = new Projector();
@@ -209,7 +203,7 @@ DataProjector = (function(superClass) {
 dataProjector = new DataProjector();
 
 
-},{"./Info.coffee":2,"./Menu.coffee":3,"./Modal.coffee":4,"./Observer.coffee":5,"./Palette.coffee":6,"./Projector.coffee":8,"./SidePanel.coffee":10,"./Storage.coffee":11,"./Subject.coffee":12,"./Toolbar.coffee":13,"./Utility.coffee":14}],2:[function(require,module,exports){
+},{"./Info.coffee":2,"./Menu.coffee":3,"./Observer.coffee":4,"./Palette.coffee":5,"./Projector.coffee":7,"./SidePanel.coffee":9,"./Storage.coffee":10,"./Subject.coffee":11,"./Toolbar.coffee":12,"./Utility.coffee":13}],2:[function(require,module,exports){
 var Info, Panel,
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
   hasProp = {}.hasOwnProperty;
@@ -268,7 +262,7 @@ Info = (function(superClass) {
 module.exports = Info;
 
 
-},{"./Panel.coffee":7}],3:[function(require,module,exports){
+},{"./Panel.coffee":6}],3:[function(require,module,exports){
 var Menu, Panel,
   bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
@@ -453,147 +447,7 @@ Menu = (function(superClass) {
 module.exports = Menu;
 
 
-},{"./Panel.coffee":7}],4:[function(require,module,exports){
-var Modal, Panel,
-  bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
-  extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
-  hasProp = {}.hasOwnProperty;
-
-Panel = require('./Panel.coffee');
-
-Modal = (function(superClass) {
-  extend(Modal, superClass);
-
-  Modal.prototype.modal = null;
-
-  function Modal(id) {
-    this.onClickDocument = bind(this.onClickDocument, this);
-    Modal.__super__.constructor.call(this, id);
-    this.modal = {
-      title: {
-        id: "#myModalLabel"
-      },
-      similar: {
-        id: "#myModalBody .similar"
-      },
-      document: {
-        id: "#myModalBody .article"
-      },
-      hr: {
-        id: "#myModalBody hr"
-      }
-    };
-    $(id).on('click', '.document', this.onClickDocument);
-  }
-
-  Modal.prototype.clear = function() {
-    this.setTitle("");
-    this.setDocumentHTML("");
-    return this.setSimilarDocuments([]);
-  };
-
-  Modal.prototype.setTitle = function(title) {
-    return $(this.modal.title.id).text(title);
-  };
-
-  Modal.prototype.setDocumentHTML = function(document) {
-    $(this.modal.document.id).text("");
-    return $(this.modal.document.id).html(document);
-  };
-
-  Modal.prototype.setSimilarDocuments = function(documents) {
-    var d, html, j, len1;
-    html = "";
-    for (j = 0, len1 = documents.length; j < len1; j++) {
-      d = documents[j];
-      html += "<a class='document' data-doc-id='" + d.id + "'>" + d.title + "</a><br/>";
-    }
-    $(this.modal.similar.id).text("");
-    return $(this.modal.similar.id).append(html);
-  };
-
-  Modal.prototype.displayDocumentsList = function(documents) {
-    var doc, docs, docsHtml, i, j, len, len1, title;
-    this.clear();
-    this.setTitle("Random Set of the Currently Visible Documents");
-    $(this.modal.similar.id).hide();
-    $(this.modal.hr.id).hide();
-    Array.prototype.shuffle = function() {
-      return this.sort(function() {
-        return 0.5 - Math.random();
-      });
-    };
-    docs = documents.shuffle().slice(0, 46);
-    len = 60;
-    for (i = j = 0, len1 = docs.length; j < len1; i = ++j) {
-      doc = docs[i];
-      title = doc.title.substring(0, len);
-      if (title.length === len) {
-        title = title + '...';
-      }
-      docs[i].title = title;
-    }
-    docsHtml = ((function() {
-      var k, len2, results;
-      results = [];
-      for (k = 0, len2 = docs.length; k < len2; k++) {
-        doc = docs[k];
-        results.push("<a class='document' data-doc-id='" + doc.id + "'>" + doc.title + "</a><br/>");
-      }
-      return results;
-    })()).join('');
-    return this.setDocumentHTML(docsHtml);
-  };
-
-  Modal.prototype.displayDocument = function(docId) {
-    $(this.modal.similar.id).show();
-    $(this.modal.hr.id).show();
-    this.getDocumentContents(docId, (function(_this) {
-      return function(data) {
-        _this.setTitle(data.title);
-        return _this.setDocumentHTML(data.html);
-      };
-    })(this));
-    return this.getSimilarDocuments(docId, (function(_this) {
-      return function(data) {
-        return _this.setSimilarDocuments(data.most_similar);
-      };
-    })(this));
-  };
-
-  Modal.prototype.onClickDocument = function(event) {
-    var docId;
-    event.preventDefault();
-    docId = $(event.target).data('doc-id');
-    return this.displayDocument(docId);
-  };
-
-  Modal.prototype.getDocumentContents = function(id, callback) {
-    return $.ajax({
-      url: 'http://localhost:5000/doc/' + id,
-      type: 'GET',
-      contentType: 'application/json',
-      success: callback
-    });
-  };
-
-  Modal.prototype.getSimilarDocuments = function(id, callback) {
-    return $.ajax({
-      url: 'http://localhost:5000/doc/' + id + '/most_similar',
-      type: 'GET',
-      contentType: 'application/json',
-      success: callback
-    });
-  };
-
-  return Modal;
-
-})(Panel);
-
-module.exports = Modal;
-
-
-},{"./Panel.coffee":7}],5:[function(require,module,exports){
+},{"./Panel.coffee":6}],4:[function(require,module,exports){
 var Observer;
 
 Observer = (function() {
@@ -608,7 +462,7 @@ Observer = (function() {
 module.exports = Observer;
 
 
-},{}],6:[function(require,module,exports){
+},{}],5:[function(require,module,exports){
 var Palette;
 
 Palette = (function() {
@@ -673,7 +527,7 @@ Palette = (function() {
 module.exports = Palette;
 
 
-},{}],7:[function(require,module,exports){
+},{}],6:[function(require,module,exports){
 var Panel, Subject,
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
   hasProp = {}.hasOwnProperty;
@@ -722,7 +576,7 @@ Panel = (function(superClass) {
 module.exports = Panel;
 
 
-},{"./Subject.coffee":12}],8:[function(require,module,exports){
+},{"./Subject.coffee":11}],7:[function(require,module,exports){
 var Palette, Projector, Selector, Subject, Utility,
   bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
@@ -1415,7 +1269,7 @@ Projector = (function(superClass) {
 module.exports = Projector;
 
 
-},{"./Palette.coffee":6,"./Selector.coffee":9,"./Subject.coffee":12,"./Utility.coffee":14}],9:[function(require,module,exports){
+},{"./Palette.coffee":5,"./Selector.coffee":8,"./Subject.coffee":11,"./Utility.coffee":13}],8:[function(require,module,exports){
 var Palette, Selector, Utility,
   bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
@@ -1806,13 +1660,15 @@ Selector = (function() {
 module.exports = Selector;
 
 
-},{"./Palette.coffee":6,"./Utility.coffee":14}],10:[function(require,module,exports){
-var Modal, Panel,
+},{"./Palette.coffee":5,"./Utility.coffee":13}],9:[function(require,module,exports){
+var Modal, Panel, Utility,
   bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
   hasProp = {}.hasOwnProperty;
 
 Panel = require('./Panel.coffee');
+
+Utility = require('./Utility.coffee');
 
 Modal = (function(superClass) {
   extend(Modal, superClass);
@@ -1865,10 +1721,17 @@ Modal = (function(superClass) {
     return $(this.modal.similar.id).append(html);
   };
 
+  Modal.prototype.toggleHidden = function() {
+    return $("#wrapper").toggleClass("toggled");
+  };
+
   Modal.prototype.displayDocumentsList = function(documents) {
     var doc, docs, docsHtml, i, j, len, len1, title;
     this.clear();
     this.setTitle("Random Set of the Currently Visible Documents");
+    if (Utility.isMobile()) {
+      this.toggleHidden();
+    }
     $(this.modal.similar.id).hide();
     $(this.modal.hr.id).hide();
     Array.prototype.shuffle = function() {
@@ -1946,7 +1809,7 @@ Modal = (function(superClass) {
 module.exports = Modal;
 
 
-},{"./Panel.coffee":7}],11:[function(require,module,exports){
+},{"./Panel.coffee":6,"./Utility.coffee":13}],10:[function(require,module,exports){
 var Storage, Subject,
   bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
@@ -2063,7 +1926,7 @@ Storage = (function(superClass) {
 module.exports = Storage;
 
 
-},{"./Subject.coffee":12}],12:[function(require,module,exports){
+},{"./Subject.coffee":11}],11:[function(require,module,exports){
 var Subject;
 
 Subject = (function() {
@@ -2106,7 +1969,7 @@ Subject = (function() {
 module.exports = Subject;
 
 
-},{}],13:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 var Palette, Panel, Toolbar, Utility,
   bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
@@ -2401,7 +2264,7 @@ Toolbar = (function(superClass) {
 module.exports = Toolbar;
 
 
-},{"./Palette.coffee":6,"./Panel.coffee":7,"./Utility.coffee":14}],14:[function(require,module,exports){
+},{"./Palette.coffee":5,"./Panel.coffee":6,"./Utility.coffee":13}],13:[function(require,module,exports){
 var Utility;
 
 Utility = (function() {
@@ -2425,6 +2288,14 @@ Utility = (function() {
   Utility.CTRL_KEY = "CTRL_KEY";
 
   Utility.ALT_KEY = "ALT_KEY";
+
+  Utility.SCREEN = {
+    MOBILE: 768
+  };
+
+  Utility.isMobile = function() {
+    return window.innerWidth <= this.SCREEN.MOBILE;
+  };
 
   Utility.printVector3 = function(vector) {
     return console.log(vector.x.toFixed(1) + " : " + vector.y.toFixed(1) + " : " + vector.z.toFixed(1));

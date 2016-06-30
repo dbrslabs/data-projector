@@ -12,7 +12,7 @@ Storage = require('./Storage.coffee')
 Toolbar = require('./Toolbar.coffee')
 Menu = require('./Menu.coffee')
 Info = require('./Info.coffee')
-Modal = require('./Modal.coffee')
+SidePanel = require('./SidePanel.coffee')
 Projector = require('./Projector.coffee')
 
 class DataProjector extends Observer
@@ -26,7 +26,7 @@ class DataProjector extends Observer
    toolbar : null # main application menu
    menu : null # main data menu - left side panel
    info : null # information console - right side panel
-   modal : null # modal - display document information
+   sidepanel : null # sidepanel - display document information
 
    projector : null # WebGL visualization canvas
 
@@ -55,8 +55,8 @@ class DataProjector extends Observer
       @info = new Info('#info')
       @info.attach(@)
 
-      @modal = new Modal('#myModal')
-      @modal.attach(@)
+      @sidepanel = new SidePanel('#sidebar-wrapper')
+      @sidepanel.attach(@)
 
       # user interface - visualization
 
@@ -172,7 +172,7 @@ class DataProjector extends Observer
 
          when Toolbar.EVENT_SHOW_DOCUMENTS
             visible = @projector.getVisibleDocuments()
-            @modal.displayDocumentsList(visible.documents)
+            @sidepanel.displayDocumentsList(visible.documents)
 
          when Toolbar.EVENT_PRINT
             @storage.saveImage(@projector.getImage())
