@@ -26,7 +26,13 @@ class Modal extends Panel
 
       # handle clicking document links
       $(id).on 'click', '.document', @onClickDocument
-
+      
+      # Remove the viz's custom events and use defaults in sidepanel
+      # NOTE: None of these unbindings actually works. This is here so you know it won't work before you try ~ .dh
+      $('#sidebar-wrapper').unbind 'scroll'
+      $('#sidebar-wrapper').unbind 'onscroll'
+      $('#sidebar-wrapper').unbind 'onmouseup'
+      $('#sidebar-wrapper').unbind 'onmousedown'
 
 
    # M E T H O D S

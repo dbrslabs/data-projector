@@ -516,7 +516,7 @@ THREE.TrackballControls = function ( object, domElement ) {
 
 	}
 
-	this.domElement.addEventListener( 'contextmenu', function ( event ) { event.preventDefault(); }, false );
+	//this.domElement.addEventListener( 'contextmenu', function ( event ) { event.preventDefault(); }, false );
 
 	this.domElement.addEventListener( 'mousedown', mousedown, false );
 
@@ -527,11 +527,14 @@ THREE.TrackballControls = function ( object, domElement ) {
 	this.domElement.addEventListener( 'touchend', touchend, false );
 	this.domElement.addEventListener( 'touchmove', touchmove, false );
 
-	window.addEventListener( 'keydown', keydown, false );
-	window.addEventListener( 'keyup', keyup, false );
+	//window.addEventListener( 'keydown', keydown, false );
+	//window.addEventListener( 'keyup', keyup, false ); // disable all keyboard shortcuts for now
 
 	this.handleResize();
 
 };
 
-THREE.TrackballControls.prototype = Object.create( THREE.EventDispatcher.prototype );
+var viz_container = document.getElementById("container");
+
+// NOTE: Specifying custom event handling isn't limited to just the dom object specified, but rather the whole page.
+THREE.TrackballControls.prototype = Object.create( THREE.EventDispatcher.prototype, viz_container );

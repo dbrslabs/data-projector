@@ -1717,6 +1717,10 @@ Modal = (function(superClass) {
       }
     };
     $(id).on('click', '.document', this.onClickDocument);
+    $('#sidebar-wrapper').unbind('scroll');
+    $('#sidebar-wrapper').unbind('onscroll');
+    $('#sidebar-wrapper').unbind('onmouseup');
+    $('#sidebar-wrapper').unbind('onmousedown');
   }
 
   Modal.prototype.clear = function() {
