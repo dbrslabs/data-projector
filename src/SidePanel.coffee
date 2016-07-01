@@ -127,7 +127,7 @@ class Modal extends Panel
    getDocumentContents: (id, callback) ->
 
       $.ajax(
-         url: 'http://localhost:5000/doc/' + id
+         url: 'http://d209e03f.ngrok.io/doc/' + id
          type: 'GET'
          contentType: 'application/json'
          success: callback
@@ -138,7 +138,7 @@ class Modal extends Panel
    getSimilarDocuments: (id, callback) ->
 
      $.ajax(
-       url: 'http://localhost:5000/doc/' + id + '/most_similar'
+       url: 'http://d209e03f.ngrok.io/doc/' + id + '/most_similar'
        type: 'GET'
        contentType: 'application/json'
        success: callback

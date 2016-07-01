@@ -1811,7 +1811,7 @@ Modal = (function(superClass) {
 
   Modal.prototype.getDocumentContents = function(id, callback) {
     return $.ajax({
-      url: 'http://localhost:5000/doc/' + id,
+      url: 'http://d209e03f.ngrok.io/doc/' + id,
       type: 'GET',
       contentType: 'application/json',
       success: callback
@@ -1820,7 +1820,7 @@ Modal = (function(superClass) {
 
   Modal.prototype.getSimilarDocuments = function(id, callback) {
     return $.ajax({
-      url: 'http://localhost:5000/doc/' + id + '/most_similar',
+      url: 'http://d209e03f.ngrok.io/doc/' + id + '/most_similar',
       type: 'GET',
       contentType: 'application/json',
       success: callback
