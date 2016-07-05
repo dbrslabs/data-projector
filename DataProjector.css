@@ -203,6 +203,21 @@ body {
      width: 100%;
 }
 
+.cluster-id {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    /*text-align: center;*/
+    /*padding: 6px 0;*/
+    /*font-size: 12px;*/
+    /*line-height: -1.42;*/
+    border-radius: 5px;
+    border-color: lightgrey;
+    border-width: 1px;
+    background-color: lightgrey;
+    margin-right: 4px;
+}
+
 a.document {
   cursor: pointer;
 }

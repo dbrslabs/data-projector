@@ -94,7 +94,8 @@ class Modal extends Panel
           if title.length == len then title = title + '...'
           docs[i].title = title
       # format html and add to dom
-      docsHtml = ("<a class='document' data-doc-id='#{doc.id}'>#{doc.title}</a><br/>" for doc in docs).join('')
+      #docsHtml = ("<span class='cluster-id' style='color:#{@colors['c1'].getStyle()}'></span><a class='document' data-doc-id='#{doc.id}'>#{doc.title}</a><br/>" for doc in docs).join('')
+      docsHtml = ("<span class='cluster-id'></span><a class='document' data-doc-id='#{doc.id}'>#{doc.title}</a><br/>" for doc in docs).join('')
       @setDocumentHTML(docsHtml)
 
 

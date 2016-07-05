@@ -1779,7 +1779,7 @@ Modal = (function(superClass) {
       results = [];
       for (k = 0, len2 = docs.length; k < len2; k++) {
         doc = docs[k];
-        results.push("<a class='document' data-doc-id='" + doc.id + "'>" + doc.title + "</a><br/>");
+        results.push("<span class='cluster-id'></span><a class='document' data-doc-id='" + doc.id + "'>" + doc.title + "</a><br/>");
       }
       return results;
     })()).join('');
