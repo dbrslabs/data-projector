@@ -200,6 +200,7 @@ DataProjector = (function(superClass) {
     this.projector.load(this.storage);
     this.onToolbarEvent(Toolbar.EVENT_SPIN_RIGHT);
     visible = this.projector.getVisibleDocuments();
+    this.sidepanel.setColors(this.colors);
     return this.sidepanel.displayDocumentsList(visible.documents);
   };
 
@@ -1019,15 +1020,17 @@ Projector = (function(superClass) {
   };
 
   Projector.prototype.getVisibleDocuments = function() {
-    var all, cloud, document, documents, i, j, k, l, ref, ref1, vertex;
+    var all, cloud, clusters, document, documents, i, j, k, l, ref, ref1, vertex;
     documents = new Array();
-    for (i = k = 0, ref = this.storage.getClusters(); 0 <= ref ? k < ref : k > ref; i = 0 <= ref ? ++k : --k) {
+    clusters = this.storage.getClusters();
+    for (i = k = 0, ref = clusters; 0 <= ref ? k < ref : k > ref; i = 0 <= ref ? ++k : --k) {
       if (this.particles[i].visible) {
         cloud = this.points[i];
         all = cloud.vertices.length;
         for (j = l = 0, ref1 = all; 0 <= ref1 ? l < ref1 : l > ref1; j = 0 <= ref1 ? ++l : --l) {
           vertex = cloud.vertices[j];
           document = cloud.documents[j];
+          document.cid = i;
           if (!this.selector.isActive()) {
             documents.push(document);
           }
@@ -1699,8 +1702,11 @@ Modal = (function(superClass) {
 
   Modal.prototype.modal = null;
 
+  Modal.prototype.colors = null;
+
   function Modal(id) {
     this.onClickDocument = bind(this.onClickDocument, this);
+    this.setColors = bind(this.setColors, this);
     Modal.__super__.constructor.call(this, id);
     this.modal = {
       title: {
@@ -1731,6 +1737,10 @@ Modal = (function(superClass) {
 
   Modal.prototype.setTitle = function(title) {
     return $(this.modal.title.id).text(title);
+  };
+
+  Modal.prototype.setColors = function(colors) {
+    this.colors = colors;
   };
 
   Modal.prototype.setDocumentHTML = function(document) {
@@ -1779,10 +1789,10 @@ Modal = (function(superClass) {
       results = [];
       for (k = 0, len2 = docs.length; k < len2; k++) {
         doc = docs[k];
-        results.push("<span class='cluster-id'></span><a class='document' data-doc-id='" + doc.id + "'>" + doc.title + "</a><br/>");
+        results.push("<span class='cluster-id' style='background-color:" + (this.colors[doc.cid].getStyle()) + "'></span><a class='document' data-doc-id='" + doc.id + "'>" + doc.title + "</a><br/>");
       }
       return results;
-    })()).join('');
+    }).call(this)).join('');
     return this.setDocumentHTML(docsHtml);
   };
 

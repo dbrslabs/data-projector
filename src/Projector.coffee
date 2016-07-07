@@ -482,13 +482,22 @@ class Projector extends Subject
 
       documents = new Array()
 
-      for i in [0...@storage.getClusters()]
+      clusters = @storage.getClusters()
+
+      #console.log Object.getOwnPropertyNames(clusters)
+      #console.log clusters.className
+
+      #for i in [0...@storage.getClusters()]
+      for i in [0...clusters]
+         #console.log i
          if @particles[i].visible
             cloud = @points[i]
             all = cloud.vertices.length
             for j in [0...all]
                vertex = cloud.vertices[j]
                document = cloud.documents[j]
+               # Add cluster ID because it isn't included by default
+               document.cid = i
                if not @selector.isActive() 
                   documents.push( document )
                if @selector.isActive() and @selector.contains(vertex, Utility.DIRECTION.ALL) 

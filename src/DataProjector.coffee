@@ -242,6 +242,7 @@ class DataProjector extends Observer
 
       # show visible docs in sidepanel so not initially blank
       visible = @projector.getVisibleDocuments()
+      @sidepanel.setColors(@colors)
       @sidepanel.displayDocumentsList(visible.documents)
 
 

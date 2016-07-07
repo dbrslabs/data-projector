@@ -10,6 +10,7 @@ class Modal extends Panel
    
    modal: null
 
+   colors : null # Array<THREE.Color> generated color values for visualization
 
    # C O N S T R U C T O R
 
@@ -49,6 +50,8 @@ class Modal extends Panel
 
        $(@modal.title.id).text(title)
 
+
+   setColors : (@colors) =>
 
 
    setDocumentHTML: (document) ->
@@ -95,9 +98,11 @@ class Modal extends Panel
           docs[i].title = title
       # format html and add to dom
       #docsHtml = ("<span class='cluster-id' style='color:#{@colors['c1'].getStyle()}'></span><a class='document' data-doc-id='#{doc.id}'>#{doc.title}</a><br/>" for doc in docs).join('')
-      docsHtml = ("<span class='cluster-id'></span><a class='document' data-doc-id='#{doc.id}'>#{doc.title}</a><br/>" for doc in docs).join('')
-      @setDocumentHTML(docsHtml)
+      docsHtml = ("<span class='cluster-id' style='background-color:#{@colors[doc.cid].getStyle()}'></span><a class='document' data-doc-id='#{doc.id}'>#{doc.title}</a><br/>" for doc in docs).join('')
 
+      #console.log Object.getOwnPropertyNames(docs[0])
+      
+      @setDocumentHTML(docsHtml)
 
 
    # display one particular document
