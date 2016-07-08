@@ -38,23 +38,62 @@ def get_doc(docid):
     except Exception as err:
         pass
 
+def most_similar_by_text(text):
+    # query doc2vec model to find (ids,similarities) of the most similar documents
+    similar_docids, similarities = zip(*d2v.docvecs.most_similar(docid))
+    return similar_docids, similarities
+
+def most_similar(docid_or_vector):
+    '''query doc2vec model to find (ids,similarities) of the most similar documents'''
+    similar_docids, similarities = zip(*d2v.docvecs.most_similar(docid_or_vector))
+    return similar_docids, similarities
+
+def get_docs_by_ids(docids):
+    # lookup documents in mongo
+    query_cursor = db.find({'_id': { '$in': [ObjectId(docid) for docid in docids] }})
+    # evaluate mongo cursor and format articles
+    docs = [format_article(a) for a in query_cursor]
+    # re-order docs list to match order of similar_docids and similarity lists
+    order = [similar_docids.index(a['id']) for a in docs]
+    docs = [article for _, article in sorted(zip(order,docs))]
+    return docs
+
+def merge_docs_and_similarities(docs, similarities):
+    # set doc2vec similarity of each article
+    docs = [dict(art.items() + [('similarity',sim)]) for art,sim in zip(docs,similarities)]
+    return docs
+
 @app.route("/doc/<docid>/most_similar", methods=['GET'])
 @cross_origin(origin='localhost', headers=['Content-Type'])
 def get_doc_most_similar(docid):
     try:
-        similar_docids, similarities = zip(*d2v.docvecs.most_similar(docid))
-        articles = db.find({'_id': { '$in': [ObjectId(docid) for docid in similar_docids] }})
-        # evaluate mongo cursor and format articles
-        articles = [format_article(a) for a in articles]
-        # re-order what mongo gave us to match similar_docids and similarity order
-        order = [similar_docids.index(a['id']) for a in articles]
-        articles = [article for _, article in sorted(zip(order,articles))]
-        # set doc2vec similarity of each article
-        articles = [dict(art.items() + [('similarity',sim)]) for art,sim in zip(articles,similarities)]
-        return jsonify({'most_similar': articles})
+        similar_docids, similarities = most_similar(docid)
+        similar_docs = get_docs_by_ids(similar_docids)
+        similar_docs = merge_docs_and_similarities(similar_docs, similarities)
+        return jsonify({'most_similar': similar_docs})
     except Exception as err:
         pass
 
+
+@app.route("/url/<url>/most_similar", methods=['GET'])
+@cross_origin(origin='localhost', headers=['Content-Type'])
+def get_url_most_similar(url):
+    try:
+        # TODO query guardian api to get article text
+        # text = get_text_by_url(url)
+        # TODO preprocess text the same as happened in the training of doc2vec
+        # text = preprocess(text)
+        # infer doc2vec vector of text
+        tagged_text = TaggedDocument(words=text.split(), tags=['N/A'])
+        vec = d2v.infer_vector(tagged_text.words)
+        # find most similar docs by vector
+        similar_docids, similarities = most_similar(vec)
+        similar_docs = get_docs_by_ids(similar_docids)
+        similar_docs = merge_docs_and_similarities(similar_docs, similarities)
+        articles, similar_docids, similarities = most_similar_by_docid(docid)
+        return jsonify({'most_similar': articles})
+    except Exception as err:
+        pass
 
 if __name__ == "__main__":
     app.run()
