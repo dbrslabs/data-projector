@@ -25,7 +25,7 @@ if __name__ == '__main__':
     logging.basicConfig(filename=logfile, level=logging.WARNING)
 
     # connect to mongoDB, get articles collection
-    client = MongoClient('mongodb://localhost')
+    client = MongoClient('mongodb://52.5.180.63')
     articles = client.guardian.articlesv2
 
     # create data dir if it doesn't exist
