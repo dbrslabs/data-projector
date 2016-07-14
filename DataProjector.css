@@ -223,7 +223,7 @@ a.document {
 }
 
 /* mobile cutoff is 768px and is in a lot of JS so don't change plz */
-@media(min-width:768px) {
+@media(min-width:769px) {
     #wrapper {
         padding-right: 250px;
     }

@@ -2325,7 +2325,7 @@ Utility = (function() {
   Utility.ALT_KEY = "ALT_KEY";
 
   Utility.SCREEN = {
-    MOBILE: 768
+    MOBILE: 769
   };
 
   Utility.isMobile = function() {

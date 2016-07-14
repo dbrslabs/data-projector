@@ -22,7 +22,8 @@ class Utility
    @ALT_KEY : "ALT_KEY"
 
    # screen sizes in px
-   @SCREEN : { MOBILE: 768 }
+   # Using 769 instead of 768 because ugh iPads
+   @SCREEN : { MOBILE: 769 }
 
    # S T A T I C   M E T H O D S   
 
