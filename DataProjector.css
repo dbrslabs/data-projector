@@ -21,14 +21,34 @@ body {
 }*/
 /*#toolbar .button { color: #CCCCCC; font-weight: bold; cursor: pointer }*/
 .navbar-brand {
-   padding: 22px;
-   font-weight: bold;
+    line-height: 30px;
+}
+
+.navbar-brand h1 {
+    color: #333;
+    letter-spacing: 2px;
+    font-weight: bold;
+    font-size: 22px;
+    display: inline-block;
+    margin: 5px 0 0 0;
+    vertical-align: middle;
+}
+
+.navbar-brand img {
+    /*margin-right: 5px;*/
+    height: 30px;
+    width: auto;
+    display: inline-block;
 }
 
 @media only screen and (max-width : 480px) {
    .navbar-brand {
       padding: 16px;
-      font-size: 14px;
+      /*font-size: 14px;*/
+   }
+   
+   .navbar-brand h1 {
+       display: none;
    }
 }
 
