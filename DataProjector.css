@@ -1,5 +1,5 @@
 body {
-   color: #909090 !important;
+   /*color: #909090 !important;*/
    /*font-family: Monospace;*/
    font-family: 'PT Sans', Helvetica, Arial;
    /*font-size: 13px;*/
@@ -25,7 +25,7 @@ body {
 }
 
 .navbar-brand h1 {
-    color: #333;
+    color: #000;
     letter-spacing: 2px;
     font-weight: bold;
     font-size: 22px;
@@ -60,6 +60,12 @@ body {
 
 .navbar-right {
    margin-right: 0;
+}
+
+.navbar {
+    -moz-box-shadow:    0 0 20px 0 #000;
+    -webkit-box-shadow: 0 0 20px 0 #000;
+    box-shadow:         0 0 20px 0 #000;
 }
 
 /*#menu {
@@ -152,6 +158,7 @@ body {
     transition: all 0.5s ease;
     padding-top: 64px;
     padding-left: 14px;
+    padding-right: 14px;
 }
 
 #wrapper.toggled #sidebar-wrapper {
@@ -171,6 +178,18 @@ body {
 
 /* Sidebar Styles */
 
+.title {
+    color: #000;
+    letter-spacing: 2px;
+    font-weight: bold;
+    font-size: 18px;
+    text-align: center;
+}
+
+#sidePanelBody hr {
+    border-top-color: #CCC;
+}
+
 .sidebar-nav {
     position: absolute;
     top: 0;
@@ -188,7 +207,7 @@ body {
 .sidebar-nav li a {
     display: block;
     text-decoration: none;
-    color: #999999;
+    color: #999;
     cursor: pointer;
 }
 
