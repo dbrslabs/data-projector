@@ -1720,6 +1720,9 @@ Modal = (function(superClass) {
       },
       hr: {
         id: "#sidePanelBody hr"
+      },
+      link: {
+        id: "#sidePanelBody .read-more #read-more-link"
       }
     };
     $(id).on('click', '.document', this.onClickDocument);
@@ -1745,7 +1748,18 @@ Modal = (function(superClass) {
 
   Modal.prototype.setDocumentHTML = function(document) {
     $(this.modal.document.id).text("");
-    return $(this.modal.document.id).html(document);
+    $(this.modal.document.id).html(document);
+    return $(this.modal.document.id).append("<div class='fold-fade'> </div>");
+  };
+
+  Modal.prototype.setDocumentListHTML = function(document) {
+    $(".article").text("");
+    $("#article-list").text("");
+    return $("#article-list").html(document);
+  };
+
+  Modal.prototype.setDocumentGuardianLink = function(url) {
+    return $(this.modal.link.href).text(url);
   };
 
   Modal.prototype.setSimilarDocuments = function(documents) {
@@ -1793,16 +1807,19 @@ Modal = (function(superClass) {
       }
       return results;
     }).call(this)).join('');
-    return this.setDocumentHTML(docsHtml);
+    $("#article-list").show();
+    return this.setDocumentListHTML(docsHtml);
   };
 
   Modal.prototype.displayDocument = function(docId) {
+    $("#article-list").hide();
     $(this.modal.similar.id).show();
     $(this.modal.hr.id).show();
     this.getDocumentContents(docId, (function(_this) {
       return function(data) {
         _this.setTitle(data.title);
-        return _this.setDocumentHTML(data.html);
+        _this.setDocumentHTML(data.html);
+        return _this.setDocumentGuardianLink(data.url);
       };
     })(this));
     return this.getSimilarDocuments(docId, (function(_this) {

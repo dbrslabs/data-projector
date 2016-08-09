@@ -261,6 +261,29 @@ a.document {
   cursor: pointer;
 }
 
+.article {
+  height: 16em;
+  overflow: hidden;
+  position: relative;
+}
+
+.fold-fade {
+  /*position: relative;
+  height: 4em;
+  bottom: 4em;*/
+  position: absolute;
+  /*top: 14em;*/
+  bottom: 0;
+  left: 0;
+  height: 2em;
+  width: 100%;
+  background: linear-gradient(to top, rgba(248, 248, 248, 1), rgba(255, 255, 255, 0));
+}
+
+/*.read-more a {
+
+}*/
+
 /* mobile cutoff is 768px and is in a lot of JS so don't change plz */
 @media(min-width:769px) {
     #wrapper {

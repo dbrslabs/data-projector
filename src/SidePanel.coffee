@@ -24,6 +24,7 @@ class Modal extends Panel
          similar:  { id : "#sidePanelBody .similar" }
          document: { id : "#sidePanelBody .article" }
          hr :      { id : "#sidePanelBody hr" }
+         link :    { id : "#sidePanelBody .read-more #read-more-link" }
 
       # handle clicking document links
       $(id).on 'click', '.document', @onClickDocument
@@ -58,7 +59,17 @@ class Modal extends Panel
 
        $(@modal.document.id).text("")
        $(@modal.document.id).html(document)
+       $(@modal.document.id).append("<div class='fold-fade'> </div>");       
 
+
+   setDocumentListHTML: (document) ->
+       $(".article").text("")
+       $("#article-list").text("")
+       $("#article-list").html(document)
+
+
+   setDocumentGuardianLink: (url) ->
+       $(@modal.link.href).text(url)
 
 
    setSimilarDocuments: (documents) ->
@@ -96,17 +107,24 @@ class Modal extends Panel
           title = doc.title.substring(0,len)
           if title.length == len then title = title + '...'
           docs[i].title = title
+          #console.log Object.getOwnPropertyNames(docs[i])
       # format html and add to dom
       #docsHtml = ("<span class='cluster-id' style='color:#{@colors['c1'].getStyle()}'></span><a class='document' data-doc-id='#{doc.id}'>#{doc.title}</a><br/>" for doc in docs).join('')
       docsHtml = ("<span class='cluster-id' style='background-color:#{@colors[doc.cid].getStyle()}'></span><a class='document' data-doc-id='#{doc.id}'>#{doc.title}</a><br/>" for doc in docs).join('')
 
       #console.log Object.getOwnPropertyNames(docs[0])
+
+      # show article list
+      $("#article-list").show()
       
-      @setDocumentHTML(docsHtml)
+      @setDocumentListHTML(docsHtml)
 
 
    # display one particular document
    displayDocument: (docId) ->
+
+      # hide document list
+      $("#article-list").hide()
          
       # show similar documents section
       $(@modal.similar.id).show()
@@ -116,6 +134,7 @@ class Modal extends Panel
       @getDocumentContents docId, (data) =>
          @setTitle data.title
          @setDocumentHTML data.html
+         @setDocumentGuardianLink data.url
 
       @getSimilarDocuments docId, (data) =>
 
