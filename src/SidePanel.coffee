@@ -69,7 +69,8 @@ class Modal extends Panel
 
 
    setDocumentGuardianLink: (url) ->
-       $(@modal.link.href).text(url)
+       #$(@modal.link.href).text(url) # Doesn't work idk
+       $("#read-more-link").attr("href", url)
 
 
    setSimilarDocuments: (documents) ->

@@ -1759,7 +1759,7 @@ Modal = (function(superClass) {
   };
 
   Modal.prototype.setDocumentGuardianLink = function(url) {
-    return $(this.modal.link.href).text(url);
+    return $("#read-more-link").attr("href", url);
   };
 
   Modal.prototype.setSimilarDocuments = function(documents) {
