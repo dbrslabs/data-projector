@@ -31,6 +31,7 @@ class Toolbar extends Panel
    @EVENT_ANIMATE : "EVENT_ANIMATE"
    @EVENT_SPIN_TOGGLE : "EVENT_SPIN_TOGGLE"
    @EVENT_SHOW_DOCUMENTS: "EVENT_SHOW_DOCUMENTS"
+   @EVENT_SHOW_HELP: "EVENT_SHOW_HELP"
 
    # M E M B E R S
    
@@ -96,6 +97,7 @@ class Toolbar extends Panel
                     # { id : "#animateButton", key : 65, modifier : Utility.NO_KEY, type : Toolbar.EVENT_ANIMATE },
                       { id : "#toggleSpinButton", key : 0, modifier : Utility.NO_KEY, type : Toolbar.EVENT_SPIN_TOGGLE },
                       { id : "#toggleArticlesButton", key : 0, modifier : Utility.NO_KEY, type : Toolbar.EVENT_SHOW_DOCUMENTS },
+                      { id : "#toggleHelpButton", key : 0, modifier : Utility.NO_KEY, type : Toolbar.EVENT_SHOW_HELP },
                     ]
 
    initialize : =>

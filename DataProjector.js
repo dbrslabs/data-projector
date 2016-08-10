@@ -156,6 +156,8 @@ DataProjector = (function(superClass) {
           return this.sidepanel.toggleHidden();
         }
         break;
+      case Toolbar.EVENT_SHOW_HELP:
+        return alert("A wild tooltip has appeared");
       case Toolbar.EVENT_PRINT:
         this.storage.saveImage(this.projector.getImage());
         return this.toolbar.blinkPrintButton();
@@ -2074,6 +2076,8 @@ Toolbar = (function(superClass) {
 
   Toolbar.EVENT_SHOW_DOCUMENTS = "EVENT_SHOW_DOCUMENTS";
 
+  Toolbar.EVENT_SHOW_HELP = "EVENT_SHOW_HELP";
+
   Toolbar.prototype.dispatcher = null;
 
   function Toolbar(id) {
@@ -2219,6 +2223,11 @@ Toolbar = (function(superClass) {
         key: 0,
         modifier: Utility.NO_KEY,
         type: Toolbar.EVENT_SHOW_DOCUMENTS
+      }, {
+        id: "#toggleHelpButton",
+        key: 0,
+        modifier: Utility.NO_KEY,
+        type: Toolbar.EVENT_SHOW_HELP
       }
     ];
   };

@@ -176,6 +176,9 @@ class DataProjector extends Observer
             # if mobile, toggle sidepanel visibility
             if Utility.isMobile() then @sidepanel.toggleHidden() 
 
+         when Toolbar.EVENT_SHOW_HELP
+            # Show tooltips and stuff
+            alert "A wild tooltip has appeared"
 
          when Toolbar.EVENT_PRINT
             @storage.saveImage(@projector.getImage())
