@@ -41,14 +41,13 @@ class Modal extends Panel
 
    # Clear the info console.
    clear: ->
-      
       @setTitle("")
       @setDocumentHTML("")
       @setSimilarDocuments([])
-
+      $("#read-more-link").hide()
+      $(".article").hide()
 
    setTitle: (title) ->
-
        $(@modal.title.id).text(title)
 
 
@@ -56,10 +55,10 @@ class Modal extends Panel
 
 
    setDocumentHTML: (document) ->
-
+       $(@modal.document.id).show()
        $(@modal.document.id).text("")
        $(@modal.document.id).html(document)
-       $(@modal.document.id).append("<div class='fold-fade'> </div>");       
+       $(@modal.document.id).append("<div class='fold-fade'> </div>")
 
 
    setDocumentListHTML: (document) ->
@@ -71,27 +70,25 @@ class Modal extends Panel
    setDocumentGuardianLink: (url) ->
        #$(@modal.link.href).text(url) # Doesn't work idk
        $("#read-more-link").attr("href", url)
+       $("#read-more-link").show()
 
 
    setSimilarDocuments: (documents) ->
-
       html = ""
       for d in documents
          html += "<a class='document' data-doc-id='" + d.id + "'>" + d.title + "</a><br />"
       $(@modal.similar.id).text("")
       $(@modal.similar.id).append(html)
-
-
+      # show similar documents section
+      $(@modal.similar.id).show()
+      $(@modal.hr.id).show()
 
    toggleHidden: ->
-
       $("#wrapper").toggleClass "toggled"
-
 
 
    # display a list of documents
    displayDocumentsList: (documents) ->
-
       @clear()
       @setTitle "Random Document Sample in Selected Clusters"
 

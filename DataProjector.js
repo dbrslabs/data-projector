@@ -1737,7 +1737,9 @@ Modal = (function(superClass) {
   Modal.prototype.clear = function() {
     this.setTitle("");
     this.setDocumentHTML("");
-    return this.setSimilarDocuments([]);
+    this.setSimilarDocuments([]);
+    $("#read-more-link").hide();
+    return $(".article").hide();
   };
 
   Modal.prototype.setTitle = function(title) {
@@ -1749,6 +1751,7 @@ Modal = (function(superClass) {
   };
 
   Modal.prototype.setDocumentHTML = function(document) {
+    $(this.modal.document.id).show();
     $(this.modal.document.id).text("");
     $(this.modal.document.id).html(document);
     return $(this.modal.document.id).append("<div class='fold-fade'> </div>");
@@ -1761,7 +1764,8 @@ Modal = (function(superClass) {
   };
 
   Modal.prototype.setDocumentGuardianLink = function(url) {
-    return $("#read-more-link").attr("href", url);
+    $("#read-more-link").attr("href", url);
+    return $("#read-more-link").show();
   };
 
   Modal.prototype.setSimilarDocuments = function(documents) {
@@ -1772,7 +1776,9 @@ Modal = (function(superClass) {
       html += "<a class='document' data-doc-id='" + d.id + "'>" + d.title + "</a><br />";
     }
     $(this.modal.similar.id).text("");
-    return $(this.modal.similar.id).append(html);
+    $(this.modal.similar.id).append(html);
+    $(this.modal.similar.id).show();
+    return $(this.modal.hr.id).show();
   };
 
   Modal.prototype.toggleHidden = function() {
