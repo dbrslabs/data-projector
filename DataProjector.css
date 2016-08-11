@@ -104,15 +104,55 @@ body {
    display:block;
 }*/
 /*#info .button { color: #CCCCCC; font-weight: bold; cursor: pointer }*/
-canvas {
-  z-index: 0;
-}
 
 .modal {
   top:5%;
   right:50%;
   outline: none;
+
 }
+.modal-header{
+  background-color: #286090;
+  color:#FFF;
+}
+.white_logos {
+  float:left;
+/*  height: 30px;
+*/  padding: 15px 15px;
+}
+
+.white_logos img {
+  height: 50px;
+  width: auto;
+  display: inline-block;
+}
+.toolTip_top {
+  margin-bottom: 0px;
+}
+.toolTip_text {
+  margin-top: 15px;
+}
+.first_toolTip, .second_toolTip, .third_toolTip {
+  margin-bottom: 0px;
+/*  float:right;
+*/}
+
+.second_toolTip, .third_toolTip {
+  display: hidden;
+}
+
+.toolTip_text_second, .toolTip_text_third {
+  display: hidden;
+  margin-top: 15px;
+}
+
+h3#myModalLabel {
+  margin-top: 10px;
+  margin-bottom: 5px;
+}
+
+.modal-body{}
+
 .btn-circle {
     width: 30px;
     height: 30px;
