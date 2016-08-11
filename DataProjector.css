@@ -138,11 +138,11 @@ body {
 */}
 
 .second_toolTip, .third_toolTip {
-  display: hidden;
+  display: none;
 }
 
 .toolTip_text_second, .toolTip_text_third {
-  display: hidden;
+  display: none;
   margin-top: 15px;
 }
 
