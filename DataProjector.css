@@ -106,19 +106,35 @@ body {
 /*#info .button { color: #CCCCCC; font-weight: bold; cursor: pointer }*/
 
 .modal {
-  top:5%;
-  right:50%;
   outline: none;
-
 }
+
 .modal-header{
   background-color: #286090;
   color:#FFF;
 }
+
 .white_logos {
   float:left;
 /*  height: 30px;
 */  padding: 15px 15px;
+}
+
+.btn-primary {
+  background-color: #286090;
+  border-color: #286090;
+}
+
+.next-button {
+  float:right;
+}
+.close-button {
+  display:none;
+}
+
+.next-button:hover, .close-button:hover {
+  background-color: #337ab7;
+  border-color: #337ab7;
 }
 
 .white_logos img {
