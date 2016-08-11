@@ -886,7 +886,9 @@ Projector = (function(superClass) {
   };
 
   Projector.prototype.createControls = function() {
-    this.controls = new THREE.TrackballControls(this.cameraPerspective);
+    var viz_container;
+    viz_container = document.getElementById("container");
+    this.controls = new THREE.TrackballControls(this.cameraPerspective, viz_container);
     this.controls.rotateSpeed = 1.0;
     this.controls.zoomSpeed = 1.0;
     this.controls.panSpeed = 0.8;

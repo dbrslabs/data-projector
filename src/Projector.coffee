@@ -288,8 +288,9 @@ class Projector extends Subject
 
    # Initialize simulated trackball navigation controls
    createControls : =>
+      viz_container = document.getElementById( "container" )
 
-      @controls = new THREE.TrackballControls( @cameraPerspective )
+      @controls = new THREE.TrackballControls( @cameraPerspective, viz_container )
 
       @controls.rotateSpeed = 1.0
       @controls.zoomSpeed = 1.0
