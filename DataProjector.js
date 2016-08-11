@@ -156,6 +156,8 @@ DataProjector = (function(superClass) {
           return this.sidepanel.toggleHidden();
         }
         break;
+      case Toolbar.EVENT_SHOW_HELP:
+        return alert("A wild tooltip has appeared");
       case Toolbar.EVENT_PRINT:
         this.storage.saveImage(this.projector.getImage());
         return this.toolbar.blinkPrintButton();
@@ -1720,6 +1722,9 @@ Modal = (function(superClass) {
       },
       hr: {
         id: "#sidePanelBody hr"
+      },
+      link: {
+        id: "#sidePanelBody .read-more #read-more-link"
       }
     };
     $(id).on('click', '.document', this.onClickDocument);
@@ -1732,7 +1737,9 @@ Modal = (function(superClass) {
   Modal.prototype.clear = function() {
     this.setTitle("");
     this.setDocumentHTML("");
-    return this.setSimilarDocuments([]);
+    this.setSimilarDocuments([]);
+    $("#read-more-link").hide();
+    return $(".article").hide();
   };
 
   Modal.prototype.setTitle = function(title) {
@@ -1744,8 +1751,21 @@ Modal = (function(superClass) {
   };
 
   Modal.prototype.setDocumentHTML = function(document) {
+    $(this.modal.document.id).show();
     $(this.modal.document.id).text("");
-    return $(this.modal.document.id).html(document);
+    $(this.modal.document.id).html(document);
+    return $(this.modal.document.id).append("<div class='fold-fade'> </div>");
+  };
+
+  Modal.prototype.setDocumentListHTML = function(document) {
+    $(".article").text("");
+    $("#article-list").text("");
+    return $("#article-list").html(document);
+  };
+
+  Modal.prototype.setDocumentGuardianLink = function(url) {
+    $("#read-more-link").attr("href", url);
+    return $("#read-more-link").show();
   };
 
   Modal.prototype.setSimilarDocuments = function(documents) {
@@ -1756,7 +1776,9 @@ Modal = (function(superClass) {
       html += "<a class='document' data-doc-id='" + d.id + "'>" + d.title + "</a><br />";
     }
     $(this.modal.similar.id).text("");
-    return $(this.modal.similar.id).append(html);
+    $(this.modal.similar.id).append(html);
+    $(this.modal.similar.id).show();
+    return $(this.modal.hr.id).show();
   };
 
   Modal.prototype.toggleHidden = function() {
@@ -1793,16 +1815,19 @@ Modal = (function(superClass) {
       }
       return results;
     }).call(this)).join('');
-    return this.setDocumentHTML(docsHtml);
+    $("#article-list").show();
+    return this.setDocumentListHTML(docsHtml);
   };
 
   Modal.prototype.displayDocument = function(docId) {
+    $("#article-list").hide();
     $(this.modal.similar.id).show();
     $(this.modal.hr.id).show();
     this.getDocumentContents(docId, (function(_this) {
       return function(data) {
         _this.setTitle(data.title);
-        return _this.setDocumentHTML(data.html);
+        _this.setDocumentHTML(data.html);
+        return _this.setDocumentGuardianLink(data.url);
       };
     })(this));
     return this.getSimilarDocuments(docId, (function(_this) {
@@ -2057,6 +2082,8 @@ Toolbar = (function(superClass) {
 
   Toolbar.EVENT_SHOW_DOCUMENTS = "EVENT_SHOW_DOCUMENTS";
 
+  Toolbar.EVENT_SHOW_HELP = "EVENT_SHOW_HELP";
+
   Toolbar.prototype.dispatcher = null;
 
   function Toolbar(id) {
@@ -2202,6 +2229,11 @@ Toolbar = (function(superClass) {
         key: 0,
         modifier: Utility.NO_KEY,
         type: Toolbar.EVENT_SHOW_DOCUMENTS
+      }, {
+        id: "#toggleHelpButton",
+        key: 0,
+        modifier: Utility.NO_KEY,
+        type: Toolbar.EVENT_SHOW_HELP
       }
     ];
   };
