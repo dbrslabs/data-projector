@@ -132,6 +132,7 @@ class Projector extends Subject
       @SCREEN_HEIGHT = window.innerHeight
 
       console.log "Screen #{@SCREEN_WIDTH} x #{@SCREEN_HEIGHT}"
+      #alert "Resized!"
 
       if @renderer?
 

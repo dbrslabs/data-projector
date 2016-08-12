@@ -1784,7 +1784,11 @@ Modal = (function(superClass) {
   };
 
   Modal.prototype.toggleHidden = function() {
-    return $("#wrapper").toggleClass("toggled");
+    return $('#wrapper').toggleClass('toggled').promise().done(function() {
+      return setTimeout((function() {
+        window.dispatchEvent(new Event('resize'));
+      }), 1000);
+    });
   };
 
   Modal.prototype.displayDocumentsList = function(documents) {

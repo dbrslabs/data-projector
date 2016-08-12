@@ -2,6 +2,7 @@
 
 Panel = require('./Panel.coffee')
 Utility = require('./Utility.coffee')
+#Projector = require('./Projector.coffee')
 
 class Modal extends Panel
 
@@ -84,8 +85,18 @@ class Modal extends Panel
       $(@modal.hr.id).show()
 
    toggleHidden: ->
-      $("#wrapper").toggleClass "toggled"
-
+      $('#wrapper').toggleClass('toggled').promise().done ->
+        # setTimeout(function() {
+        #   window.dispatchEvent new Event('resize')
+        # }, 2000);
+        setTimeout (-> # TODO: Remove this setTimeout and replace with working promise ~ .dh
+            window.dispatchEvent new Event('resize')
+            return
+        ), 1000
+        
+        #$(window).resize()
+        #return
+        
 
    # display a list of documents
    displayDocumentsList: (documents) ->

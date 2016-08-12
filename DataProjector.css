@@ -285,9 +285,10 @@ a.document {
 }*/
 
 /* mobile cutoff is 768px and is in a lot of JS so don't change plz */
-@media(min-width:769px) {
+@media(min-width:768px) {
     #wrapper {
-        padding-right: 250px;
+        /*padding-right: 250px;*/
+        padding-right: 384px;
     }
 
     #wrapper.toggled {
@@ -295,7 +296,8 @@ a.document {
     }
 
     #sidebar-wrapper {
-        width: 450px;
+        /*width: 450px;*/
+        width: 384px;
     }
 
     #wrapper.toggled #sidebar-wrapper {
