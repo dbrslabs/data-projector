@@ -122,6 +122,8 @@ class Toolbar extends Panel
       @setButtonSelected("#spinStopButton", true)
       @setButtonSelected("#spinRightButton", false)
 
+      @setHelpModal("#toggleHelpButton", true)
+
       #@setButtonSelected("#animateButton", true)
       #@setButtonSelected("#animateSpinButton", true)
 
@@ -206,7 +208,22 @@ class Toolbar extends Panel
 
       @setButtonSelected("#animateButton", selected)
 
+   setHelpModal : =>
 
+       $('#myModal').modal 'show'
+       $('.next-button').click ->
+         $targetItem = $('.toolTip_text.active').next()
+         $targetItem.addClass 'active'
+         $targetItem.siblings().removeClass 'active'
+         $('.back-button').css 'display', 'inline'
+         return
+         
+       $('.back-button').click ->
+         $targetItem = $('.toolTip_text.active').prev()
+         $targetItem.addClass 'active'
+         $targetItem.siblings().removeClass 'active'
+         return
+             
 
 
 module.exports = Toolbar

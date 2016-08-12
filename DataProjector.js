@@ -151,13 +151,13 @@ DataProjector = (function(superClass) {
         return this.projector.toggleSpin();
       case Toolbar.EVENT_SHOW_DOCUMENTS:
         visible = this.projector.getVisibleDocuments();
-        this.sidepanel.displayDocumentsList(visible.documents);
+        this.SidePanel.displayDocumentsList(visible.documents);
         if (Utility.isMobile()) {
           return this.sidepanel.toggleHidden();
         }
         break;
       case Toolbar.EVENT_SHOW_HELP:
-        return alert("A wild tooltip has appeared");
+        return this.toolbar.setHelpModal();
       case Toolbar.EVENT_PRINT:
         this.storage.saveImage(this.projector.getImage());
         return this.toolbar.blinkPrintButton();
@@ -2087,6 +2087,7 @@ Toolbar = (function(superClass) {
   Toolbar.prototype.dispatcher = null;
 
   function Toolbar(id) {
+    this.setHelpModal = bind(this.setHelpModal, this);
     this.setAnimateButtonSelected = bind(this.setAnimateButtonSelected, this);
     this.setSpinButtonSelected = bind(this.setSpinButtonSelected, this);
     this.setViewButtonSelected = bind(this.setViewButtonSelected, this);
@@ -2252,7 +2253,8 @@ Toolbar = (function(superClass) {
     this.setButtonSelected("#viewSideButton", false);
     this.setButtonSelected("#spinLeftButton", false);
     this.setButtonSelected("#spinStopButton", true);
-    return this.setButtonSelected("#spinRightButton", false);
+    this.setButtonSelected("#spinRightButton", false);
+    return this.setHelpModal("#toggleHelpButton", true);
   };
 
   Toolbar.prototype.setButtonSelected = function(id, selected) {
@@ -2322,6 +2324,23 @@ Toolbar = (function(superClass) {
 
   Toolbar.prototype.setAnimateButtonSelected = function(selected) {
     return this.setButtonSelected("#animateButton", selected);
+  };
+
+  Toolbar.prototype.setHelpModal = function() {
+    $('#myModal').modal('show');
+    $('.next-button').click(function() {
+      var $targetItem;
+      $targetItem = $('.toolTip_text.active').next();
+      $targetItem.addClass('active');
+      $targetItem.siblings().removeClass('active');
+      $('.back-button').css('display', 'inline');
+    });
+    return $('.back-button').click(function() {
+      var $targetItem;
+      $targetItem = $('.toolTip_text.active').prev();
+      $targetItem.addClass('active');
+      $targetItem.siblings().removeClass('active');
+    });
   };
 
   return Toolbar;
