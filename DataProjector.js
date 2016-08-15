@@ -1855,7 +1855,13 @@ Modal = (function(superClass) {
       url: 'http://127.0.0.1:5000/doc/' + id,
       type: 'GET',
       contentType: 'application/json',
-      success: callback
+      beforeSend: function() {
+        return $('#sidePanelBody i.article-spinner').addClass('fa fa-spinner fa-pulse fa-3x fa-fw');
+      },
+      success: function(data) {
+        $('#sidePanelBody i.article-spinner').removeClass('fa fa-spinner fa-pulse fa-3x fa-fw');
+        return callback(data);
+      }
     });
   };
 
@@ -1864,7 +1870,13 @@ Modal = (function(superClass) {
       url: 'http://127.0.0.1:5000/doc/' + id + '/most_similar',
       type: 'GET',
       contentType: 'application/json',
-      success: callback
+      beforeSend: function() {
+        return $('#sidePanelBody i.related-articles-spinner').addClass('fa fa-spinner fa-pulse fa-3x fa-fw');
+      },
+      success: function(data) {
+        $('#sidePanelBody i.related-articles-spinner').removeClass('fa fa-spinner fa-pulse fa-3x fa-fw');
+        return callback(data);
+      }
     });
   };
 

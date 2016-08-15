@@ -190,6 +190,12 @@ body {
     border-top-color: #CCC;
 }
 
+#sidePanelBody i {
+  text-align: center;
+  display: block;
+  margin: 0 auto;
+}
+
 .sidebar-nav {
     position: absolute;
     top: 0;
