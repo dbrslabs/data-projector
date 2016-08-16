@@ -18,8 +18,12 @@ First install all python dependencies and then run the flask server:
 
     $ virtualenv venv
     $ source venv/bin/activate
-    $ pip install -r requirements.txt
+    $ pip install -r web-requirements.txt
     $ python api.py
+
+If you are planning do throw down some machine learning biz, you'll want to install all the math libraries in `ml-requirements.txt` instead of just `web-requirements.txt`:
+
+    $ pip install -r ml-requirements.txt
 
 You can run doc2vec and tsne to generate your own `data.json`. An example of doc2vec:
 
