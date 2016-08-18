@@ -212,11 +212,11 @@ class Toolbar extends Panel
 
        $('#myModal').modal 'show'
        $('.next-button').click =>
-        $targetItem = $('div p.toolTip_text.active').next()
+        $targetItem = $('p.toolTip_text.active').next()
         if $targetItem.is 'button'
           $('#myModal').modal 'hide'
           $targetItem.prev().removeClass 'active'          
-          $('div p.toolTip_text.first').addClass 'active'
+          $('p.toolTip_text.first').addClass 'active'
         else
           $targetItem.addClass 'active'
           $targetItem.prev().removeClass 'active'
