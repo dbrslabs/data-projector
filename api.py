@@ -25,9 +25,9 @@ init_rng_state = d2v.random.get_state()
 # 3rd party
 import requests
 
-app = Flask(__name__)
-app.config['CORS_HEADERS'] = "Content-Type"
-cors = CORS(app, resources={r"/*": {"origins": 'localhost'}})
+application = Flask(__name__)
+application.config['CORS_HEADERS'] = "Content-Type"
+cors = CORS(application, resources={r"/*": {"origins": 'localhost'}})
 
 def format_article(article):
     return {
@@ -39,11 +39,11 @@ def format_article(article):
         'url': article['webUrl'],
     }
 
-@app.route("/", methods=['GET'])
+@application.route("/", methods=['GET'])
 def sanitytest():
     return "<p>airhornsounds.wav</p>"
 
-@app.route("/doc/<docid>", methods=['GET'])
+@application.route("/doc/<docid>", methods=['GET'])
 @cross_origin(origin='localhost', headers=['Content-Type'])
 def get_doc(docid):
     try:
@@ -70,7 +70,7 @@ def merge_docs_and_similarities(docs, similarities):
     docs = [dict(art.items() + [('similarity',sim)]) for art,sim in zip(docs,similarities)]
     return docs
 
-@app.route("/doc/<docid>/most_similar", methods=['GET'])
+@application.route("/doc/<docid>/most_similar", methods=['GET'])
 @cross_origin(origin='localhost', headers=['Content-Type'])
 def get_doc_most_similar(docid):
     try:
@@ -82,7 +82,7 @@ def get_doc_most_similar(docid):
         pass
 
 
-@app.route("/url/most_similar", methods=['POST'])
+@application.route("/url/most_similar", methods=['POST'])
 @cross_origin(origin='localhost', headers=['Content-Type'])
 def get_url_most_similar():
     try:
@@ -126,4 +126,4 @@ def get_url_most_similar():
         pass
 
 if __name__ == "__main__":
-    app.run()
+    application.run(host='0.0.0.0')
