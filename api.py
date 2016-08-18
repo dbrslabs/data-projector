@@ -39,6 +39,10 @@ def format_article(article):
         'url': article['webUrl'],
     }
 
+@app.route("/", methods=['GET'])
+def sanitytest():
+    return "<p>airhornsounds.wav</p>"
+
 @app.route("/doc/<docid>", methods=['GET'])
 @cross_origin(origin='localhost', headers=['Content-Type'])
 def get_doc(docid):
