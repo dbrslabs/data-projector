@@ -13,6 +13,10 @@ To serve index.html:
 
     $ python -m SimpleHTTPServer
 
+The site lives in /guardian-galaxy to match the routing in production, so you can access it at:
+
+    http://0.0.0.0:8000/guardian-galaxy
+
 You also need to serve the api if you want to access the Guardian-article-content and most-similar-articles endpoints. 
 First install all python dependencies and then run the flask server:
 
