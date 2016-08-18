@@ -126,4 +126,4 @@ def get_url_most_similar():
         pass
 
 if __name__ == "__main__":
-    app.run()
+    app.run(host='0.0.0.0')
