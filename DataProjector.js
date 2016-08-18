@@ -1852,7 +1852,7 @@ Modal = (function(superClass) {
 
   Modal.prototype.getDocumentContents = function(id, callback) {
     return $.ajax({
-      url: 'http://127.0.0.1:5000/doc/' + id,
+      url: '/guardian-galaxy-api/doc/' + id,
       type: 'GET',
       contentType: 'application/json',
       beforeSend: function() {
@@ -1867,7 +1867,7 @@ Modal = (function(superClass) {
 
   Modal.prototype.getSimilarDocuments = function(id, callback) {
     return $.ajax({
-      url: 'http://127.0.0.1:5000/doc/' + id + '/most_similar',
+      url: '/guardian-galaxy-api/doc/' + id + '/most_similar',
       type: 'GET',
       contentType: 'application/json',
       beforeSend: function() {
