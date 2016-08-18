@@ -2,6 +2,7 @@
 
 Panel = require('./Panel.coffee')
 Utility = require('./Utility.coffee')
+#Projector = require('./Projector.coffee')
 
 class Modal extends Panel
 
@@ -84,8 +85,18 @@ class Modal extends Panel
       $(@modal.hr.id).show()
 
    toggleHidden: ->
-      $("#wrapper").toggleClass "toggled"
-
+      $('#wrapper').toggleClass('toggled').promise().done ->
+        # setTimeout(function() {
+        #   window.dispatchEvent new Event('resize')
+        # }, 2000);
+        setTimeout (-> # TODO: Remove this setTimeout and replace with working promise ~ .dh
+            window.dispatchEvent new Event('resize')
+            return
+        ), 1000
+        
+        #$(window).resize()
+        #return
+        
 
    # display a list of documents
    displayDocumentsList: (documents) ->
@@ -150,10 +161,14 @@ class Modal extends Panel
    getDocumentContents: (id, callback) ->
 
       $.ajax(
-         url: 'http://127.0.0.1:5000/doc/' + id
-         type: 'GET'
-         contentType: 'application/json'
-         success: callback
+        url: 'http://127.0.0.1:5000/doc/' + id
+        type: 'GET'
+        contentType: 'application/json'
+        beforeSend: ->
+             $('#sidePanelBody i.article-spinner').addClass('fa fa-spinner fa-pulse fa-3x fa-fw')
+        success: (data) ->
+             $('#sidePanelBody i.article-spinner').removeClass('fa fa-spinner fa-pulse fa-3x fa-fw')
+             callback(data)
       )
 
 
@@ -164,7 +179,11 @@ class Modal extends Panel
        url: 'http://127.0.0.1:5000/doc/' + id + '/most_similar'
        type: 'GET'
        contentType: 'application/json'
-       success: callback
+       beforeSend: ->
+            $('#sidePanelBody i.related-articles-spinner').addClass('fa fa-spinner fa-pulse fa-3x fa-fw')
+       success:  (data) ->
+            $('#sidePanelBody i.related-articles-spinner').removeClass('fa fa-spinner fa-pulse fa-3x fa-fw')
+            callback(data)
      )
 
 

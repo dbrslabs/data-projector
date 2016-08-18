@@ -886,7 +886,9 @@ Projector = (function(superClass) {
   };
 
   Projector.prototype.createControls = function() {
-    this.controls = new THREE.TrackballControls(this.cameraPerspective);
+    var viz_container;
+    viz_container = document.getElementById("container");
+    this.controls = new THREE.TrackballControls(this.cameraPerspective, viz_container);
     this.controls.rotateSpeed = 1.0;
     this.controls.zoomSpeed = 1.0;
     this.controls.panSpeed = 0.8;
@@ -1782,7 +1784,11 @@ Modal = (function(superClass) {
   };
 
   Modal.prototype.toggleHidden = function() {
-    return $("#wrapper").toggleClass("toggled");
+    return $('#wrapper').toggleClass('toggled').promise().done(function() {
+      return setTimeout((function() {
+        window.dispatchEvent(new Event('resize'));
+      }), 1000);
+    });
   };
 
   Modal.prototype.displayDocumentsList = function(documents) {
@@ -1849,7 +1855,13 @@ Modal = (function(superClass) {
       url: 'http://127.0.0.1:5000/doc/' + id,
       type: 'GET',
       contentType: 'application/json',
-      success: callback
+      beforeSend: function() {
+        return $('#sidePanelBody i.article-spinner').addClass('fa fa-spinner fa-pulse fa-3x fa-fw');
+      },
+      success: function(data) {
+        $('#sidePanelBody i.article-spinner').removeClass('fa fa-spinner fa-pulse fa-3x fa-fw');
+        return callback(data);
+      }
     });
   };
 
@@ -1858,7 +1870,13 @@ Modal = (function(superClass) {
       url: 'http://127.0.0.1:5000/doc/' + id + '/most_similar',
       type: 'GET',
       contentType: 'application/json',
-      success: callback
+      beforeSend: function() {
+        return $('#sidePanelBody i.related-articles-spinner').addClass('fa fa-spinner fa-pulse fa-3x fa-fw');
+      },
+      success: function(data) {
+        $('#sidePanelBody i.related-articles-spinner').removeClass('fa fa-spinner fa-pulse fa-3x fa-fw');
+        return callback(data);
+      }
     });
   };
 

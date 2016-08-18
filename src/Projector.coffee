@@ -132,6 +132,7 @@ class Projector extends Subject
       @SCREEN_HEIGHT = window.innerHeight
 
       console.log "Screen #{@SCREEN_WIDTH} x #{@SCREEN_HEIGHT}"
+      #alert "Resized!"
 
       if @renderer?
 
@@ -288,8 +289,9 @@ class Projector extends Subject
 
    # Initialize simulated trackball navigation controls
    createControls : =>
+      viz_container = document.getElementById( "container" )
 
-      @controls = new THREE.TrackballControls( @cameraPerspective )
+      @controls = new THREE.TrackballControls( @cameraPerspective, viz_container )
 
       @controls.rotateSpeed = 1.0
       @controls.zoomSpeed = 1.0
