@@ -2331,9 +2331,11 @@ Toolbar = (function(superClass) {
     $('.next-button').click((function(_this) {
       return function() {
         var $targetItem;
-        $targetItem = $('p.toolTip_text.active').next();
+        $targetItem = $('div p.toolTip_text.active').next();
         if ($targetItem.is('button')) {
           $('#myModal').modal('hide');
+          $targetItem.prev().removeClass('active');
+          $('div p.toolTip_text.first').addClass('active');
         } else {
           $targetItem.addClass('active');
           $targetItem.prev().removeClass('active');
@@ -2341,22 +2343,16 @@ Toolbar = (function(superClass) {
         }
       };
     })(this));
-    $('.back-button').click((function(_this) {
+    return $('.back-button').click((function(_this) {
       return function() {
         var $targetItem;
-        $targetItem = $('p.toolTip_text.active').prev();
+        $targetItem = $('div p.toolTip_text.active').prev();
         if ($targetItem.is('div')) {
-          $('.back-button').toggle;
+          _this.css('display', 'none');
         } else {
           $targetItem.addClass('active');
           $targetItem.next().removeClass('active');
         }
-      };
-    })(this));
-    return $('#toggleHelpButton').click((function(_this) {
-      return function() {
-        $('p.toolTip_text').removeClass('active');
-        $('div p.toolTip_text:first-child').addClass('active');
       };
     })(this));
   };

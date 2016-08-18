@@ -212,28 +212,25 @@ class Toolbar extends Panel
 
        $('#myModal').modal 'show'
        $('.next-button').click =>
-        $targetItem = $('p.toolTip_text.active').next()
+        $targetItem = $('div p.toolTip_text.active').next()
         if $targetItem.is 'button'
           $('#myModal').modal 'hide'
+          $targetItem.prev().removeClass 'active'          
+          $('div p.toolTip_text.first').addClass 'active'
         else
           $targetItem.addClass 'active'
           $targetItem.prev().removeClass 'active'
           $('.back-button').css 'display', 'inline'       
         return
        $('.back-button').click =>
-        $targetItem = $('p.toolTip_text.active').prev()
+        $targetItem = $('div p.toolTip_text.active').prev()
         if $targetItem.is 'div'
-          # $('#myModal').modal 'hide'
           # this.css 'display', 'none'
-          $('.back-button').css 'display', 'none'         
+          this.css 'display', 'none'         
         else         
           $targetItem.addClass 'active'
           $targetItem.next().removeClass 'active'          
         return
-       $('#toggleHelpButton').click =>
-         $('p.toolTip_text').removeClass 'active'
-         $('div p.toolTip_text:first-child').addClass 'active'
-         return
 
 
 
