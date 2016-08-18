@@ -4,6 +4,7 @@
 from urlparse import urlparse
 from urllib import urlencode
 import json
+import os.path
 
 # mongo
 from pymongo import MongoClient
@@ -40,10 +41,17 @@ def format_article(article):
     }
 
 @application.route("/guardian-galaxy", methods=['GET'])
-def sanitytest():
-    return "<p>airhornsounds.wav</p>"
+def index():
+    return application.send_static_file('index.html')
+    #return send_from_directory('.', 'index.html')
+    #root_dir = os.path.dirname(os.getcwd())
+    #return "<p>" + os.path.abspath('index.html') + "</p>"
+    #return send_from_directory(root_dir, 'index.html')
+    #return application.send_static_file('../index.html')
+#def sanitytest():
+#    return "<p>airhornsounds.wav</p>"
 
-@application.route("/guardian-galaxy/doc/<docid>", methods=['GET'])
+@application.route("/doc/<docid>", methods=['GET'])
 @cross_origin(origin='localhost', headers=['Content-Type'])
 def get_doc(docid):
     try:
@@ -70,7 +78,7 @@ def merge_docs_and_similarities(docs, similarities):
     docs = [dict(art.items() + [('similarity',sim)]) for art,sim in zip(docs,similarities)]
     return docs
 
-@application.route("guardian-galaxy/doc/<docid>/most_similar", methods=['GET'])
+@application.route("/doc/<docid>/most_similar", methods=['GET'])
 @cross_origin(origin='localhost', headers=['Content-Type'])
 def get_doc_most_similar(docid):
     try:
@@ -82,7 +90,7 @@ def get_doc_most_similar(docid):
         pass
 
 
-@application.route("guardian-galaxy/url/most_similar", methods=['POST'])
+@application.route("/url/most_similar", methods=['POST'])
 @cross_origin(origin='localhost', headers=['Content-Type'])
 def get_url_most_similar():
     try:
