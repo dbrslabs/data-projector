@@ -85,7 +85,7 @@ DataProjector = (function(superClass) {
   };
 
   DataProjector.prototype.onToolbarEvent = function(type, data) {
-    var icon, spinning, state, visible;
+    var icon, spinning, state;
     switch (type) {
       case Toolbar.EVENT_MENU:
         state = this.menu.toggle();
@@ -150,12 +150,7 @@ DataProjector = (function(superClass) {
         }
         return this.projector.toggleSpin();
       case Toolbar.EVENT_SHOW_DOCUMENTS:
-        visible = this.projector.getVisibleDocuments();
-        this.sidepanel.displayDocumentsList(visible.documents);
-        if (Utility.isMobile()) {
-          return this.sidepanel.toggleHidden();
-        }
-        break;
+        return this.sidepanel.toggleHidden();
       case Toolbar.EVENT_SHOW_HELP:
         return alert("A wild tooltip has appeared");
       case Toolbar.EVENT_PRINT:
@@ -167,13 +162,17 @@ DataProjector = (function(superClass) {
   DataProjector.prototype.onMenuEvent = function(type, data) {
     switch (type) {
       case Menu.EVENT_TOGGLE_ALL_ON:
-        return this.projector.setAllClustersVisible(true);
+        this.projector.setAllClustersVisible(true);
+        return this.updateDocumentsDisplay();
       case Menu.EVENT_TOGGLE_ALL_OFF:
-        return this.projector.setAllClustersVisible(false);
+        this.projector.setAllClustersVisible(false);
+        return this.updateDocumentsDisplay();
       case Menu.EVENT_TOGGLE_ID:
-        return this.projector.toggleClusterVisibility(data.id);
+        this.projector.toggleClusterVisibility(data.id);
+        return this.updateDocumentsDisplay();
       case Menu.EVENT_CLUSTER_ID:
-        return this.projector.toggleClusterSelection(data.id);
+        this.projector.toggleClusterSelection(data.id);
+        return this.updateDocumentsDisplay();
     }
   };
 
@@ -203,6 +202,13 @@ DataProjector = (function(superClass) {
     this.onToolbarEvent(Toolbar.EVENT_SPIN_RIGHT);
     visible = this.projector.getVisibleDocuments();
     this.sidepanel.setColors(this.colors);
+    return this.sidepanel.displayDocumentsList(visible.documents);
+  };
+
+  DataProjector.prototype.updateDocumentsDisplay = function() {
+    var visible;
+    console.log('updateDocumentsDisplay');
+    visible = this.projector.getVisibleDocuments();
     return this.sidepanel.displayDocumentsList(visible.documents);
   };
 
@@ -1852,7 +1858,7 @@ Modal = (function(superClass) {
 
   Modal.prototype.getDocumentContents = function(id, callback) {
     return $.ajax({
-      url: '/guardian-galaxy-api/doc/' + id,
+      url: 'http://localhost:5000/doc/' + id,
       type: 'GET',
       contentType: 'application/json',
       beforeSend: function() {
@@ -1867,7 +1873,7 @@ Modal = (function(superClass) {
 
   Modal.prototype.getSimilarDocuments = function(id, callback) {
     return $.ajax({
-      url: '/guardian-galaxy-api/doc/' + id + '/most_similar',
+      url: 'http://127.0.0.1:5000/doc/' + id + '/most_similar',
       type: 'GET',
       contentType: 'application/json',
       beforeSend: function() {
