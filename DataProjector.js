@@ -207,7 +207,6 @@ DataProjector = (function(superClass) {
 
   DataProjector.prototype.updateDocumentsDisplay = function() {
     var visible;
-    console.log('updateDocumentsDisplay');
     visible = this.projector.getVisibleDocuments();
     return this.sidepanel.displayDocumentsList(visible.documents);
   };
@@ -2170,77 +2169,77 @@ Toolbar = (function(superClass) {
     return this.dispatcher = [
       {
         id: "#menuButton",
-        key: 77,
+        key: 0,
         modifier: Utility.NO_KEY,
         type: Toolbar.EVENT_MENU
       }, {
         id: "#infoButton",
-        key: 73,
+        key: 0,
         modifier: Utility.NO_KEY,
         type: Toolbar.EVENT_INFO
       }, {
         id: "#perspectiveButton",
-        key: 80,
+        key: 0,
         modifier: Utility.NO_KEY,
         type: Toolbar.EVENT_PERSPECTIVE
       }, {
         id: "#orthographicButton",
-        key: 79,
+        key: 0,
         modifier: Utility.NO_KEY,
         type: Toolbar.EVENT_ORTHOGRAPHIC
       }, {
         id: "#dualButton",
-        key: 68,
+        key: 0,
         modifier: Utility.NO_KEY,
         type: Toolbar.EVENT_DUAL
       }, {
         id: "#resetButton",
-        key: 82,
+        key: 0,
         modifier: Utility.NO_KEY,
         type: Toolbar.EVENT_RESET
       }, {
         id: "#clearButton",
-        key: 67,
+        key: 0,
         modifier: Utility.NO_KEY,
         type: Toolbar.EVENT_CLEAR
       }, {
         id: "#boxButton",
-        key: 66,
+        key: 0,
         modifier: Utility.NO_KEY,
         type: Toolbar.EVENT_BOX
       }, {
         id: "#viewportButton",
-        key: 86,
+        key: 0,
         modifier: Utility.NO_KEY,
         type: Toolbar.EVENT_VIEWPORT
       }, {
         id: "#viewTopButton",
-        key: 49,
+        key: 0,
         modifier: Utility.NO_KEY,
         type: Toolbar.EVENT_VIEW_TOP
       }, {
         id: "#viewFrontButton",
-        key: 50,
+        key: 0,
         modifier: Utility.NO_KEY,
         type: Toolbar.EVENT_VIEW_FRONT
       }, {
         id: "#viewSideButton",
-        key: 51,
+        key: 0,
         modifier: Utility.NO_KEY,
         type: Toolbar.EVENT_VIEW_SIDE
       }, {
         id: "#spinLeftButton",
-        key: 37,
+        key: 0,
         modifier: Utility.NO_KEY,
         type: Toolbar.EVENT_SPIN_LEFT
       }, {
         id: "#spinStopButton",
-        key: 32,
+        key: 0,
         modifier: Utility.NO_KEY,
         type: Toolbar.EVENT_SPIN_STOP
       }, {
         id: "#spinRightButton",
-        key: 39,
+        key: 0,
         modifier: Utility.NO_KEY,
         type: Toolbar.EVENT_SPIN_RIGHT
       }, {
