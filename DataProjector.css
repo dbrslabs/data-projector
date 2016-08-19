@@ -10,6 +10,17 @@ body {
    overflow: hidden;
 }
 
+
+/* Neither of these outline overrides work -_- */
+* {
+    outline: none;
+}
+
+button {
+    outline: none;
+    -webkit-tap-highlight-color: rgba(0,0,0,0);
+}
+
 /*#toolbar {
    position: absolute;
    top: 10px;
