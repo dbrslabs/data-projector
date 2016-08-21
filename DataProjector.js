@@ -85,7 +85,7 @@ DataProjector = (function(superClass) {
   };
 
   DataProjector.prototype.onToolbarEvent = function(type, data) {
-    var icon, spinning, state;
+    var icon, spinning, state, visible;
     switch (type) {
       case Toolbar.EVENT_MENU:
         state = this.menu.toggle();
@@ -150,16 +150,12 @@ DataProjector = (function(superClass) {
         }
         return this.projector.toggleSpin();
       case Toolbar.EVENT_SHOW_DOCUMENTS:
-<<<<<<< HEAD
         visible = this.projector.getVisibleDocuments();
         this.SidePanel.displayDocumentsList(visible.documents);
         if (Utility.isMobile()) {
-          return this.sidepanel.toggleHidden();
+          this.sidepanel.toggleHidden();
         }
-        break;
-=======
         return this.sidepanel.toggleHidden();
->>>>>>> 23875303b2ab885bac42256e28f5f94ac80b92b4
       case Toolbar.EVENT_SHOW_HELP:
         return this.toolbar.setHelpModal();
       case Toolbar.EVENT_PRINT:
@@ -1866,7 +1862,7 @@ Modal = (function(superClass) {
 
   Modal.prototype.getDocumentContents = function(id, callback) {
     return $.ajax({
-      url: 'http://localhost:5000/doc/' + id,
+      url: '/guardian-galaxy-api/doc/' + id,
       type: 'GET',
       contentType: 'application/json',
       beforeSend: function() {
@@ -1881,7 +1877,7 @@ Modal = (function(superClass) {
 
   Modal.prototype.getSimilarDocuments = function(id, callback) {
     return $.ajax({
-      url: 'http://127.0.0.1:5000/doc/' + id + '/most_similar',
+      url: '/guardian-galaxy-api/doc/' + id + '/most_similar',
       type: 'GET',
       contentType: 'application/json',
       beforeSend: function() {

@@ -171,14 +171,11 @@ class DataProjector extends Observer
             @projector.toggleSpin()
 
          when Toolbar.EVENT_SHOW_DOCUMENTS
-<<<<<<< HEAD
             visible = @projector.getVisibleDocuments()
             @SidePanel.displayDocumentsList(visible.documents)
             # if mobile, toggle sidepanel visibility
             if Utility.isMobile() then @sidepanel.toggleHidden() 
-=======
             @sidepanel.toggleHidden() 
->>>>>>> 23875303b2ab885bac42256e28f5f94ac80b92b4
 
          when Toolbar.EVENT_SHOW_HELP
             # Show tooltips and stuff
