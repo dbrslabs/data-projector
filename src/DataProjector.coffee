@@ -171,10 +171,14 @@ class DataProjector extends Observer
             @projector.toggleSpin()
 
          when Toolbar.EVENT_SHOW_DOCUMENTS
+<<<<<<< HEAD
             visible = @projector.getVisibleDocuments()
             @SidePanel.displayDocumentsList(visible.documents)
             # if mobile, toggle sidepanel visibility
             if Utility.isMobile() then @sidepanel.toggleHidden() 
+=======
+            @sidepanel.toggleHidden() 
+>>>>>>> 23875303b2ab885bac42256e28f5f94ac80b92b4
 
          when Toolbar.EVENT_SHOW_HELP
             # Show tooltips and stuff
@@ -193,15 +197,19 @@ class DataProjector extends Observer
 
          when Menu.EVENT_TOGGLE_ALL_ON
             @projector.setAllClustersVisible(true)
+            this.updateDocumentsDisplay()
 
          when Menu.EVENT_TOGGLE_ALL_OFF
             @projector.setAllClustersVisible(false)
+            this.updateDocumentsDisplay()
 
          when Menu.EVENT_TOGGLE_ID
             @projector.toggleClusterVisibility(data.id)
+            this.updateDocumentsDisplay()
 
          when Menu.EVENT_CLUSTER_ID
             @projector.toggleClusterSelection(data.id)
+            this.updateDocumentsDisplay()
 
 
    # Handle projector events.
@@ -247,6 +255,12 @@ class DataProjector extends Observer
       # show visible docs in sidepanel so not initially blank
       visible = @projector.getVisibleDocuments()
       @sidepanel.setColors(@colors)
+      @sidepanel.displayDocumentsList(visible.documents)
+
+
+   # populate sidepanel with documents that are currently visible
+   updateDocumentsDisplay : ->
+      visible = @projector.getVisibleDocuments()
       @sidepanel.displayDocumentsList(visible.documents)
 
 

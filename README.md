@@ -4,6 +4,11 @@ A visual exploration of document similarity and clustering performed on Guardian
 
 Note: the beautiful frontend was [created by DataCritic](ec2-54-88-15-234.compute-1.amazonaws.com).
 
+The dev and prod environments are totes different, so until we come up with a more elegant way of switching out URLs for dev and prod environments, you'll have to manually change the API URLs in these files (look for lines with #dev and #prod):
+
+* src/SidePanel.coffee
+* api.py
+
 To rebuild from coffeescript source:
 
     $ npm install

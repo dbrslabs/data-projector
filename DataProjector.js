@@ -85,7 +85,7 @@ DataProjector = (function(superClass) {
   };
 
   DataProjector.prototype.onToolbarEvent = function(type, data) {
-    var icon, spinning, state, visible;
+    var icon, spinning, state;
     switch (type) {
       case Toolbar.EVENT_MENU:
         state = this.menu.toggle();
@@ -150,12 +150,16 @@ DataProjector = (function(superClass) {
         }
         return this.projector.toggleSpin();
       case Toolbar.EVENT_SHOW_DOCUMENTS:
+<<<<<<< HEAD
         visible = this.projector.getVisibleDocuments();
         this.SidePanel.displayDocumentsList(visible.documents);
         if (Utility.isMobile()) {
           return this.sidepanel.toggleHidden();
         }
         break;
+=======
+        return this.sidepanel.toggleHidden();
+>>>>>>> 23875303b2ab885bac42256e28f5f94ac80b92b4
       case Toolbar.EVENT_SHOW_HELP:
         return this.toolbar.setHelpModal();
       case Toolbar.EVENT_PRINT:
@@ -167,13 +171,17 @@ DataProjector = (function(superClass) {
   DataProjector.prototype.onMenuEvent = function(type, data) {
     switch (type) {
       case Menu.EVENT_TOGGLE_ALL_ON:
-        return this.projector.setAllClustersVisible(true);
+        this.projector.setAllClustersVisible(true);
+        return this.updateDocumentsDisplay();
       case Menu.EVENT_TOGGLE_ALL_OFF:
-        return this.projector.setAllClustersVisible(false);
+        this.projector.setAllClustersVisible(false);
+        return this.updateDocumentsDisplay();
       case Menu.EVENT_TOGGLE_ID:
-        return this.projector.toggleClusterVisibility(data.id);
+        this.projector.toggleClusterVisibility(data.id);
+        return this.updateDocumentsDisplay();
       case Menu.EVENT_CLUSTER_ID:
-        return this.projector.toggleClusterSelection(data.id);
+        this.projector.toggleClusterSelection(data.id);
+        return this.updateDocumentsDisplay();
     }
   };
 
@@ -203,6 +211,12 @@ DataProjector = (function(superClass) {
     this.onToolbarEvent(Toolbar.EVENT_SPIN_RIGHT);
     visible = this.projector.getVisibleDocuments();
     this.sidepanel.setColors(this.colors);
+    return this.sidepanel.displayDocumentsList(visible.documents);
+  };
+
+  DataProjector.prototype.updateDocumentsDisplay = function() {
+    var visible;
+    visible = this.projector.getVisibleDocuments();
     return this.sidepanel.displayDocumentsList(visible.documents);
   };
 
@@ -1852,7 +1866,7 @@ Modal = (function(superClass) {
 
   Modal.prototype.getDocumentContents = function(id, callback) {
     return $.ajax({
-      url: 'http://127.0.0.1:5000/doc/' + id,
+      url: 'http://localhost:5000/doc/' + id,
       type: 'GET',
       contentType: 'application/json',
       beforeSend: function() {
@@ -2165,77 +2179,77 @@ Toolbar = (function(superClass) {
     return this.dispatcher = [
       {
         id: "#menuButton",
-        key: 77,
+        key: 0,
         modifier: Utility.NO_KEY,
         type: Toolbar.EVENT_MENU
       }, {
         id: "#infoButton",
-        key: 73,
+        key: 0,
         modifier: Utility.NO_KEY,
         type: Toolbar.EVENT_INFO
       }, {
         id: "#perspectiveButton",
-        key: 80,
+        key: 0,
         modifier: Utility.NO_KEY,
         type: Toolbar.EVENT_PERSPECTIVE
       }, {
         id: "#orthographicButton",
-        key: 79,
+        key: 0,
         modifier: Utility.NO_KEY,
         type: Toolbar.EVENT_ORTHOGRAPHIC
       }, {
         id: "#dualButton",
-        key: 68,
+        key: 0,
         modifier: Utility.NO_KEY,
         type: Toolbar.EVENT_DUAL
       }, {
         id: "#resetButton",
-        key: 82,
+        key: 0,
         modifier: Utility.NO_KEY,
         type: Toolbar.EVENT_RESET
       }, {
         id: "#clearButton",
-        key: 67,
+        key: 0,
         modifier: Utility.NO_KEY,
         type: Toolbar.EVENT_CLEAR
       }, {
         id: "#boxButton",
-        key: 66,
+        key: 0,
         modifier: Utility.NO_KEY,
         type: Toolbar.EVENT_BOX
       }, {
         id: "#viewportButton",
-        key: 86,
+        key: 0,
         modifier: Utility.NO_KEY,
         type: Toolbar.EVENT_VIEWPORT
       }, {
         id: "#viewTopButton",
-        key: 49,
+        key: 0,
         modifier: Utility.NO_KEY,
         type: Toolbar.EVENT_VIEW_TOP
       }, {
         id: "#viewFrontButton",
-        key: 50,
+        key: 0,
         modifier: Utility.NO_KEY,
         type: Toolbar.EVENT_VIEW_FRONT
       }, {
         id: "#viewSideButton",
-        key: 51,
+        key: 0,
         modifier: Utility.NO_KEY,
         type: Toolbar.EVENT_VIEW_SIDE
       }, {
         id: "#spinLeftButton",
-        key: 37,
+        key: 0,
         modifier: Utility.NO_KEY,
         type: Toolbar.EVENT_SPIN_LEFT
       }, {
         id: "#spinStopButton",
-        key: 32,
+        key: 0,
         modifier: Utility.NO_KEY,
         type: Toolbar.EVENT_SPIN_STOP
       }, {
         id: "#spinRightButton",
-        key: 39,
+        key: 0,
         modifier: Utility.NO_KEY,
         type: Toolbar.EVENT_SPIN_RIGHT
       }, {
