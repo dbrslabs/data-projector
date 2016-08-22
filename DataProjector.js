@@ -2358,28 +2358,29 @@ Toolbar = (function(superClass) {
     $('#myModal').modal('show');
     $('.next-button').click((function(_this) {
       return function() {
-        var $targetItem;
-        $targetItem = $('p.toolTip_text.active').next();
-        if ($targetItem.is('button')) {
+        var $nextItem;
+        $nextItem = $('p.toolTip_text.active').next();
+        if ($nextItem.is('button')) {
           $('#myModal').modal('hide');
-          $targetItem.prev().removeClass('active');
-          $('p.toolTip_text.first').addClass('active');
+          $('.back-button').css('display', 'none');
+          $nextItem.prev().removeClass('active');
+          $('p.first').addClass('active');
         } else {
-          $targetItem.addClass('active');
-          $targetItem.prev().removeClass('active');
+          $nextItem.addClass('active');
+          $nextItem.prev().removeClass('active');
           $('.back-button').css('display', 'inline');
         }
       };
     })(this));
     return $('.back-button').click((function(_this) {
       return function() {
-        var $targetItem;
-        $targetItem = $('div p.toolTip_text.active').prev();
-        if ($targetItem.is('div')) {
-          _this.css('display', 'none');
+        var $prevItem;
+        $prevItem = $('p.toolTip_text.active').prev();
+        if ($prevItem.is('div')) {
+          $('.back-button').css('display', 'none');
         } else {
-          $targetItem.addClass('active');
-          $targetItem.next().removeClass('active');
+          $prevItem.addClass('active');
+          $prevItem.next().removeClass('active');
         }
       };
     })(this));

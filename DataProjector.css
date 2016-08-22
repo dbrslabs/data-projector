@@ -137,13 +137,14 @@ button {
 }
 
 .next-button {
-  float:right;
+  display: inline-block;
 }
+
 .back-button {
   display:none;
 }
 
-.next-button:hover, .close-button:hover {
+.next-button:hover, .back-button:hover {
   background-color: #337ab7;
   border-color: #337ab7;
 }
@@ -162,15 +163,6 @@ button {
 }
 .active {
   display: block;
-}
-
-.first_toolTip, .second_toolTip, .third_toolTip {
-  margin-bottom: 0px;
-/*  float:right;*/
-}
-
-.second_toolTip, .third_toolTip {
-  display: none;
 }
 
 h3#myModalLabel {

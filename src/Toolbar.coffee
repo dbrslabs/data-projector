@@ -212,26 +212,25 @@ class Toolbar extends Panel
 
        $('#myModal').modal 'show'
        $('.next-button').click =>
-        $targetItem = $('p.toolTip_text.active').next()
-        if $targetItem.is 'button'
+        $nextItem = $('p.toolTip_text.active').next()
+        if $nextItem.is 'button'
           $('#myModal').modal 'hide'
-          $targetItem.prev().removeClass 'active'          
-          $('p.toolTip_text.first').addClass 'active'
+          $('.back-button').css 'display', 'none'          
+          $nextItem.prev().removeClass 'active'
+          $('p.first').addClass 'active'
         else
-          $targetItem.addClass 'active'
-          $targetItem.prev().removeClass 'active'
-          $('.back-button').css 'display', 'inline'       
+          $nextItem.addClass 'active'
+          $nextItem.prev().removeClass 'active'
+          $('.back-button').css 'display', 'inline'
         return
        $('.back-button').click =>
-        $targetItem = $('div p.toolTip_text.active').prev()
-        if $targetItem.is 'div'
-          # this.css 'display', 'none'
-          this.css 'display', 'none'         
+        $prevItem = $('p.toolTip_text.active').prev()
+        if $prevItem.is 'div'
+          $('.back-button').css 'display', 'none'
         else         
-          $targetItem.addClass 'active'
-          $targetItem.next().removeClass 'active'          
+          $prevItem.addClass 'active'
+          $prevItem.next().removeClass 'active'
         return
-
 
 
              
