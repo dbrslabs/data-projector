@@ -60,7 +60,7 @@ class Projector extends Subject
    selector : null # Selector
 
    # visual helpers for data display
-   box : null # THREE.Mesh - data cage  
+   box : null # THREE.Mesh - data cage
    viewport : null # parent of selectable view rectangles
    direction : Utility.DIRECTION.TOP # default 2D view is from top
    view1 : null # THREE.Line - 2D orthographic view box - top
@@ -123,7 +123,7 @@ class Projector extends Subject
       if $(this).find('.btn-primary').size() > 0
          $(this).find('.btn').toggleClass 'btn-primary'
       $(this).find('.btn').toggleClass 'btn-default'
-   
+
    # Make updates related to window size changes.
    # Also used when view configuration is switched.
    onWindowResize : (event) =>
@@ -177,7 +177,7 @@ class Projector extends Subject
             @updateMouse3D()
             @mouseStart.copy(@mouse)
             @selector.start(@mouseStart.clone())
-            
+
             event.stopPropagation()
 
 
@@ -241,7 +241,7 @@ class Projector extends Subject
 
 
    toggleSelector : =>
-   
+
       state = @selector.toggle()
       @updateSelection()
       return state
@@ -271,7 +271,7 @@ class Projector extends Subject
       # NOTE Cameras aspect ratio setup matches the half screen viewports for initial dual mode
 
       @cameraPerspective = new THREE.PerspectiveCamera( 50, 0.5 * @SCREEN_WIDTH / @SCREEN_HEIGHT, 150, 1000 )
-      @cameraPerspective.position.set(0, 0, 550)
+      @cameraPerspective.position.set(0, 0, 350)
       @scene.add( @cameraPerspective )
 
 
@@ -444,7 +444,7 @@ class Projector extends Subject
       switch @mode
 
          # one viewport: perspective camera only
-         when Projector.VIEW.PERSPECTIVE 
+         when Projector.VIEW.PERSPECTIVE
             if @spin isnt Projector.SPIN.NONE then @spinCamera()
             @cameraPerspective.lookAt( @box.position )
             # RENDERING
@@ -500,9 +500,9 @@ class Projector extends Subject
                document = cloud.documents[j]
                # Add cluster ID because it isn't included by default
                document.cid = i
-               if not @selector.isActive() 
+               if not @selector.isActive()
                   documents.push( document )
-               if @selector.isActive() and @selector.contains(vertex, Utility.DIRECTION.ALL) 
+               if @selector.isActive() and @selector.contains(vertex, Utility.DIRECTION.ALL)
                   documents.push( document )
 
             cloud.colorsNeedUpdate = true;
@@ -530,9 +530,9 @@ class Projector extends Subject
                vertex = cloud.vertices[j]
                color = cloud.colors[j]
                document = cloud.documents[j]
-               if not @selector.isActive() 
+               if not @selector.isActive()
                   documents.push( document )
-               if @selector.isActive() and @selector.contains(vertex, Utility.DIRECTION.ALL) 
+               if @selector.isActive() and @selector.contains(vertex, Utility.DIRECTION.ALL)
                   color.setHex(Palette.HIGHLIGHT.getHex())
                   counter++
                   documents.push( document )
@@ -600,11 +600,11 @@ class Projector extends Subject
       else
          @setViewsVisible(false, false, false)
 
-      return @viewport.visible   
+      return @viewport.visible
 
 
    # Set visibility of view indicators.
-   setViewsVisible : (top, front, side) =>      
+   setViewsVisible : (top, front, side) =>
 
          @view1.visible = top
          @view2.visible = front
@@ -618,7 +618,7 @@ class Projector extends Subject
 
 
    toggleAnimation : =>
-   
+
       @animateOn = not @animateOn
 
       if @animateOn
@@ -627,7 +627,7 @@ class Projector extends Subject
       else
          @setAllClustersVisible(true)
 
-      return @animateOn   
+      return @animateOn
 
 
    toggleSpin : =>
@@ -693,7 +693,7 @@ class Projector extends Subject
          @timeStamp = timeNow
          step = delta * step / 10
 
-      return step   
+      return step
 
 
    # Toggle visibility of the cluster given by its index.
@@ -719,7 +719,7 @@ class Projector extends Subject
       if @selected is index
          # unselecting
          @selected = -1
-      else 
+      else
          # selecting
          @selected = index
          # highlight new selected
@@ -727,7 +727,7 @@ class Projector extends Subject
 
       if @selected > -1
          @notify(Projector.EVENT_CLUSTER_SELECTED, { id : index })
-      else 
+      else
          @notify(Projector.EVENT_CLUSTER_SELECTED, { id : -1 })
 
 

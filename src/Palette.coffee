@@ -35,12 +35,12 @@ class Palette
    generate: (size) ->
 
       hue = 0
-      saturation = 0.7
-      lightness = 0.45
+      saturation = 0.6
+      lightness = 0.55
 
       step = 1 / size
 
-      for i in [0...size]
+      for i in [2...size+2]
          hue = (i + 1) * step
          color = new THREE.Color()
          color.setHSL(hue, saturation, lightness)
