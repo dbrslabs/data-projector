@@ -85,7 +85,7 @@ DataProjector = (function(superClass) {
   };
 
   DataProjector.prototype.onToolbarEvent = function(type, data) {
-    var icon, spinning, state;
+    var icon, spinning, state, visible;
     switch (type) {
       case Toolbar.EVENT_MENU:
         state = this.menu.toggle();
@@ -150,9 +150,14 @@ DataProjector = (function(superClass) {
         }
         return this.projector.toggleSpin();
       case Toolbar.EVENT_SHOW_DOCUMENTS:
+        visible = this.projector.getVisibleDocuments();
+        this.SidePanel.displayDocumentsList(visible.documents);
+        if (Utility.isMobile()) {
+          this.sidepanel.toggleHidden();
+        }
         return this.sidepanel.toggleHidden();
       case Toolbar.EVENT_SHOW_HELP:
-        return alert("A wild tooltip has appeared");
+        return this.toolbar.showHelpModal();
       case Toolbar.EVENT_PRINT:
         this.storage.saveImage(this.projector.getImage());
         return this.toolbar.blinkPrintButton();
@@ -207,7 +212,6 @@ DataProjector = (function(superClass) {
 
   DataProjector.prototype.updateDocumentsDisplay = function() {
     var visible;
-    console.log('updateDocumentsDisplay');
     visible = this.projector.getVisibleDocuments();
     return this.sidepanel.displayDocumentsList(visible.documents);
   };
@@ -1858,7 +1862,7 @@ Modal = (function(superClass) {
 
   Modal.prototype.getDocumentContents = function(id, callback) {
     return $.ajax({
-      url: 'http://localhost:5000/doc/' + id,
+      url: '/guardian-galaxy-api/doc/' + id,
       type: 'GET',
       contentType: 'application/json',
       beforeSend: function() {
@@ -1873,7 +1877,7 @@ Modal = (function(superClass) {
 
   Modal.prototype.getSimilarDocuments = function(id, callback) {
     return $.ajax({
-      url: 'http://127.0.0.1:5000/doc/' + id + '/most_similar',
+      url: '/guardian-galaxy-api/doc/' + id + '/most_similar',
       type: 'GET',
       contentType: 'application/json',
       beforeSend: function() {
@@ -2111,6 +2115,8 @@ Toolbar = (function(superClass) {
   Toolbar.prototype.dispatcher = null;
 
   function Toolbar(id) {
+    this.showHelpModal = bind(this.showHelpModal, this);
+    this.setHelpModal = bind(this.setHelpModal, this);
     this.setAnimateButtonSelected = bind(this.setAnimateButtonSelected, this);
     this.setSpinButtonSelected = bind(this.setSpinButtonSelected, this);
     this.setViewButtonSelected = bind(this.setViewButtonSelected, this);
@@ -2170,77 +2176,77 @@ Toolbar = (function(superClass) {
     return this.dispatcher = [
       {
         id: "#menuButton",
-        key: 77,
+        key: 0,
         modifier: Utility.NO_KEY,
         type: Toolbar.EVENT_MENU
       }, {
         id: "#infoButton",
-        key: 73,
+        key: 0,
         modifier: Utility.NO_KEY,
         type: Toolbar.EVENT_INFO
       }, {
         id: "#perspectiveButton",
-        key: 80,
+        key: 0,
         modifier: Utility.NO_KEY,
         type: Toolbar.EVENT_PERSPECTIVE
       }, {
         id: "#orthographicButton",
-        key: 79,
+        key: 0,
         modifier: Utility.NO_KEY,
         type: Toolbar.EVENT_ORTHOGRAPHIC
       }, {
         id: "#dualButton",
-        key: 68,
+        key: 0,
         modifier: Utility.NO_KEY,
         type: Toolbar.EVENT_DUAL
       }, {
         id: "#resetButton",
-        key: 82,
+        key: 0,
         modifier: Utility.NO_KEY,
         type: Toolbar.EVENT_RESET
       }, {
         id: "#clearButton",
-        key: 67,
+        key: 0,
         modifier: Utility.NO_KEY,
         type: Toolbar.EVENT_CLEAR
       }, {
         id: "#boxButton",
-        key: 66,
+        key: 0,
         modifier: Utility.NO_KEY,
         type: Toolbar.EVENT_BOX
       }, {
         id: "#viewportButton",
-        key: 86,
+        key: 0,
         modifier: Utility.NO_KEY,
         type: Toolbar.EVENT_VIEWPORT
       }, {
         id: "#viewTopButton",
-        key: 49,
+        key: 0,
         modifier: Utility.NO_KEY,
         type: Toolbar.EVENT_VIEW_TOP
       }, {
         id: "#viewFrontButton",
-        key: 50,
+        key: 0,
         modifier: Utility.NO_KEY,
         type: Toolbar.EVENT_VIEW_FRONT
       }, {
         id: "#viewSideButton",
-        key: 51,
+        key: 0,
         modifier: Utility.NO_KEY,
         type: Toolbar.EVENT_VIEW_SIDE
       }, {
         id: "#spinLeftButton",
-        key: 37,
+        key: 0,
         modifier: Utility.NO_KEY,
         type: Toolbar.EVENT_SPIN_LEFT
       }, {
         id: "#spinStopButton",
-        key: 32,
+        key: 0,
         modifier: Utility.NO_KEY,
         type: Toolbar.EVENT_SPIN_STOP
       }, {
         id: "#spinRightButton",
-        key: 39,
+        key: 0,
         modifier: Utility.NO_KEY,
         type: Toolbar.EVENT_SPIN_RIGHT
       }, {
@@ -2276,7 +2282,8 @@ Toolbar = (function(superClass) {
     this.setButtonSelected("#viewSideButton", false);
     this.setButtonSelected("#spinLeftButton", false);
     this.setButtonSelected("#spinStopButton", true);
-    return this.setButtonSelected("#spinRightButton", false);
+    this.setButtonSelected("#spinRightButton", false);
+    return this.setHelpModal("#toggleHelpButton");
   };
 
   Toolbar.prototype.setButtonSelected = function(id, selected) {
@@ -2346,6 +2353,45 @@ Toolbar = (function(superClass) {
 
   Toolbar.prototype.setAnimateButtonSelected = function(selected) {
     return this.setButtonSelected("#animateButton", selected);
+  };
+
+  Toolbar.prototype.setHelpModal = function() {
+    $('#myModal').modal('show');
+    $('p.toolTip_text').removeClass('active');
+    $('p.toolTip_text').first().addClass('active');
+    $('.next-button').click((function(_this) {
+      return function() {
+        var $nextItem;
+        $nextItem = $('p.toolTip_text.active').next();
+        if ($nextItem.is('button')) {
+          $('#myModal').modal('hide');
+          $('.back-button').css('visibility', 'hidden');
+          $nextItem.prev().removeClass('active');
+        } else {
+          $nextItem.addClass('active');
+          $nextItem.prev().removeClass('active');
+          $('.back-button').css('visibility', 'visible');
+        }
+      };
+    })(this));
+    return $('.back-button').click((function(_this) {
+      return function() {
+        var $prevItem;
+        $prevItem = $('p.toolTip_text.active').prev();
+        if ($prevItem.is('div')) {
+          $('.back-button').css('visibility', 'hidden');
+        } else {
+          $prevItem.addClass('active');
+          $prevItem.next().removeClass('active');
+        }
+      };
+    })(this));
+  };
+
+  Toolbar.prototype.showHelpModal = function() {
+    $('#myModal').modal('show');
+    $('p.toolTip_text').removeClass('active');
+    return $('p.toolTip_text').first().addClass('active');
   };
 
   return Toolbar;

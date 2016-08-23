@@ -78,23 +78,23 @@ class Toolbar extends Panel
 
       # NOTE key == 0 means no shortcut assigned
 
-      @dispatcher = [ { id : "#menuButton", key : 77, modifier : Utility.NO_KEY, type : Toolbar.EVENT_MENU },
-                      { id : "#infoButton", key : 73, modifier : Utility.NO_KEY, type : Toolbar.EVENT_INFO },
-                      { id : "#perspectiveButton", key : 80, modifier : Utility.NO_KEY, type : Toolbar.EVENT_PERSPECTIVE },
-                      { id : "#orthographicButton", key : 79, modifier : Utility.NO_KEY, type : Toolbar.EVENT_ORTHOGRAPHIC },
-                      { id : "#dualButton", key : 68, modifier : Utility.NO_KEY, type : Toolbar.EVENT_DUAL },
-                      { id : "#resetButton", key : 82, modifier : Utility.NO_KEY, type : Toolbar.EVENT_RESET },
-                      { id : "#clearButton", key : 67, modifier : Utility.NO_KEY, type : Toolbar.EVENT_CLEAR },
-                      { id : "#boxButton", key : 66, modifier : Utility.NO_KEY, type : Toolbar.EVENT_BOX },
-                      { id : "#viewportButton", key : 86, modifier : Utility.NO_KEY, type : Toolbar.EVENT_VIEWPORT },
-                    # { id : "#selectButton", key : 83, modifier : Utility.NO_KEY, type : Toolbar.EVENT_SELECT },
-                      { id : "#viewTopButton", key : 49, modifier : Utility.NO_KEY, type : Toolbar.EVENT_VIEW_TOP },
-                      { id : "#viewFrontButton", key : 50, modifier : Utility.NO_KEY, type : Toolbar.EVENT_VIEW_FRONT },
-                      { id : "#viewSideButton", key : 51, modifier : Utility.NO_KEY, type : Toolbar.EVENT_VIEW_SIDE },
-                      { id : "#spinLeftButton", key : 37, modifier : Utility.NO_KEY, type : Toolbar.EVENT_SPIN_LEFT },
-                      { id : "#spinStopButton", key : 32, modifier : Utility.NO_KEY, type : Toolbar.EVENT_SPIN_STOP },
-                      { id : "#spinRightButton", key : 39, modifier : Utility.NO_KEY, type : Toolbar.EVENT_SPIN_RIGHT },
-                    # { id : "#animateButton", key : 65, modifier : Utility.NO_KEY, type : Toolbar.EVENT_ANIMATE },
+      @dispatcher = [ { id : "#menuButton", key : 0, modifier : Utility.NO_KEY, type : Toolbar.EVENT_MENU },
+                      { id : "#infoButton", key : 0, modifier : Utility.NO_KEY, type : Toolbar.EVENT_INFO },
+                      { id : "#perspectiveButton", key : 0, modifier : Utility.NO_KEY, type : Toolbar.EVENT_PERSPECTIVE },
+                      { id : "#orthographicButton", key : 0, modifier : Utility.NO_KEY, type : Toolbar.EVENT_ORTHOGRAPHIC },
+                      { id : "#dualButton", key : 0, modifier : Utility.NO_KEY, type : Toolbar.EVENT_DUAL },
+                      { id : "#resetButton", key : 0, modifier : Utility.NO_KEY, type : Toolbar.EVENT_RESET },
+                      { id : "#clearButton", key : 0, modifier : Utility.NO_KEY, type : Toolbar.EVENT_CLEAR },
+                      { id : "#boxButton", key : 0, modifier : Utility.NO_KEY, type : Toolbar.EVENT_BOX },
+                      { id : "#viewportButton", key : 0, modifier : Utility.NO_KEY, type : Toolbar.EVENT_VIEWPORT },
+                    # { id : "#selectButton", key : 0, modifier : Utility.NO_KEY, type : Toolbar.EVENT_SELECT },
+                      { id : "#viewTopButton", key : 0, modifier : Utility.NO_KEY, type : Toolbar.EVENT_VIEW_TOP },
+                      { id : "#viewFrontButton", key : 0, modifier : Utility.NO_KEY, type : Toolbar.EVENT_VIEW_FRONT },
+                      { id : "#viewSideButton", key : 0, modifier : Utility.NO_KEY, type : Toolbar.EVENT_VIEW_SIDE },
+                      { id : "#spinLeftButton", key : 0, modifier : Utility.NO_KEY, type : Toolbar.EVENT_SPIN_LEFT },
+                      { id : "#spinStopButton", key : 0, modifier : Utility.NO_KEY, type : Toolbar.EVENT_SPIN_STOP },
+                      { id : "#spinRightButton", key : 0, modifier : Utility.NO_KEY, type : Toolbar.EVENT_SPIN_RIGHT },
+                    # { id : "#animateButton", key : 0, modifier : Utility.NO_KEY, type : Toolbar.EVENT_ANIMATE },
                       { id : "#toggleSpinButton", key : 0, modifier : Utility.NO_KEY, type : Toolbar.EVENT_SPIN_TOGGLE },
                       { id : "#toggleArticlesButton", key : 0, modifier : Utility.NO_KEY, type : Toolbar.EVENT_SHOW_DOCUMENTS },
                       { id : "#toggleHelpButton", key : 0, modifier : Utility.NO_KEY, type : Toolbar.EVENT_SHOW_HELP },
@@ -121,6 +121,8 @@ class Toolbar extends Panel
       @setButtonSelected("#spinLeftButton", false)
       @setButtonSelected("#spinStopButton", true)
       @setButtonSelected("#spinRightButton", false)
+
+      @setHelpModal("#toggleHelpButton")
 
       #@setButtonSelected("#animateButton", true)
       #@setButtonSelected("#animateSpinButton", true)
@@ -206,7 +208,48 @@ class Toolbar extends Panel
 
       @setButtonSelected("#animateButton", selected)
 
+   setHelpModal : =>
 
+       $('#myModal').modal 'show'
+
+       $('p.toolTip_text').removeClass 'active'
+       $('p.toolTip_text').first().addClass 'active'
+
+       #console.log 'Loaded modal thingy.'
+
+       $('.next-button').click =>
+          $nextItem = $('p.toolTip_text.active').next()
+          #console.log $nextItem.attr 'id'
+          if $nextItem.is 'button'
+             $('#myModal').modal 'hide'
+             #$('.back-button').css 'display', 'none'
+             $('.back-button').css 'visibility', 'hidden'
+             $nextItem.prev().removeClass 'active'
+             #$('p.first').addClass 'active'
+          else
+             $nextItem.addClass 'active'
+             $nextItem.prev().removeClass 'active'
+             #$('.back-button').css 'display', 'inline-block'
+             $('.back-button').css 'visibility', 'visible'
+          return
+
+       $('.back-button').click =>
+          $prevItem = $('p.toolTip_text.active').prev()
+          if $prevItem.is 'div'
+             #$('.back-button').css 'display', 'none'
+             $('.back-button').css 'visibility', 'hidden'
+          else
+             $prevItem.addClass 'active'
+             $prevItem.next().removeClass 'active'
+          return
+
+   showHelpModal : =>
+    
+      $('#myModal').modal 'show'
+
+      $('p.toolTip_text').removeClass 'active'
+      $('p.toolTip_text').first().addClass 'active'
+             
 
 
 module.exports = Toolbar
