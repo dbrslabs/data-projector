@@ -179,7 +179,8 @@ class DataProjector extends Observer
 
          when Toolbar.EVENT_SHOW_HELP
             # Show tooltips and stuff
-            @toolbar.setHelpModal()
+            #@toolbar.setHelpModal()
+            @toolbar.showHelpModal()
             # alert "A wild tooltip has appeared"
 
          when Toolbar.EVENT_PRINT

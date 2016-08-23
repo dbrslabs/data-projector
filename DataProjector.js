@@ -157,7 +157,7 @@ DataProjector = (function(superClass) {
         }
         return this.sidepanel.toggleHidden();
       case Toolbar.EVENT_SHOW_HELP:
-        return this.toolbar.setHelpModal();
+        return this.toolbar.showHelpModal();
       case Toolbar.EVENT_PRINT:
         this.storage.saveImage(this.projector.getImage());
         return this.toolbar.blinkPrintButton();
@@ -2115,6 +2115,7 @@ Toolbar = (function(superClass) {
   Toolbar.prototype.dispatcher = null;
 
   function Toolbar(id) {
+    this.showHelpModal = bind(this.showHelpModal, this);
     this.setHelpModal = bind(this.setHelpModal, this);
     this.setAnimateButtonSelected = bind(this.setAnimateButtonSelected, this);
     this.setSpinButtonSelected = bind(this.setSpinButtonSelected, this);
@@ -2282,7 +2283,7 @@ Toolbar = (function(superClass) {
     this.setButtonSelected("#spinLeftButton", false);
     this.setButtonSelected("#spinStopButton", true);
     this.setButtonSelected("#spinRightButton", false);
-    return this.setHelpModal("#toggleHelpButton", true);
+    return this.setHelpModal("#toggleHelpButton");
   };
 
   Toolbar.prototype.setButtonSelected = function(id, selected) {
@@ -2358,12 +2359,10 @@ Toolbar = (function(superClass) {
     $('#myModal').modal('show');
     $('p.toolTip_text').removeClass('active');
     $('p.toolTip_text').first().addClass('active');
-    console.log('Loaded modal thingy.');
     $('.next-button').click((function(_this) {
       return function() {
         var $nextItem;
         $nextItem = $('p.toolTip_text.active').next();
-        console.log($nextItem.attr('id'));
         if ($nextItem.is('button')) {
           $('#myModal').modal('hide');
           $('.back-button').css('visibility', 'hidden');
@@ -2387,6 +2386,12 @@ Toolbar = (function(superClass) {
         }
       };
     })(this));
+  };
+
+  Toolbar.prototype.showHelpModal = function() {
+    $('#myModal').modal('show');
+    $('p.toolTip_text').removeClass('active');
+    return $('p.toolTip_text').first().addClass('active');
   };
 
   return Toolbar;

@@ -122,7 +122,7 @@ class Toolbar extends Panel
       @setButtonSelected("#spinStopButton", true)
       @setButtonSelected("#spinRightButton", false)
 
-      @setHelpModal("#toggleHelpButton", true)
+      @setHelpModal("#toggleHelpButton")
 
       #@setButtonSelected("#animateButton", true)
       #@setButtonSelected("#animateSpinButton", true)
@@ -243,7 +243,12 @@ class Toolbar extends Panel
              $prevItem.next().removeClass 'active'
           return
 
+   showHelpModal : =>
+    
+      $('#myModal').modal 'show'
 
+      $('p.toolTip_text').removeClass 'active'
+      $('p.toolTip_text').first().addClass 'active'
              
 
 
