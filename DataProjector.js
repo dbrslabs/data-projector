@@ -523,11 +523,11 @@ Palette = (function() {
   Palette.prototype.generate = function(size) {
     var color, hue, i, j, lightness, ref, results, saturation, step;
     hue = 0;
-    saturation = 0.7;
-    lightness = 0.45;
+    saturation = 0.6;
+    lightness = 0.55;
     step = 1 / size;
     results = [];
-    for (i = j = 0, ref = size; 0 <= ref ? j < ref : j > ref; i = 0 <= ref ? ++j : --j) {
+    for (i = j = 2, ref = size + 2; 2 <= ref ? j < ref : j > ref; i = 2 <= ref ? ++j : --j) {
       hue = (i + 1) * step;
       color = new THREE.Color();
       color.setHSL(hue, saturation, lightness);
@@ -885,7 +885,7 @@ Projector = (function(superClass) {
 
   Projector.prototype.createPerspectiveCamera = function() {
     this.cameraPerspective = new THREE.PerspectiveCamera(50, 0.5 * this.SCREEN_WIDTH / this.SCREEN_HEIGHT, 150, 1000);
-    this.cameraPerspective.position.set(0, 0, 550);
+    this.cameraPerspective.position.set(0, 0, 350);
     return this.scene.add(this.cameraPerspective);
   };
 
