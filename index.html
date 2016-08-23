@@ -81,7 +81,7 @@
            --- Info Console ---
            <span id="message"></span>
         </div>
-
+ 
         <div id="wrapper">
             <div id="sidebar-wrapper">
                 <h2 class="title" id="sidePanelTitle"></h2>
@@ -100,11 +100,45 @@
 
             <div id="page-content-wrapper">
                 <div id="container">
-                </div>
-            </div>
-        </div>
+                <!-- Button trigger modal -->
+            <a data-toggle="modal" href="#myModal" class="btn btn-primary btn-lg">Launch demo modal</a>
 
         <div id="screenshots">
+        </div>
+
+        <!-- Modal -->
+        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <div class="white_logos">
+                  <img src="img/guardian_logo_white_220px.png" alt="" />
+                  <img src="img/labs_logo_white_220px.png" alt="" />
+                </div>
+                <div class="toolTip_top">
+                  <h3 id="myModalLabel">GUARDIAN GALAXY</h3>
+                  <p class="first_toolTip">A joint project from <br />
+                  <b>The Guardian</b> and <b>DBRS Innovation Labs</b></p>                
+                </div>
+              </div>
+              <div class="modal-body">
+                  <p id="tt-1" class="toolTip_text first active">GUARDIAN GALAXY is a visualization of articles from The Guardian using machine learning tools k-means and t-SNE. Each cluster is a selection of articles grouped together by machine learning algorithms which use multiple ways to look for sematic similarties. The 3D visualization is a representation of a more complex multidimensional clustering model. Articles in the Galaxy are from the Science section of the Guardian from 1921-2016.
+                  <br /><br />
+                  Learn more about GUARDIAN GALAXY at <a href="#">website link.</a></p>
+
+                  <p id="tt-2" class="toolTip_text">Each circle below represents a group of related articles called a cluster. A cluster is a selection of articles grouped together by machine learning algorithms. The words of each article are turned into vector-based representations, similar articles are clustered together based on similar vector representations, and then the vector size is reduced to have 3 coordinates so similar articles can be plotted close to each other as clusters in 3D. 
+                  <br /><br />
+                  To see all or none of the clusters, click on the grey button or left-most button.</p>
+
+                  <p id="tt-3" class="toolTip_text">The article list displays one section at a time. To update or refresh the article list, click on Show Articles. Each time you click Show Articles, a new list of articles from the selected clusters is generated. The circles beside each headline represent the cluster to which each article belongs.
+                  <br /><br />
+                  Click <b>Next</b> to begin reading through the GUARDIAN GALAXY.</p>
+                  <button class="btn btn-primary next-button pull-right">Next</button>
+                  <button class="btn btn-primary back-button">Back</button>
+              </div>
+            </div>
+          </div>
         </div>
 
         <nav class="navbar navbar-default navbar-fixed-bottom" id="menu">
@@ -135,6 +169,16 @@
         <!-- End Piwik Code -->
 
         <script src="./DataProjector.js"></script>
-
+<!--         <script type="text/javascript">
+          $(window).load(function(){
+            $('#myModal').modal('show');
+          });
+          $('.next-button').click(function(){
+            var $targetItem = $('.toolTip_text.active').next();
+            $targetItem.addClass('.active');
+            $targetItem.siblings().removeClass('.active');
+          });
+        </script>
+ -->
     </body>
 </html>

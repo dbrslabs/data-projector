@@ -120,6 +120,61 @@ button:focus {
 }*/
 /*#info .button { color: #CCCCCC; font-weight: bold; cursor: pointer }*/
 
+.modal {
+  outline: none;
+}
+
+.modal-header{
+  background-color: #286090;
+  color:#FFF;
+}
+
+.white_logos {
+  float:left;
+/*  height: 30px;
+*/  padding: 15px 15px;
+}
+
+.btn-primary {
+  background-color: #286090;
+  border-color: #286090;
+}
+
+.next-button {
+  display: inline-block;
+}
+
+.back-button {
+  /*display:none;*/
+  visibility: hidden;
+}
+
+.next-button:hover, .back-button:hover {
+  background-color: #337ab7;
+  border-color: #337ab7;
+}
+
+.white_logos img {
+  height: 50px;
+  width: auto;
+  display: inline-block;
+}
+.toolTip_top {
+  margin-bottom: 0px;
+}
+.toolTip_text {
+  margin-top: 15px;
+  display: none;
+}
+.active {
+  display: block;
+}
+
+h3#myModalLabel {
+  margin-top: 10px;
+  margin-bottom: 5px;
+}
+
 .btn-circle {
     width: 30px;
     height: 30px;

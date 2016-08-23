@@ -171,11 +171,16 @@ class DataProjector extends Observer
             @projector.toggleSpin()
 
          when Toolbar.EVENT_SHOW_DOCUMENTS
+            visible = @projector.getVisibleDocuments()
+            @SidePanel.displayDocumentsList(visible.documents)
+            # if mobile, toggle sidepanel visibility
+            if Utility.isMobile() then @sidepanel.toggleHidden() 
             @sidepanel.toggleHidden() 
 
          when Toolbar.EVENT_SHOW_HELP
             # Show tooltips and stuff
-            alert "A wild tooltip has appeared"
+            @toolbar.setHelpModal()
+            # alert "A wild tooltip has appeared"
 
          when Toolbar.EVENT_PRINT
             @storage.saveImage(@projector.getImage())
