@@ -122,6 +122,8 @@ class Toolbar extends Panel
       @setButtonSelected("#spinStopButton", true)
       @setButtonSelected("#spinRightButton", false)
 
+      @setHelpModal("#toggleHelpButton")
+
       #@setButtonSelected("#animateButton", true)
       #@setButtonSelected("#animateSpinButton", true)
 
@@ -206,7 +208,48 @@ class Toolbar extends Panel
 
       @setButtonSelected("#animateButton", selected)
 
+   setHelpModal : =>
 
+       $('#myModal').modal 'show'
+
+       $('p.toolTip_text').removeClass 'active'
+       $('p.toolTip_text').first().addClass 'active'
+
+       #console.log 'Loaded modal thingy.'
+
+       $('.next-button').click =>
+          $nextItem = $('p.toolTip_text.active').next()
+          #console.log $nextItem.attr 'id'
+          if $nextItem.is 'button'
+             $('#myModal').modal 'hide'
+             #$('.back-button').css 'display', 'none'
+             $('.back-button').css 'visibility', 'hidden'
+             $nextItem.prev().removeClass 'active'
+             #$('p.first').addClass 'active'
+          else
+             $nextItem.addClass 'active'
+             $nextItem.prev().removeClass 'active'
+             #$('.back-button').css 'display', 'inline-block'
+             $('.back-button').css 'visibility', 'visible'
+          return
+
+       $('.back-button').click =>
+          $prevItem = $('p.toolTip_text.active').prev()
+          if $prevItem.is 'div'
+             #$('.back-button').css 'display', 'none'
+             $('.back-button').css 'visibility', 'hidden'
+          else
+             $prevItem.addClass 'active'
+             $prevItem.next().removeClass 'active'
+          return
+
+   showHelpModal : =>
+    
+      $('#myModal').modal 'show'
+
+      $('p.toolTip_text').removeClass 'active'
+      $('p.toolTip_text').first().addClass 'active'
+             
 
 
 module.exports = Toolbar
