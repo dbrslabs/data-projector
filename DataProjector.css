@@ -141,7 +141,8 @@ button {
 }
 
 .back-button {
-  display:none;
+  /*display:none;*/
+  visibility: hidden;
 }
 
 .next-button:hover, .back-button:hover {
