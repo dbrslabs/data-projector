@@ -1967,7 +1967,7 @@ Storage = (function(superClass) {
   Storage.prototype.requestJSON = function(datafile) {
     var file;
     this.datafile = datafile;
-    file = this.datafile + "?" + String(Math.round(Math.random() * 99999));
+    file = this.datafile;
     return $.getJSON(file, this.onJSON);
   };
 

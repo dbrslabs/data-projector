@@ -88,7 +88,9 @@ class Storage extends Subject
    requestJSON : (@datafile) ->
 
       # attach random value to avoid browser cache problem
-      file = @datafile + "?" + String(Math.round(Math.random() * 99999))
+      #file = @datafile + "?" + String(Math.round(Math.random() * 99999))
+      # it's not a problem, it's an optimization ~ .dh
+      file = @datafile
       $.getJSON(file, @onJSON)
 
 
