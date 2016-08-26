@@ -98,6 +98,6 @@ In addition to the nginx site configuration, uwsgi also uses a few config files 
 
 `api.ini`: ^ Same.
 
-`upstart\guardian-galaxy-api.conf`: This lives in /etc/init/guardian-galaxy-api.conf on the server.
+`deploy\upstart\guardian-galaxy-api.conf`: This lives in /etc/init/guardian-galaxy-api.conf on the server.
 
-`systemd\guardian-galaxy-api.service`: This is something I wrote for the post-systemd future when we upgrade to Ubuntu 16.
+`deploy\systemd\guardian-galaxy-api.service`: This is something I wrote for the post-systemd future when we upgrade to Ubuntu 16.

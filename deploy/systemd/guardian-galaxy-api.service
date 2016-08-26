@@ -1,0 +1,13 @@
+[Unit]
+Description=uWSGI instance to serve Guardian Galaxy API
+After=network.target
+
+[Service]
+User=ubuntu
+Group=www-data
+WorkingDirectory=/home/ubuntu/www/dbrslabs-splash/guardian-galaxy-api
+Environment="PATH=/home/ubuntu/www/dbrslabs-splash/guardian-galaxy-api/venv/bin"
+ExecStart=/home/ubuntu/www/dbrslabs-splash/guardian-galaxy-api/venv/bin/uwsgi --ini api.ini
+
+[Install]
+WantedBy=multi-user.target
