@@ -16,6 +16,8 @@ parser.add_argument('--doc2vec', required=True, help='doc2vec model used when t-
 parser.add_argument('--components', default=2, type=int, help='dimensionality of t-sne run')
 parser.add_argument('--seed', default=20150101, type=int, help='seed that t-sne was run with')
 parser.add_argument('--clusters', type=int, default=9, help='number of clusters')
+parser.add_argument('--output', type=str, default='data.json', help='data output json file')
+
 arg = parser.parse_args()
 
 assert arg.components in [2,3], 't-SNE must have 2 or 3 components'
@@ -58,5 +60,5 @@ for point in data['points']:
     })
 
 # output to json
-with open('data.json','w') as fp:
+with open(arg.output,'w') as fp:
     json.dump({'points': points}, fp)
