@@ -198,7 +198,7 @@ DataProjector = (function(superClass) {
   };
 
   DataProjector.prototype.initialize = function() {
-    var visible;
+    var actuallythis, visible;
     this.palette = new Palette(this.storage.getClusters());
     this.colors = this.palette.getColors();
     this.menu.create(this.storage.getClusters(), this.palette.getColors());
@@ -207,7 +207,12 @@ DataProjector = (function(superClass) {
     this.onToolbarEvent(Toolbar.EVENT_SPIN_RIGHT);
     visible = this.projector.getVisibleDocuments();
     this.sidepanel.setColors(this.colors);
-    return this.sidepanel.displayDocumentsList(visible.documents);
+    this.sidepanel.displayDocumentsList(visible.documents);
+    actuallythis = this;
+    return $("#article-list-link").click(function(event) {
+      event.preventDefault();
+      return actuallythis.updateDocumentsDisplay();
+    });
   };
 
   DataProjector.prototype.updateDocumentsDisplay = function() {
@@ -1736,7 +1741,7 @@ Modal = (function(superClass) {
         id: "#sidePanelBody hr"
       },
       link: {
-        id: "#sidePanelBody .read-more #read-more-link"
+        id: "#sidePanelBody .read-more-link-container #read-more-link"
       }
     };
     $(id).on('click', '.document', this.onClickDocument);
@@ -1751,6 +1756,7 @@ Modal = (function(superClass) {
     this.setDocumentHTML("");
     this.setSimilarDocuments([]);
     $("#read-more-link").hide();
+    $("#article-list-link").hide();
     return $(".article").hide();
   };
 
@@ -1766,7 +1772,8 @@ Modal = (function(superClass) {
     $(this.modal.document.id).show();
     $(this.modal.document.id).text("");
     $(this.modal.document.id).html(document);
-    return $(this.modal.document.id).append("<div class='fold-fade'> </div>");
+    $(this.modal.document.id).append("<div class='fold-fade'> </div>");
+    return $("#article-list-link").show();
   };
 
   Modal.prototype.setDocumentListHTML = function(document) {

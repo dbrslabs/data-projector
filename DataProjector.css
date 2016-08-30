@@ -338,7 +338,7 @@ a.document {
 }
 
 .article {
-  height: 14em;
+  height: 10em;
   overflow: hidden;
   position: relative;
 }
@@ -356,9 +356,9 @@ a.document {
   background: linear-gradient(to top, rgba(248, 248, 248, 1), rgba(255, 255, 255, 0));
 }
 
-/*.read-more a {
-
-}*/
+.article-list-link-container {
+  margin-top: 1em;
+}
 
 /* mobile cutoff is 768px and is in a lot of JS so don't change plz */
 @media(min-width:768px) {

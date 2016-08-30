@@ -6,6 +6,9 @@ Utility = require('./Utility.coffee')
 
 class Modal extends Panel
 
+   # E V E N T S
+
+   #@EVENT_ARTICLES_LINK : "EVENT_ARTICLES_LINK"
 
    # M E M B E R S
    
@@ -25,7 +28,7 @@ class Modal extends Panel
          similar:  { id : "#sidePanelBody .similar" }
          document: { id : "#sidePanelBody .article" }
          hr :      { id : "#sidePanelBody hr" }
-         link :    { id : "#sidePanelBody .read-more #read-more-link" }
+         link :    { id : "#sidePanelBody .read-more-link-container #read-more-link" }
 
       # handle clicking document links
       $(id).on 'click', '.document', @onClickDocument
@@ -46,6 +49,7 @@ class Modal extends Panel
       @setDocumentHTML("")
       @setSimilarDocuments([])
       $("#read-more-link").hide()
+      $("#article-list-link").hide()
       $(".article").hide()
 
    setTitle: (title) ->
@@ -60,6 +64,8 @@ class Modal extends Panel
        $(@modal.document.id).text("")
        $(@modal.document.id).html(document)
        $(@modal.document.id).append("<div class='fold-fade'> </div>")
+       #@setArticlesLink()
+       $("#article-list-link").show()
 
 
    setDocumentListHTML: (document) ->
@@ -72,6 +78,12 @@ class Modal extends Panel
        #$(@modal.link.href).text(url) # Doesn't work idk
        $("#read-more-link").attr("href", url)
        $("#read-more-link").show()
+
+
+   # setArticlesLink: ->
+   #    $("#article-list-link").click (event) ->
+   #      event.preventDefault()
+   #      @notify(Modal.EVENT_ARTICLES_LINK)
 
 
    setSimilarDocuments: (documents) ->

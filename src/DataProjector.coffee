@@ -188,6 +188,14 @@ class DataProjector extends Observer
             @toolbar.blinkPrintButton()
 
 
+   # onSidePanelEvent : (type, data) -> 
+      
+   #    switch type
+
+   #       when SidePanel.EVENT_ARTICLES_LINK
+   #          this.updateDocumentsDisplay()
+
+
    # Handle menu events.
    onMenuEvent : (type, data) ->
 
@@ -254,6 +262,16 @@ class DataProjector extends Observer
       visible = @projector.getVisibleDocuments()
       @sidepanel.setColors(@colors)
       @sidepanel.displayDocumentsList(visible.documents)
+
+      # Set the "Back to Article List" links
+      #@setArticlesListLink()
+      
+      # yolo
+      actuallythis = this
+
+      $("#article-list-link").click (event) ->
+        event.preventDefault()
+        actuallythis.updateDocumentsDisplay()
 
 
    # populate sidepanel with documents that are currently visible
