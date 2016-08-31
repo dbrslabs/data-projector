@@ -150,12 +150,13 @@ DataProjector = (function(superClass) {
         }
         return this.projector.toggleSpin();
       case Toolbar.EVENT_SHOW_DOCUMENTS:
-        visible = this.projector.getVisibleDocuments();
-        this.SidePanel.displayDocumentsList(visible.documents);
         if (Utility.isMobile()) {
-          this.sidepanel.toggleHidden();
+          return this.sidepanel.toggleHidden();
+        } else {
+          visible = this.projector.getVisibleDocuments();
+          return this.sidepanel.displayDocumentsList(visible.documents);
         }
-        return this.sidepanel.toggleHidden();
+        break;
       case Toolbar.EVENT_SHOW_HELP:
         return this.toolbar.showHelpModal();
       case Toolbar.EVENT_PRINT:
