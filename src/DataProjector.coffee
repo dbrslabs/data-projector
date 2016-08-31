@@ -221,12 +221,12 @@ class DataProjector extends Observer
    # Handle projector events.
    onProjectorEvent : (type, data) ->
 
-      console.log "DataProjector.onProjectorEvent " + type + " : " + data
+      #console.log "DataProjector.onProjectorEvent " + type + " : " + data
 
       switch type
 
-         when Projector.EVENT_DATA_LOADED
-            console.log "DataProjector.onProjectorEvent " + type
+         #when Projector.EVENT_DATA_LOADED
+            #console.log "DataProjector.onProjectorEvent " + type
          
          when Projector.EVENT_POINTS_SELECTED
              @info.displayDocuments data,

@@ -71,7 +71,7 @@ class Selector
    # Set direction.
    setDirection : (@direction) ->
 
-      console.log "Selector.setDirection " + @direction
+      #console.log "Selector.setDirection " + @direction
 
 
    # Check if currently active/visible.

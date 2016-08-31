@@ -144,7 +144,7 @@ class Toolbar extends Panel
 
    unblinkButton : (id) =>
    
-      console.log "Toolbar.unblinkButton " + id
+      #console.log "Toolbar.unblinkButton " + id
       @setButtonSelected(id, false)
 
 

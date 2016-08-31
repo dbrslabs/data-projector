@@ -182,10 +182,7 @@ DataProjector = (function(superClass) {
   };
 
   DataProjector.prototype.onProjectorEvent = function(type, data) {
-    console.log("DataProjector.onProjectorEvent " + type + " : " + data);
     switch (type) {
-      case Projector.EVENT_DATA_LOADED:
-        return console.log("DataProjector.onProjectorEvent " + type);
       case Projector.EVENT_POINTS_SELECTED:
         return this.info.displayDocuments(data);
       case Projector.EVENT_CLUSTER_SELECTED:
@@ -556,8 +553,7 @@ Palette = (function() {
       hsl = c.getHSL();
       hue = hsl.h.toFixed(1);
       saturation = hsl.s.toFixed(1);
-      lightness = hsl.l.toFixed(1);
-      results.push(console.log(i++ + " > " + hue + " : " + saturation + " : " + lightness + " | " + css));
+      results.push(lightness = hsl.l.toFixed(1));
     }
     return results;
   };
@@ -777,7 +773,6 @@ Projector = (function(superClass) {
   Projector.prototype.onWindowResize = function(event) {
     this.SCREEN_WIDTH = window.innerWidth - $('#sidebar-wrapper').width();
     this.SCREEN_HEIGHT = window.innerHeight;
-    console.log("Screen " + this.SCREEN_WIDTH + " x " + this.SCREEN_HEIGHT);
     if (this.renderer != null) {
       this.renderer.setSize(this.SCREEN_WIDTH, this.SCREEN_HEIGHT);
       switch (this.mode) {
@@ -1371,7 +1366,6 @@ Selector = (function() {
 
   Selector.prototype.setDirection = function(direction1) {
     this.direction = direction1;
-    return console.log("Selector.setDirection " + this.direction);
   };
 
   Selector.prototype.isActive = function() {
@@ -1959,7 +1953,6 @@ Storage = (function(superClass) {
   };
 
   Storage.prototype.onSaveResponse = function(message) {
-    console.log("DataProjector.onSaveResponse " + message);
     return this.notify(Storage.EVENT_SCREENSHOT_OK);
   };
 
@@ -2308,7 +2301,6 @@ Toolbar = (function(superClass) {
   };
 
   Toolbar.prototype.unblinkButton = function(id) {
-    console.log("Toolbar.unblinkButton " + id);
     return this.setButtonSelected(id, false);
   };
 
@@ -2441,9 +2433,7 @@ Utility = (function() {
     return window.innerWidth <= this.SCREEN.MOBILE;
   };
 
-  Utility.printVector3 = function(vector) {
-    return console.log(vector.x.toFixed(1) + " : " + vector.y.toFixed(1) + " : " + vector.z.toFixed(1));
-  };
+  Utility.printVector3 = function(vector) {};
 
   return Utility;
 

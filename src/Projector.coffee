@@ -131,7 +131,7 @@ class Projector extends Subject
       @SCREEN_WIDTH = window.innerWidth - $('#sidebar-wrapper').width()
       @SCREEN_HEIGHT = window.innerHeight
 
-      console.log "Screen #{@SCREEN_WIDTH} x #{@SCREEN_HEIGHT}"
+      #console.log "Screen #{@SCREEN_WIDTH} x #{@SCREEN_HEIGHT}"
       #alert "Resized!"
 
       if @renderer?

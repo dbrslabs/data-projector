@@ -61,7 +61,7 @@ class Palette
          hue = hsl.h.toFixed(1)
          saturation = hsl.s.toFixed(1)
          lightness = hsl.l.toFixed(1)
-         console.log i++ + " > " + hue + " : " + saturation + " : " + lightness + " | " + css
+         #console.log i++ + " > " + hue + " : " + saturation + " : " + lightness + " | " + css
 
 
 module.exports = Palette

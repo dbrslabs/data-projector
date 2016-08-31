@@ -33,6 +33,6 @@ class Utility
    # Debug utility. Prints out THREE.Vector3 component values.
    @printVector3: (vector) ->
 
-      console.log vector.x.toFixed(1) + " : " + vector.y.toFixed(1) + " : " + vector.z.toFixed(1)
+      #console.log vector.x.toFixed(1) + " : " + vector.y.toFixed(1) + " : " + vector.z.toFixed(1)
 
 module.exports = Utility

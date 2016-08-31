@@ -67,7 +67,7 @@ class Storage extends Subject
    # Server response to saving image on disk.
    onSaveResponse : (message) =>
    
-      console.log "DataProjector.onSaveResponse " + message   
+      #console.log "DataProjector.onSaveResponse " + message   
       @notify(Storage.EVENT_SCREENSHOT_OK)
 
 
