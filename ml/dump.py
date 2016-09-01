@@ -44,7 +44,10 @@ maxabs = max(map(abs,itertools.chain(*points)))
 scale = 100 / maxabs
 
 points = []
-for point in data['points']:
+for count, point in enumerate(data['points']):
+    # print percentage progress
+    print "{:.1%}".format( float(count) / len(data['points']) )
+
     docid = point['document']['id']
     article = articles.find_one({'_id': ObjectId(docid)})
     # format data-projector expects
