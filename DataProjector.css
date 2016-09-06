@@ -65,6 +65,24 @@ button:focus {
    .navbar-brand h1 {
        display: none;
    }
+
+   #myModal div div div .white_logos {
+      width: 100%;
+      padding-top: 0;
+      padding-left: 0;
+      padding-right: 5px;
+      padding-bottom: 10px;
+   }
+
+   #myModal div div div .white_logos img {
+      height: 20px;
+      width: auto;
+   }
+
+   .toolTip_text {
+      max-height: 280px;
+      overflow-y: scroll;
+   }
 }
 
 .navbar-text label {
