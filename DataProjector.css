@@ -115,7 +115,7 @@ button:focus {
 #menu .color { color: #CCCCCC; font-weight: bold; cursor: pointer }*/
 
 #menu {
-   padding: 15px;
+   padding: 15px 10px;
    text-align: center;
 }
 
@@ -207,7 +207,21 @@ h3#myModalLabel {
     margin: 0 2px;
 }
 
+@media only screen and (max-width : 360px) {
+  .btn-circle {
+    margin: 8px 4px 0;
+  }
 
+  #menu {
+    /* Offset top padding (15px - 8px) */
+    padding-top: 7px;
+  }
+
+  .toolTip_text {
+      max-height: 220px;
+      overflow-y: scroll;
+   }
+}
 
 /*!
  * Side Panel
