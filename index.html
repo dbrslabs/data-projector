@@ -56,23 +56,23 @@
                 <!-- Display: -->
                 <span class="button hidden" id="menuButton">[M]enu</span>
                 <span class="button hidden" id="infoButton">[I]nfo</span>
-               <!-- Camera: -->
-               <span class="button hidden" id="perspectiveButton">[P]erspective</span>
+                <!-- Camera: -->
+                <span class="button hidden" id="perspectiveButton">[P]erspective</span>
                 <span class="button hidden" id="orthographicButton">[O]rthographic</span>
                 <span class="button hidden" id="dualButton">[D]ual</span>
-               <span class="button hidden" id="resetButton">[R]eset</span>
+                <span class="button hidden" id="resetButton">[R]eset</span>
                 <!-- Tools: -->
-               <span class="button hidden" id="clearButton">[C]lear</span>
-               <span class="button hidden" id="boxButton">[B]ox</span>
-               <span class="button hidden" id="selectButton">[S]elect</span>
-               <span class="button hidden" id="viewportButton">[V]iewport</span>
-               <span class="button hidden" id="viewTopButton">[1]Top</span>
-               <span class="button hidden" id="viewFrontButton">[2]Front</span>
-               <span class="button hidden" id="viewSideButton">[3]Side</span>
-               <span class="button hidden" id="spinLeftButton">[&lt;]Left</span>
-               <span class="button hidden" id="spinStopButton">[ ]Stop</span>
-               <span class="button hidden" id="spinRightButton">[&gt;]Right</span>
-               <span class="button hidden" id="animateButton">[A]nimate</span>
+                <span class="button hidden" id="clearButton">[C]lear</span>
+                <span class="button hidden" id="boxButton">[B]ox</span>
+                <span class="button hidden" id="selectButton">[S]elect</span>
+                <span class="button hidden" id="viewportButton">[V]iewport</span>
+                <span class="button hidden" id="viewTopButton">[1]Top</span>
+                <span class="button hidden" id="viewFrontButton">[2]Front</span>
+                <span class="button hidden" id="viewSideButton">[3]Side</span>
+                <span class="button hidden" id="spinLeftButton">[&lt;]Left</span>
+                <span class="button hidden" id="spinStopButton">[ ]Stop</span>
+                <span class="button hidden" id="spinRightButton">[&gt;]Right</span>
+                <span class="button hidden" id="animateButton">[A]nimate</span>
                 <!-- </div> -->
             </div>
         </nav>
@@ -104,58 +104,54 @@
             </div>
 
             <div id="page-content-wrapper">
-                <div id="container">
-                <!-- Button trigger modal -->
-            <a data-toggle="modal" href="#myModal" class="btn btn-primary btn-lg">Launch demo modal</a>
-
-        <div id="screenshots">
-        </div>
-
-        <!-- Modal -->
-        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-          <div class="modal-dialog" role="document">
-            <div class="modal-content">
-              <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <div class="white_logos">
-                  <img src="img/guardian_logo_white_220px.png" alt="" />
-                  <img src="img/labs_logo_white_220px.png" alt="" />
-                </div>
-                <div class="toolTip_top">
-                  <h3 id="myModalLabel">GUARDIAN GALAXY</h3>
-                  <p class="first_toolTip">A joint project from <br />
-                  <b>The Guardian</b> and <b>DBRS Innovation Labs</b></p>                
-                </div>
-              </div>
-              <div class="modal-body">
-                  <p id="tt-1" class="toolTip_text first active">GUARDIAN GALAXY is a visualization of articles from the Science section of The Guardian from 1921-2016. Using the machine learning tools word2vec, t-SNE, and k-means, articles are grouped into clusters based on semantic relationship. Each point represents an article.
-                  <br /><br />
-                  <a href="#">Learn more about GUARDIAN GALAXY</a>.</p>
-
-                  <p id="tt-2" class="toolTip_text">Each circle below represents a group of related articles, or “cluster". Machine Learning algorithms convert the words of each article into numerical vector-based representations. Articles with similar vectors are closer to one another than articles with dissimilar vectors. The t-SNE algorithm then converts those coordinates from high-dimensional space (think lattitude and longitude, but with way more numbers) to three dimensional space.
-                  <br /><br />
-                  To see all or none of the clusters, click on the grey button or left-most button.</p>
-
-                  <p id="tt-3" class="toolTip_text">The article list on the right displays a random sampling from the selected clusters. The circles beside each headline represent the cluster to which each article belongs. Click on the headline to read a snippet from the article. At the bottom of the snippet are the Top Five Related Articles as determined by the machine learning tools. Each time you move back from an article to the main listing, a new article list from the selected clusters is generated.
-                  <br /><br />
-                  Click <b>Next</b> to begin reading through the GUARDIAN GALAXY.</p>
-                  <button class="btn btn-primary next-button pull-right">Next</button>
-                  <button class="btn btn-primary back-button">Back</button>
-              </div>
+                <div id="container"></div>
+                <div id="screenshots"></div>
             </div>
-          </div>
-        </div>
 
-        <nav class="navbar navbar-default navbar-fixed-bottom" id="menu">
-            <button href='#' id='toggleAll' class='btn btn-circle checked'></button>
-        </nav>
+            <!-- Modal -->
+            <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                            <div class="white_logos">
+                                <img src="img/guardian_logo_white_220px.png" alt="" />
+                                <img src="img/labs_logo_white_220px.png" alt="" />
+                            </div>
+                            <div class="toolTip_top">
+                                <h3 id="myModalLabel">GUARDIAN GALAXY</h3>
+                                <p class="first_toolTip">A joint project from <br />
+                                <b>The Guardian</b> and <b>DBRS Innovation Labs</b></p>                
+                            </div>
+                        </div>
+                        <div class="modal-body">
+                            <p id="tt-1" class="toolTip_text first active">GUARDIAN GALAXY is a visualization of articles from the Science section of The Guardian from 1921-2016. Using the machine learning tools word2vec, t-SNE, and k-means, articles are grouped into clusters based on semantic relationship. Each point represents an article.
+                            <br /><br />
+                            <a href="#">Learn more about GUARDIAN GALAXY</a>.</p>
+
+                            <p id="tt-2" class="toolTip_text">Each circle below represents a group of related articles, or “cluster". Machine Learning algorithms convert the words of each article into numerical vector-based representations. Articles with similar vectors are closer to one another than articles with dissimilar vectors. The t-SNE algorithm then converts those coordinates from high-dimensional space (think lattitude and longitude, but with way more numbers) to three dimensional space.
+                            <br /><br />
+                            To see all or none of the clusters, click on the grey button or left-most button.</p>
+
+                            <p id="tt-3" class="toolTip_text">The article list on the right displays a random sampling from the selected clusters. The circles beside each headline represent the cluster to which each article belongs. Click on the headline to read a snippet from the article. At the bottom of the snippet are the Top Five Related Articles as determined by the machine learning tools. Each time you move back from an article to the main listing, a new article list from the selected clusters is generated.
+                            <br /><br />
+                            Click <b>Next</b> to begin reading through the GUARDIAN GALAXY.</p>
+                            <button class="btn btn-primary next-button pull-right">Next</button>
+                            <button class="btn btn-primary back-button">Back</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <nav class="navbar navbar-default navbar-fixed-bottom" id="menu">
+                <button href='#' id='toggleAll' class='btn btn-circle checked'></button>
+            </nav>
 
         <script src="./jquery-2.0.2.min.js"></script>
         <script src="./node_modules/three/build/three.min.js"></script>
         <script src="./TweenLite.min.js"></script>
         <script src="./TrackballControls.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
-        
         <!-- Piwik -->
         <script type="text/javascript">
           var _paq = _paq || [];
@@ -172,18 +168,6 @@
         </script>
         <noscript><p><img src="//dbrslabs.com/piwik/piwik.php?idsite=4" style="border:0;" alt="" /></p></noscript>
         <!-- End Piwik Code -->
-
         <script src="./DataProjector.js"></script>
-<!--         <script type="text/javascript">
-          $(window).load(function(){
-            $('#myModal').modal('show');
-          });
-          $('.next-button').click(function(){
-            var $targetItem = $('.toolTip_text.active').next();
-            $targetItem.addClass('.active');
-            $targetItem.siblings().removeClass('.active');
-          });
-        </script>
- -->
     </body>
 </html>
