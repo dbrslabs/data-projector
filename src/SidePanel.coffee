@@ -51,6 +51,7 @@ class Modal extends Panel
       $("#read-more-link").hide()
       $("#article-list-link").hide()
       $(".article").hide()
+      $("#related-articles-title").hide()
 
    setTitle: (title) ->
        $(@modal.title.id).text(title)
@@ -95,6 +96,7 @@ class Modal extends Panel
       # show similar documents section
       $(@modal.similar.id).show()
       $(@modal.hr.id).show()
+      $("#related-articles-title").show()
 
    toggleHidden: ->
       $('#wrapper').toggleClass('toggled').promise().done ->

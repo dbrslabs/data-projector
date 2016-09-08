@@ -1752,7 +1752,8 @@ Modal = (function(superClass) {
     this.setSimilarDocuments([]);
     $("#read-more-link").hide();
     $("#article-list-link").hide();
-    return $(".article").hide();
+    $(".article").hide();
+    return $("#related-articles-title").hide();
   };
 
   Modal.prototype.setTitle = function(title) {
@@ -1792,7 +1793,8 @@ Modal = (function(superClass) {
     $(this.modal.similar.id).text("");
     $(this.modal.similar.id).append(html);
     $(this.modal.similar.id).show();
-    return $(this.modal.hr.id).show();
+    $(this.modal.hr.id).show();
+    return $("#related-articles-title").show();
   };
 
   Modal.prototype.toggleHidden = function() {

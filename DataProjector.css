@@ -221,6 +221,10 @@ h3#myModalLabel {
       max-height: 220px;
       overflow-y: scroll;
    }
+
+   #sidebar-wrapper {
+      padding-bottom: 128px !important;
+   }
 }
 
 /*!
@@ -252,15 +256,13 @@ h3#myModalLabel {
     width: 0;
     height: 100%;
     margin-right: -250px;
-    overflow-y: auto;
+    overflow-y: scroll;
     background: #f8f8f8;
     -webkit-transition: all 0.5s ease;
     -moz-transition: all 0.5s ease;
     -o-transition: all 0.5s ease;
     transition: all 0.5s ease;
-    padding-top: 64px;
-    padding-left: 14px;
-    padding-right: 14px;
+    padding: 64px 14px;
 }
 
 #wrapper.toggled #sidebar-wrapper {
