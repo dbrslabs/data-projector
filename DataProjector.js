@@ -207,10 +207,16 @@ DataProjector = (function(superClass) {
     this.sidepanel.setColors(this.colors);
     this.sidepanel.displayDocumentsList(visible.documents);
     actuallythis = this;
-    return $("#article-list-link").click(function(event) {
+    $("#article-list-link").click(function(event) {
       event.preventDefault();
       return actuallythis.updateDocumentsDisplay();
     });
+    if (Utility.isMobile()) {
+      return $('#sidebar-wrapper').on('swipeleft swiperight', function(event) {
+        event.preventDefault();
+        return actuallythis.sidepanel.toggleHidden();
+      });
+    }
   };
 
   DataProjector.prototype.updateDocumentsDisplay = function() {

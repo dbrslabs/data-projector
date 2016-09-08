@@ -272,11 +272,17 @@ class DataProjector extends Observer
       #@setArticlesListLink()
       
       # yolo
-      actuallythis = this
+      actuallythis = @
 
       $("#article-list-link").click (event) ->
-        event.preventDefault()
-        actuallythis.updateDocumentsDisplay()
+         event.preventDefault()
+         actuallythis.updateDocumentsDisplay()
+
+      if Utility.isMobile()
+         $('#sidebar-wrapper').on 'swipeleft swiperight', (event) ->
+            event.preventDefault()
+            actuallythis.sidepanel.toggleHidden()
+         
 
 
    # populate sidepanel with documents that are currently visible
