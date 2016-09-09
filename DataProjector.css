@@ -225,6 +225,18 @@ h3#myModalLabel {
    #sidebar-wrapper {
       padding-bottom: 128px !important;
    }
+
+   #wrapper.toggled {
+      padding-right: 200px !important;
+   }
+
+   #wrapper.toggled #sidebar-wrapper {
+      width: 300px !important;
+   }
+
+   #wrapper.toggled #page-content-wrapper {
+      margin-right: 200px !important;
+   }
 }
 
 /*!
