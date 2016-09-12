@@ -166,6 +166,36 @@ class Projector extends Subject
 
 
    onMouseDown : (event) =>
+      threshold = 1
+      raycaster = new (THREE.Raycaster)
+      raycaster.params.Points.threshold = threshold
+
+      # create once
+      mouse = new (THREE.Vector2)
+      # create once
+      mouse.x = event.clientX / @renderer.domElement.width * 2 - 1
+      mouse.y = -(event.clientY / @renderer.domElement.height) * 2 + 1
+      raycaster.setFromCamera mouse, @cameraPerspective
+      recursiveFlag = false
+      intersects = raycaster.intersectObjects(@particles, false)
+
+      console.log intersects
+      console.log intersects[0].point
+      index = intersects[0].index
+      console.log intersects[0]
+      cid = intersects[0].object.geometry.vertices[0].cid
+      point = @particles[cid].geometry.vertices[ index ]
+      console.log point
+      index2 = index+1
+      point2 = @particles[cid].geometry.vertices[ index2 ]
+      console.log point2
+      console.log @points
+      # make sure we're at least in right cluster
+      i = 0
+      while i < 1
+         intersects[i].object.material.color.set 0xff0000
+         i++
+
 
       if @mode is Projector.VIEW.DUAL
 
@@ -196,7 +226,6 @@ class Projector extends Subject
 
 
    onMouseUp : (event) =>
-
       if @mode is Projector.VIEW.DUAL
 
          event.preventDefault()
@@ -387,7 +416,6 @@ class Projector extends Subject
          @points[c].colorsNeedUpdate = true
          @points[c].documents = new Array()
 
-
       # process JSON data
       $.each(data.points, @processPoint)
 
@@ -409,11 +437,12 @@ class Projector extends Subject
 
       # cluster index
       index = parseInt(nodeData.cid)
-
       vertex = new THREE.Vector3()
       vertex.x = parseFloat( nodeData.x )
       vertex.y = parseFloat( nodeData.y )
       vertex.z = parseFloat( nodeData.z )
+      vertex.cid = nodeData.cid
+      vertex.name = nodeData.document.id
       @points[index].vertices.push( vertex )
 
       # NOTE Although initially all points in the same cluster have the same color
@@ -760,3 +789,5 @@ class Projector extends Subject
 
 
 module.exports = Projector
+
+
