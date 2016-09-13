@@ -14,7 +14,8 @@ from bson.objectid import ObjectId
 
 # flask
 from flask import Flask, jsonify, request
-from flask_cors import CORS, cross_origin
+#from flask_cors import CORS, cross_origin
+from flask.ext.cors import CORS, cross_origin
 
 # doc2vec
 from gensim.models import Doc2Vec
