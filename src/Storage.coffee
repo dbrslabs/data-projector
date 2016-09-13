@@ -58,6 +58,12 @@ class Storage extends Subject
    onJSON : (@data) =>
 
       @notify(Storage.EVENT_JSON_READY)
+
+      # clear existing data
+      @clusterIDs = new Array()
+      @points = 0
+      @clusters = 0
+
       # process JSON data
       $.each(@data.points, @processPoint)
       @notify(Storage.EVENT_DATA_READY)
@@ -75,13 +81,14 @@ class Storage extends Subject
 
 
    # This is a two step process. First data file name is retrieved. Then data itself.
-   requestData : ->
+   requestData : (filename) ->
 
-      @requestDatafile()
+      @requestDatafile(filename)
 
 
    # Get the name of the data file to use in visualization.
-   requestDatafile : -> @onDatafile "data.json"
+   requestDatafile : (filename) ->
+       @onDatafile filename
 
 
    # Use jQuery JSON loader to fetch data.

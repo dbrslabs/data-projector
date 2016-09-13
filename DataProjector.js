@@ -43,9 +43,10 @@ DataProjector = (function(superClass) {
   DataProjector.prototype.colors = null;
 
   function DataProjector() {
+    this.initialized = false;
     this.storage = new Storage();
     this.storage.attach(this);
-    this.storage.requestData();
+    this.storage.requestData(this.dataUrl('Business'));
     this.toolbar = new Toolbar('#toolbar');
     this.toolbar.attach(this);
     this.menu = new Menu('#menu');
@@ -74,11 +75,19 @@ DataProjector = (function(superClass) {
   };
 
   DataProjector.prototype.onStorageEvent = function(type, data) {
+    var visible;
     switch (type) {
       case Storage.EVENT_DATA_READY:
         this.info.display("Processed " + (this.storage.getPoints()) + " points.");
         this.info.display("Found " + (this.storage.getClusters()) + " clusters.");
-        return this.initialize();
+        if (!this.initialized) {
+          this.initialize();
+        } else {
+          this.projector.load(this.storage);
+          visible = this.projector.getVisibleDocuments();
+          this.sidepanel.displayDocumentsList(visible.documents);
+        }
+        return this.menu.setAllOn();
       case Storage.EVENT_SCREENSHOT_OK:
         return this.info.display("Screenshot " + (this.storage.getSaved()) + " saved.");
     }
@@ -149,6 +158,8 @@ DataProjector = (function(superClass) {
           icon('fa fa-pause');
         }
         return this.projector.toggleSpin();
+      case Toolbar.EVENT_SECTION_SELECTION:
+        return this.storage.requestData(this.dataUrl(this.toolbar.section));
       case Toolbar.EVENT_SHOW_DOCUMENTS:
         if (Utility.isMobile()) {
           return this.sidepanel.toggleHidden();
@@ -196,7 +207,7 @@ DataProjector = (function(superClass) {
   };
 
   DataProjector.prototype.initialize = function() {
-    var actuallythis, visible;
+    var visible;
     this.palette = new Palette(this.storage.getClusters());
     this.colors = this.palette.getColors();
     this.menu.create(this.storage.getClusters(), this.palette.getColors());
@@ -206,23 +217,32 @@ DataProjector = (function(superClass) {
     visible = this.projector.getVisibleDocuments();
     this.sidepanel.setColors(this.colors);
     this.sidepanel.displayDocumentsList(visible.documents);
-    actuallythis = this;
-    $("#article-list-link").click(function(event) {
-      event.preventDefault();
-      return actuallythis.updateDocumentsDisplay();
-    });
-    if (Utility.isMobile()) {
-      return $('#sidebar-wrapper').on('swipeleft swiperight', function(event) {
+    $("#article-list-link").click((function(_this) {
+      return function(event) {
         event.preventDefault();
-        return actuallythis.sidepanel.toggleHidden();
-      });
+        return _this.updateDocumentsDisplay();
+      };
+    })(this));
+    if (Utility.isMobile()) {
+      $('#sidebar-wrapper').on('swipeleft swiperight', (function(_this) {
+        return function(event) {
+          event.preventDefault();
+          return _this.sidepanel.toggleHidden();
+        };
+      })(this));
     }
+    return this.initialized = true;
   };
 
   DataProjector.prototype.updateDocumentsDisplay = function() {
     var visible;
     visible = this.projector.getVisibleDocuments();
     return this.sidepanel.displayDocumentsList(visible.documents);
+  };
+
+  DataProjector.prototype.dataUrl = function(section) {
+    section = section.toLowerCase().replace(/ /g, '');
+    return "https://d16ej4xdzdwuoi.cloudfront.net/data/" + section + ".json";
   };
 
   return DataProjector;
@@ -421,6 +441,16 @@ Menu = (function(superClass) {
       }
     }
     return result;
+  };
+
+  Menu.prototype.setAllOn = function() {
+    var i, j, ref, tag;
+    this.setState(this.allId, Menu.TOGGLE_ON);
+    for (i = j = 0, ref = this.clusters; 0 <= ref ? j < ref : j > ref; i = 0 <= ref ? ++j : --j) {
+      tag = '#c' + String(i);
+      this.setState(tag, Menu.TOGGLE_ON);
+    }
+    return this.notify(Menu.EVENT_TOGGLE_ALL_ON);
   };
 
   Menu.prototype.setState = function(tag, checked) {
@@ -972,6 +1002,9 @@ Projector = (function(superClass) {
   Projector.prototype.load = function(storage) {
     var c, clusters, data, k, l, material, p, ref, ref1;
     this.storage = storage;
+    while (this.box.children.length > 4) {
+      this.box.remove(this.box.children[4]);
+    }
     data = this.storage.getData();
     clusters = this.storage.getClusters();
     this.points = new Array();
@@ -983,12 +1016,12 @@ Projector = (function(superClass) {
     $.each(data.points, this.processPoint);
     this.particles = new Array();
     for (p = l = 0, ref1 = clusters; 0 <= ref1 ? l < ref1 : l > ref1; p = 0 <= ref1 ? ++l : --l) {
-      material = new THREE.ParticleBasicMaterial({
+      material = new THREE.PointsMaterial({
         size: 2.0,
         sizeAttenuation: false,
         vertexColors: true
       });
-      this.particles[p] = new THREE.ParticleSystem(this.points[p], material);
+      this.particles[p] = new THREE.Points(this.points[p], material);
       this.box.add(this.particles[p]);
     }
     return this.notify(Projector.EVENT_DATA_LOADED);
@@ -1957,6 +1990,9 @@ Storage = (function(superClass) {
   Storage.prototype.onJSON = function(data) {
     this.data = data;
     this.notify(Storage.EVENT_JSON_READY);
+    this.clusterIDs = new Array();
+    this.points = 0;
+    this.clusters = 0;
     $.each(this.data.points, this.processPoint);
     return this.notify(Storage.EVENT_DATA_READY);
   };
@@ -1965,12 +2001,12 @@ Storage = (function(superClass) {
     return this.notify(Storage.EVENT_SCREENSHOT_OK);
   };
 
-  Storage.prototype.requestData = function() {
-    return this.requestDatafile();
+  Storage.prototype.requestData = function(filename) {
+    return this.requestDatafile(filename);
   };
 
-  Storage.prototype.requestDatafile = function() {
-    return this.onDatafile("data.json");
+  Storage.prototype.requestDatafile = function(filename) {
+    return this.onDatafile(filename);
   };
 
   Storage.prototype.requestJSON = function(datafile) {
@@ -2121,7 +2157,11 @@ Toolbar = (function(superClass) {
 
   Toolbar.EVENT_SHOW_HELP = "EVENT_SHOW_HELP";
 
+  Toolbar.EVENT_SECTION_SELECTION = "EVENT_SECTION_SELECTION";
+
   Toolbar.prototype.dispatcher = null;
+
+  Toolbar.prototype.section = null;
 
   function Toolbar(id) {
     this.showHelpModal = bind(this.showHelpModal, this);
@@ -2142,6 +2182,7 @@ Toolbar = (function(superClass) {
     this.setButtonSelected = bind(this.setButtonSelected, this);
     this.initialize = bind(this.initialize, this);
     this.createDispatcher = bind(this.createDispatcher, this);
+    this.onSelect = bind(this.onSelect, this);
     this.onClick = bind(this.onClick, this);
     this.onKeyDown = bind(this.onKeyDown, this);
     var i, item, len, ref;
@@ -2150,9 +2191,15 @@ Toolbar = (function(superClass) {
     ref = this.dispatcher;
     for (i = 0, len = ref.length; i < len; i++) {
       item = ref[i];
-      $(item.id).click({
-        type: item.type
-      }, this.onClick);
+      if (item.type === Toolbar.EVENT_SECTION_SELECTION) {
+        $(item.id).on('changed.bs.select', {
+          type: item.type
+        }, this.onSelect);
+      } else {
+        $(item.id).click({
+          type: item.type
+        }, this.onClick);
+      }
     }
     document.addEventListener('keydown', this.onKeyDown, false);
     this.initialize();
@@ -2178,6 +2225,11 @@ Toolbar = (function(superClass) {
   };
 
   Toolbar.prototype.onClick = function(event) {
+    return this.notify(event.data.type);
+  };
+
+  Toolbar.prototype.onSelect = function(event, index, newVal, oldVal) {
+    this.section = event.target.value;
     return this.notify(event.data.type);
   };
 
@@ -2263,6 +2315,11 @@ Toolbar = (function(superClass) {
         key: 0,
         modifier: Utility.NO_KEY,
         type: Toolbar.EVENT_SPIN_TOGGLE
+      }, {
+        id: "#sectionSelector",
+        key: 0,
+        modifier: Utility.NO_KEY,
+        type: Toolbar.EVENT_SECTION_SELECTION
       }, {
         id: "#toggleArticlesButton",
         key: 0,

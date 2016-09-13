@@ -38,11 +38,13 @@ class DataProjector extends Observer
    # Create data projector and display/visualize given data file.
    constructor : ->
 
+      @initialized = false
+
       # data read/write access
 
       @storage = new Storage()
       @storage.attach(@)
-      @storage.requestData()
+      @storage.requestData(@dataUrl('Business')) # initial dataset
 
       # user interface - panels
 
@@ -85,7 +87,18 @@ class DataProjector extends Observer
          when Storage.EVENT_DATA_READY
             @info.display "Processed #{@storage.getPoints()} points."
             @info.display "Found #{@storage.getClusters()} clusters."
-            @initialize() # get going!
+            if not @initialized
+               @initialize() # get going!
+            else
+               # load new data into visualization
+               @projector.load(@storage)
+               # update visible docs in sidepanel
+               visible = @projector.getVisibleDocuments()
+               @sidepanel.displayDocumentsList(visible.documents)
+
+            # set all cluster buttons to on
+            @menu.setAllOn()
+
 
          when Storage.EVENT_SCREENSHOT_OK
             @info.display "Screenshot #{@storage.getSaved()} saved."
@@ -169,6 +182,10 @@ class DataProjector extends Observer
             icon = (style) -> $('#toggleSpinButton button i').attr 'class', style
             if spinning then icon 'fa fa-play' else icon 'fa fa-pause'
             @projector.toggleSpin()
+
+         when Toolbar.EVENT_SECTION_SELECTION
+            # update documents cloud with new data
+            @storage.requestData(@dataUrl(@toolbar.section))
 
          when Toolbar.EVENT_SHOW_DOCUMENTS
             if Utility.isMobile()
@@ -271,24 +288,27 @@ class DataProjector extends Observer
       # Set the "Back to Article List" links
       #@setArticlesListLink()
       
-      # yolo
-      actuallythis = @
-
-      $("#article-list-link").click (event) ->
+      $("#article-list-link").click (event) =>
          event.preventDefault()
-         actuallythis.updateDocumentsDisplay()
+         @updateDocumentsDisplay()
 
       if Utility.isMobile()
-         $('#sidebar-wrapper').on 'swipeleft swiperight', (event) ->
+         $('#sidebar-wrapper').on 'swipeleft swiperight', (event) =>
             event.preventDefault()
-            actuallythis.sidepanel.toggleHidden()
+            @sidepanel.toggleHidden()
          
+      @initialized = true
 
 
    # populate sidepanel with documents that are currently visible
    updateDocumentsDisplay : ->
       visible = @projector.getVisibleDocuments()
       @sidepanel.displayDocumentsList(visible.documents)
+
+
+   dataUrl : (section) ->
+      section = section.toLowerCase().replace(/ /g,'')
+      return "https://d16ej4xdzdwuoi.cloudfront.net/data/#{section}.json"
 
 
 

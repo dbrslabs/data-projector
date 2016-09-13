@@ -9,9 +9,13 @@ ml/nytimes/articles
 ml/nytimes/*.json
 ml/nytimes/data
 
-ml/guardian/data
+ml/guardian/data/*
+ml/doc2vec/models/*
+ml/tsne/vecs/*
 
-ml/venv
+data/*
+
+venv
 
 *.log
 

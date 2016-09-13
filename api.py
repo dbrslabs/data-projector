@@ -14,7 +14,7 @@ from bson.objectid import ObjectId
 
 # flask
 from flask import Flask, jsonify, request
-from flask.ext.cors import CORS, cross_origin
+from flask_cors import CORS, cross_origin
 
 # doc2vec
 from gensim.models import Doc2Vec
@@ -84,50 +84,6 @@ def get_doc_most_similar(docid):
     except Exception as err:
         pass
 
-
-#@application.route("/url/most_similar", methods=['POST']) #dev
-@application.route("/guardian-galaxy-api/url/most_similar", methods=['POST']) #prod
-@cross_origin(origin='localhost', headers=['Content-Type'])
-def get_url_most_similar():
-    try:
-        # extract url from payload
-        content = request.get_json()
-        url = content['url']
-
-        # get text of document url using Guardian api
-        params = {
-            'api-key':'e49965fd-587d-4b44-913d-6fd32587b515',
-            'show-fields': 'all',
-            'show-blocks': 'body',
-        }
-        apiurl = "http://content.guardianapis.com{path}?{query}".format(
-            path=urlparse(url).path,
-            query = urlencode(params),
-        )
-        res = requests.get(apiurl)
-        text = json.loads(res.content)['response']['content']['blocks']['body'][0]['bodyTextSummary']
-        print json.loads(res.content)['response']['content']['webTitle']
-
-        # preprocess text in the same manner as doc2vec training
-        # TODO *import* these preprocess functions from doc2vec/doc2vec.py
-        import string; printable = set(string.printable)
-        text = filter(lambda x: x in printable, text) # strip_punct
-        text = text.lower() # lower case
-
-        # get doc2vec vector given the document text
-        tagged_text = TaggedDocument(words=text.split(), tags=['N/A'])
-        # for deterministic infer_vector, setting the d2v seed is
-        # required until infer_vector seed feature released
-        d2v.random.set_state(init_rng_state)
-        vec = d2v.infer_vector(tagged_text.words)
-
-        # find most similar docs by vector
-        similar_docids, similarities = most_similar(vec)
-        similar_docs = get_docs_by_ids(similar_docids)
-        similar_docs = merge_docs_and_similarities(similar_docs, similarities)
-        return jsonify({'most_similar': similar_docs})
-    except Exception as err:
-        pass
 
 if __name__ == "__main__":
     application.run(host='0.0.0.0')

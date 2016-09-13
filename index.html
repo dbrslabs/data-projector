@@ -5,8 +5,15 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
 
+        <!-- Bootstrap -->
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+
+        <!-- Bootstrap-Select -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.11.0/css/bootstrap-select.min.css">
+
+        <!-- Font Awesome -->
         <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-T8Gy5hrqNKT+hzMclPo118YTQO6cYprQmhrYwIiQ/3axmI1hQomh7Ud2hPOy8SP1" crossorigin="anonymous">
+
         <link rel="stylesheet" type="text/css" href="DataProjector.css">
 
         <link rel="apple-touch-icon" sizes="57x57" href="img/favicons/apple-touch-icon-57x57.png?v=OmmXEAkJbg">
@@ -42,6 +49,24 @@
                         <button id="toggleArticlesButton" class="visible-xs-inline-block btn btn-primary" aria-expanded="false">
                             <i class="fa fa-files-o"></i>
                         </button>
+                        <select id="sectionSelector"
+                          class="selectpicker" 
+                          data-width="100px"
+                          data-style="btn-primary">
+                          <optgroup label="Section">
+                            <option>Business</option>
+                            <option>Film</option>
+                            <option>Football</option>
+                            <option>Money</option>
+                            <option>Music</option>
+                            <option>Politics</option>
+                            <option>Science</option>
+                            <option>Sport</option>
+                            <option>Technology</option>
+                            <option>Travel</option>
+                            <option>World News</option>
+                          </optgroup>
+                        </select>
                         <span id="toggleSpinButton">
                             <button class="btn btn-primary">
                                 <i class="fa fa-pause"></i>
@@ -153,7 +178,13 @@
         <script src="./node_modules/three/build/three.min.js"></script>
         <script src="./TweenLite.min.js"></script>
         <script src="./TrackballControls.js"></script>
+
+        <!-- Bootstrap -->
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+
+        <!-- Bootstrap-Select -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.11.0/js/bootstrap-select.min.js"></script>
+        
         <!-- Piwik -->
         <script type="text/javascript">
           var _paq = _paq || [];
