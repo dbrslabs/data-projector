@@ -114,6 +114,7 @@ class Projector extends Subject
 
       @animate() # start rendering loop!
 
+      @setTooltips()
 
    # E V E N T   H A N D L E R S
 
@@ -123,6 +124,37 @@ class Projector extends Subject
       if $(this).find('.btn-primary').size() > 0
          $(this).find('.btn').toggleClass 'btn-primary'
       $(this).find('.btn').toggleClass 'btn-default'
+
+   findPoint : (cid, docid) => # maybe pass along cid to make search faster?
+      mDocs = @points[cid].documents
+      console.log @points[cid]
+      console.log(mDocs)
+      i = 0
+      for d in mDocs
+         if d.id is docid
+            console.log d
+            console.log @points[cid].colors[i]
+            console.log @points[cid].documents[i]
+         i++
+           #console.log @points[cid].colors[d]
+   setTooltips: () =>
+
+      canvas1 = document.createElement('canvas')
+      @context1 = canvas1.getContext('2d')
+      @context1.font = 'Bold 20px Arial'
+      @context1.fillStyle = 'rgba(0,0,0,0.95)'
+      @context1.fillText 'Hello, world!', 0, 20
+      # canvas contents will be used for a texture
+      @texture1 = new (THREE.Texture)(canvas1)
+      @texture1.needsUpdate = true
+      #//////////////////////////////////////
+      spriteMaterial = new (THREE.SpriteMaterial)({
+      map: @texture1
+      useScreenCoordinates: true})
+      @sprite1 = new (THREE.Sprite)(spriteMaterial)
+      @sprite1.scale.set 200, 100, 1.0
+      @sprite1.position.set 50, 50, 0
+      @scene.add @sprite1
 
    # Make updates related to window size changes.
    # Also used when view configuration is switched.
@@ -169,33 +201,66 @@ class Projector extends Subject
       threshold = 1
       raycaster = new (THREE.Raycaster)
       raycaster.params.Points.threshold = threshold
-
+      # TODO: delete this
+      console.log @findPoint(0,'56f3172cd4f5ca1daeb6539b')
       # create once
       mouse = new (THREE.Vector2)
-      # create once
       mouse.x = event.clientX / @renderer.domElement.width * 2 - 1
       mouse.y = -(event.clientY / @renderer.domElement.height) * 2 + 1
       raycaster.setFromCamera mouse, @cameraPerspective
       recursiveFlag = false
       intersects = raycaster.intersectObjects(@particles, false)
+      if intersects.length > 0
+         console.log intersects
+         console.log intersects[0].point
+         index = intersects[0].index
+         console.log intersects[0]
+         cid = intersects[0].object.geometry.vertices[0].cid
+         point = @particles[cid].geometry.vertices[ index ]
+         console.log point
+         console.log @points
 
-      console.log intersects
-      console.log intersects[0].point
-      index = intersects[0].index
-      console.log intersects[0]
-      cid = intersects[0].object.geometry.vertices[0].cid
-      point = @particles[cid].geometry.vertices[ index ]
-      console.log point
-      index2 = index+1
-      point2 = @particles[cid].geometry.vertices[ index2 ]
-      console.log point2
-      console.log @points
+         @context1.clearRect 0, 0, 640, 480
+         message = point.name
+         #message = "hello world"
+         metrics = @context1.measureText(message)
+         width = metrics.width
+         @context1.fillStyle = 'rgba(0,0,0,0.95)'
+         # black border
+         @context1.fillRect 0, 0, width + 8, 20 + 8
+         @context1.fillStyle = 'rgba(255,255,255,0.95)'
+         # white filler
+         @context1.fillRect 2, 2, width + 4, 20 + 4
+         @context1.fillStyle = 'rgba(0,0,0,1)'
+         # text color
+         @context1.fillText message, 4, 20
+         @texture1.needsUpdate = true
+
+         @sprite1.position.copy intersects[0].point
+
       # make sure we're at least in right cluster
+      ###
       i = 0
       while i < 1
          intersects[i].object.material.color.set 0xff0000
          i++
+      ###
+      ###
+      particleMaterial = new THREE.SpriteMaterial({
+         color: 0x000000
+         program: (context) ->
+            context.beginPath()
+            context.arc(0, 0, 0.5, 0, PI2, true)
+            context.fill()
+      })
 
+      if intersects.length > 0
+         intersects[0].object.material.color.setHex Math.random() * 0xffffff
+         particle = new (THREE.Sprite)(particleMaterial)
+         particle.position.copy intersects[0].point
+         particle.scale.x = particle.scale.y = 16
+         @scene.add particle
+      ###
 
       if @mode is Projector.VIEW.DUAL
 
@@ -224,6 +289,10 @@ class Projector extends Subject
 
             event.stopPropagation()
 
+      @sprite1.position.set event.clientX, event.clientY - 20, 0
+      # update the mouse variable
+      @mouse.x = event.clientX / window.innerWidth * 2 - 1
+      @mouse.y = -(event.clientY / window.innerHeight) * 2 + 1
 
    onMouseUp : (event) =>
       if @mode is Projector.VIEW.DUAL
