@@ -992,7 +992,8 @@ Projector = (function(superClass) {
       this.particles[p] = new THREE.ParticleSystem(this.points[p], material);
       this.box.add(this.particles[p]);
     }
-    return this.notify(Projector.EVENT_DATA_LOADED);
+    this.notify(Projector.EVENT_DATA_LOADED);
+    return this.findPoint(0, '56f2e763d4f5ca1daeaa89b5');
   };
 
   Projector.prototype.processPoint = function(nodeName, nodeData) {
@@ -1009,17 +1010,18 @@ Projector = (function(superClass) {
   };
 
   Projector.prototype.findPoint = function(cid, docid) {
-    var k, p, ref, results;
-    results = [];
-    for (p = k = 0, ref = this.points[cid]; 0 <= ref ? k < ref : k > ref; p = 0 <= ref ? ++k : --k) {
-      if (p.document.id === docid) {
-        console.log(p.document.id);
-        results.push(console.log(p.color));
-      } else {
-        results.push(void 0);
+    var doc, index, k, len, point_index, ref;
+    point_index = null;
+    ref = this.points[cid].documents;
+    for (index = k = 0, len = ref.length; k < len; index = ++k) {
+      doc = ref[index];
+      if (doc.id === docid) {
+        console.log('yay', cid, docid, index);
+        point_index = index;
+        console.log(this.points[cid].colors[index]);
       }
     }
-    return results;
+    return point_index;
   };
 
   Projector.prototype.animate = function() {

@@ -402,6 +402,8 @@ class Projector extends Subject
 
       @notify(Projector.EVENT_DATA_LOADED)
 
+      @findPoint(0, '56f2e763d4f5ca1daeaa89b5')
+
 
 
    # Called for each data point loaded in JSON file.
@@ -427,12 +429,37 @@ class Projector extends Subject
       @points[index].documents.push( nodeData.document )
 
    findPoint : (cid, docid) => # maybe pass along cid to make search faster?
-      #Example: docid 56f2cddbd4f5ca1daea2aad2, cid 0
-      for p in [0...@points[cid]]
-         if p.document.id is docid
-            console.log p.document.id
-            console.log p.color
+      #console.log @points[cid].documents
+      #console.log @particles[cid]
+      #Example: cid 0 docid 56f2cddbd4f5ca1daea2aad2
+      #console.log @points[cid].documents
+      #console.log typeof @points[cid].documents
 
+      #$.each (index, @points[cid].documents) ->
+      #   if element.id is docid
+      #      console.log element.id
+
+      #for doc in @points[cid].documents
+      #   if doc.id is docid
+      #      console.log 'yay', cid, docid
+
+      # for d in [0...@points[cid].documents]
+      #    console.log d
+      #    console.log @points[cid].documents[d].id
+
+      #    if @points[cid].documents[d].id is docid
+      #       console.log @points[cid].documents[d]
+      #       console.log @points[cid].colors[d]
+
+      point_index = null;
+
+      for doc, index in @points[cid].documents
+         if doc.id is docid
+            console.log 'yay', cid, docid, index
+            point_index = index
+            console.log @points[cid].colors[index]
+
+      return point_index
 
    # Rendering loop - animate calls itself forever.
    animate : =>
