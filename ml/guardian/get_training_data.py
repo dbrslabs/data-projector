@@ -3,12 +3,13 @@ import os, logging, sys, argparse
 from datetime import datetime
 
 # 3rd party
-from pymongo import MongoClient
+from pymongo import MongoClient, DESCENDING
 
 if __name__ == '__main__':
     # parse cmd line arguments
     parser = argparse.ArgumentParser(description='Creates doc2vec training data from guardian db')
     parser.add_argument('-o','--output', default="articles", help='file path to output data file')
+    parser.add_argument('-q','--quantity', default=0, type=int, help='number of documents, e.g. there are 51,760 articles but you only want 30,000')
     parser.add_argument('-s','--sections', nargs='+', type=str, default=[], 
         help=('list of sectionsNames for which to search. '
             'sections with >10k articles (see: sections.json): '
@@ -39,13 +40,20 @@ if __name__ == '__main__':
             output = arg.output,
             sections = "-".join(arg.sections) if arg.sections else 'all').replace(' ',''))
 
+    # adds quantity to filename
+    if arg.quantity:
+        out = out + '-{}'.format(arg.quantity)
+
     # open outfile and begin writing articles
     with open(out, 'w') as outfile:
 
         # construct query from cmd line arguments
         query = {'type':'article'}
         if arg.sections: query.update({'sectionName': {'$in': arg.sections }})
-        docs = articles.find(query)
+        docs = articles.find(query).sort('publicationDateObj', DESCENDING)
+
+        if arg.quantity and docs.count() > arg.quantity:
+            docs = docs[0:arg.quantity-1]
 
         # iterate through documents and write text to out file
         for i, doc in enumerate(docs):
