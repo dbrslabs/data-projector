@@ -732,6 +732,7 @@ Projector = (function(superClass) {
     this.getVisibleDocuments = bind(this.getVisibleDocuments, this);
     this.render = bind(this.render, this);
     this.animate = bind(this.animate, this);
+    this.findPoint = bind(this.findPoint, this);
     this.processPoint = bind(this.processPoint, this);
     this.load = bind(this.load, this);
     this.createRenderingEngine = bind(this.createRenderingEngine, this);
@@ -1005,6 +1006,20 @@ Projector = (function(superClass) {
     color = this.colors[index].clone();
     this.points[index].colors.push(color);
     return this.points[index].documents.push(nodeData.document);
+  };
+
+  Projector.prototype.findPoint = function(cid, docid) {
+    var k, p, ref, results;
+    results = [];
+    for (p = k = 0, ref = this.points[cid]; 0 <= ref ? k < ref : k > ref; p = 0 <= ref ? ++k : --k) {
+      if (p.document.id === docid) {
+        console.log(p.document.id);
+        results.push(console.log(p.color));
+      } else {
+        results.push(void 0);
+      }
+    }
+    return results;
   };
 
   Projector.prototype.animate = function() {
@@ -1872,7 +1887,7 @@ Modal = (function(superClass) {
 
   Modal.prototype.getDocumentContents = function(id, callback) {
     return $.ajax({
-      url: '/guardian-galaxy-api/doc/' + id,
+      url: 'http://127.0.0.1:5000/doc/' + id,
       type: 'GET',
       contentType: 'application/json',
       beforeSend: function() {
@@ -1887,7 +1902,7 @@ Modal = (function(superClass) {
 
   Modal.prototype.getSimilarDocuments = function(id, callback) {
     return $.ajax({
-      url: '/guardian-galaxy-api/doc/' + id + '/most_similar',
+      url: 'http://127.0.0.1:5000/doc/' + id + '/most_similar',
       type: 'GET',
       contentType: 'application/json',
       beforeSend: function() {

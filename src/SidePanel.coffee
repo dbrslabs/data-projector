@@ -175,8 +175,8 @@ class Modal extends Panel
    getDocumentContents: (id, callback) ->
 
       $.ajax(
-        #url: 'http://127.0.0.1:5000/doc/' + id #dev
-        url: '/guardian-galaxy-api/doc/' + id #prod
+        url: 'http://127.0.0.1:5000/doc/' + id #dev
+        #url: '/guardian-galaxy-api/doc/' + id #prod
         type: 'GET'
         contentType: 'application/json'
         beforeSend: ->
@@ -191,8 +191,8 @@ class Modal extends Panel
    getSimilarDocuments: (id, callback) ->
 
      $.ajax(
-       #url: 'http://127.0.0.1:5000/doc/' + id + '/most_similar' #dev
-       url: '/guardian-galaxy-api/doc/' + id + '/most_similar' #prod
+       url: 'http://127.0.0.1:5000/doc/' + id + '/most_similar' #dev
+       #url: '/guardian-galaxy-api/doc/' + id + '/most_similar' #prod
        type: 'GET'
        contentType: 'application/json'
        beforeSend: ->

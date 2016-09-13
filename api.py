@@ -44,8 +44,8 @@ def format_article(article):
 def sanitytest():
     return "<p>airhornsounds.wav</p>"
 
-#@application.route("/doc/<docid>", methods=['GET']) #dev
-@application.route("/guardian-galaxy-api/doc/<docid>", methods=['GET']) #prod
+@application.route("/doc/<docid>", methods=['GET']) #dev
+#@application.route("/guardian-galaxy-api/doc/<docid>", methods=['GET']) #prod
 @cross_origin(origin='localhost', headers=['Content-Type'])
 def get_doc(docid):
     try:
@@ -72,8 +72,8 @@ def merge_docs_and_similarities(docs, similarities):
     docs = [dict(art.items() + [('similarity',sim)]) for art,sim in zip(docs,similarities)]
     return docs
 
-#@application.route("/doc/<docid>/most_similar", methods=['GET']) #dev
-@application.route("/guardian-galaxy-api/doc/<docid>/most_similar", methods=['GET']) #prod
+@application.route("/doc/<docid>/most_similar", methods=['GET']) #dev
+#@application.route("/guardian-galaxy-api/doc/<docid>/most_similar", methods=['GET']) #prod
 @cross_origin(origin='localhost', headers=['Content-Type'])
 def get_doc_most_similar(docid):
     try:
@@ -85,8 +85,8 @@ def get_doc_most_similar(docid):
         pass
 
 
-#@application.route("/url/most_similar", methods=['POST']) #dev
-@application.route("/guardian-galaxy-api/url/most_similar", methods=['POST']) #prod
+@application.route("/url/most_similar", methods=['POST']) #dev
+#@application.route("/guardian-galaxy-api/url/most_similar", methods=['POST']) #prod
 @cross_origin(origin='localhost', headers=['Content-Type'])
 def get_url_most_similar():
     try:

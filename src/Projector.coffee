@@ -426,6 +426,13 @@ class Projector extends Subject
       # track corresponding document metadata
       @points[index].documents.push( nodeData.document )
 
+   findPoint : (cid, docid) => # maybe pass along cid to make search faster?
+      #Example: docid 56f2cddbd4f5ca1daea2aad2, cid 0
+      for p in [0...@points[cid]]
+         if p.document.id is docid
+            console.log p.document.id
+            console.log p.color
+
 
    # Rendering loop - animate calls itself forever.
    animate : =>
