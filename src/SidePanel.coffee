@@ -1,8 +1,6 @@
 # Controls application document presentation in the side panel
 
 Panel = require('./Panel.coffee')
-Utility = require('./Utility.coffee')
-#Projector = require('./Projector.coffee')
 
 class Modal extends Panel
 
@@ -87,10 +85,12 @@ class Modal extends Panel
    #      @notify(Modal.EVENT_ARTICLES_LINK)
 
 
-   setSimilarDocuments: (documents) ->
+   setSimilarDocuments: (documents, section) ->
       html = ""
       for d in documents
-         html += "<a class='document' data-doc-id='" + d.id + "'>" + d.title + "</a><br />"
+         html += "<a class='document' 
+                     data-section='#{section}'
+                     data-doc-id='#{d.id}'>#{d.title}</a><br />"
       $(@modal.similar.id).text("")
       $(@modal.similar.id).append(html)
       # show similar documents section
@@ -113,7 +113,7 @@ class Modal extends Panel
         
 
    # display a list of documents
-   displayDocumentsList: (documents) ->
+   displayDocumentsList: (documents, section) ->
       @clear()
       @setTitle "Random Document Sample in Selected Clusters"
 
@@ -130,12 +130,14 @@ class Modal extends Panel
           title = doc.title.substring(0,len)
           if title.length == len then title = title + '...'
           docs[i].title = title
-          #console.log Object.getOwnPropertyNames(docs[i])
       # format html and add to dom
-      #docsHtml = ("<span class='cluster-id' style='color:#{@colors['c1'].getStyle()}'></span><a class='document' data-doc-id='#{doc.id}'>#{doc.title}</a><br/>" for doc in docs).join('')
-      docsHtml = ("<span class='cluster-id' style='background-color:#{@colors[doc.cid].getStyle()}'></span><a class='document' data-doc-id='#{doc.id}'>#{doc.title}</a><br/>" for doc in docs).join('')
-
-      #console.log Object.getOwnPropertyNames(docs[0])
+      docsHtml = (
+         "<span class='cluster-id' 
+            style='background-color:#{@colors[doc.cid].getStyle()}'> </span>
+         <a class='document' 
+            data-section='#{section}'
+            data-doc-id='#{doc.id}'>#{doc.title}</a>
+         <br/>" for doc in docs).join('')
 
       # show article list
       $("#article-list").show()
@@ -144,7 +146,7 @@ class Modal extends Panel
 
 
    # display one particular document
-   displayDocument: (docId) ->
+   displayDocument: (docId, section) ->
 
       # hide document list
       $("#article-list").hide()
@@ -159,20 +161,20 @@ class Modal extends Panel
          @setDocumentHTML data.html
          @setDocumentGuardianLink data.url
 
-      @getSimilarDocuments docId, (data) =>
-
-         @setSimilarDocuments data.most_similar
+      @getSimilarDocuments(docId, section, (data) =>
+         @setSimilarDocuments(data.most_similar, section))
 
 
 
    onClickDocument: (event) =>
       event.preventDefault()
       docId = $(event.target).data 'doc-id' 
-      @displayDocument docId
+      section = $(event.target).data 'section' 
+      @displayDocument docId, section
 
 
 
-   getDocumentContents: (id, callback) ->
+   getDocumentContents: (id, callback) =>
 
       $.ajax(
         #url: 'http://127.0.0.1:5000/doc/' + id #dev
@@ -188,11 +190,11 @@ class Modal extends Panel
 
 
 
-   getSimilarDocuments: (id, callback) ->
+   getSimilarDocuments: (id, section, callback) =>
 
      $.ajax(
-       #url: 'http://127.0.0.1:5000/doc/' + id + '/most_similar' #dev
-       url: '/guardian-galaxy-api/doc/' + id + '/most_similar' #prod
+       #url: "http://127.0.0.1:5000/doc/#{id}/section/#{section}/most_similar" #dev
+       url: "/guardian-galaxy-api/doc/#{id}/section/#{section}/most_similar" #prod
        type: 'GET'
        contentType: 'application/json'
        beforeSend: ->

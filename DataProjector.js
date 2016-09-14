@@ -44,11 +44,11 @@ DataProjector = (function(superClass) {
 
   function DataProjector() {
     this.initialized = false;
-    this.storage = new Storage();
-    this.storage.attach(this);
-    this.storage.requestData(this.dataUrl('Business'));
     this.toolbar = new Toolbar('#toolbar');
     this.toolbar.attach(this);
+    this.storage = new Storage();
+    this.storage.attach(this);
+    this.storage.requestData(this.dataUrl(this.toolbar.section));
     this.menu = new Menu('#menu');
     this.menu.attach(this);
     this.info = new Info('#info');
@@ -85,7 +85,7 @@ DataProjector = (function(superClass) {
         } else {
           this.projector.load(this.storage);
           visible = this.projector.getVisibleDocuments();
-          this.sidepanel.displayDocumentsList(visible.documents);
+          this.sidepanel.displayDocumentsList(visible.documents, this.toolbar.section);
         }
         return this.menu.setAllOn();
       case Storage.EVENT_SCREENSHOT_OK:
@@ -165,7 +165,7 @@ DataProjector = (function(superClass) {
           return this.sidepanel.toggleHidden();
         } else {
           visible = this.projector.getVisibleDocuments();
-          return this.sidepanel.displayDocumentsList(visible.documents);
+          return this.sidepanel.displayDocumentsList(visible.documents, this.toolbar.section);
         }
         break;
       case Toolbar.EVENT_SHOW_HELP:
@@ -216,7 +216,7 @@ DataProjector = (function(superClass) {
     this.onToolbarEvent(Toolbar.EVENT_SPIN_RIGHT);
     visible = this.projector.getVisibleDocuments();
     this.sidepanel.setColors(this.colors);
-    this.sidepanel.displayDocumentsList(visible.documents);
+    this.sidepanel.displayDocumentsList(visible.documents, this.toolbar.section);
     $("#article-list-link").click((function(_this) {
       return function(event) {
         event.preventDefault();
@@ -237,11 +237,10 @@ DataProjector = (function(superClass) {
   DataProjector.prototype.updateDocumentsDisplay = function() {
     var visible;
     visible = this.projector.getVisibleDocuments();
-    return this.sidepanel.displayDocumentsList(visible.documents);
+    return this.sidepanel.displayDocumentsList(visible.documents, this.toolbar.section);
   };
 
   DataProjector.prototype.dataUrl = function(section) {
-    section = section.toLowerCase().replace(/ /g, '');
     return "https://d16ej4xdzdwuoi.cloudfront.net/data/" + section + ".json";
   };
 
@@ -1741,14 +1740,12 @@ module.exports = Selector;
 
 
 },{"./Palette.coffee":5,"./Utility.coffee":13}],9:[function(require,module,exports){
-var Modal, Panel, Utility,
+var Modal, Panel,
   bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
   hasProp = {}.hasOwnProperty;
 
 Panel = require('./Panel.coffee');
-
-Utility = require('./Utility.coffee');
 
 Modal = (function(superClass) {
   extend(Modal, superClass);
@@ -1758,6 +1755,8 @@ Modal = (function(superClass) {
   Modal.prototype.colors = null;
 
   function Modal(id) {
+    this.getSimilarDocuments = bind(this.getSimilarDocuments, this);
+    this.getDocumentContents = bind(this.getDocumentContents, this);
     this.onClickDocument = bind(this.onClickDocument, this);
     this.setColors = bind(this.setColors, this);
     Modal.__super__.constructor.call(this, id);
@@ -1786,6 +1785,7 @@ Modal = (function(superClass) {
   }
 
   Modal.prototype.clear = function() {
+    console.log('clear!');
     this.setTitle("");
     this.setDocumentHTML("");
     this.setSimilarDocuments([]);
@@ -1822,12 +1822,12 @@ Modal = (function(superClass) {
     return $("#read-more-link").show();
   };
 
-  Modal.prototype.setSimilarDocuments = function(documents) {
+  Modal.prototype.setSimilarDocuments = function(documents, section) {
     var d, html, j, len1;
     html = "";
     for (j = 0, len1 = documents.length; j < len1; j++) {
       d = documents[j];
-      html += "<a class='document' data-doc-id='" + d.id + "'>" + d.title + "</a><br />";
+      html += "<a class='document' data-section='" + section + "' data-doc-id='" + d.id + "'>" + d.title + "</a><br />";
     }
     $(this.modal.similar.id).text("");
     $(this.modal.similar.id).append(html);
@@ -1844,7 +1844,7 @@ Modal = (function(superClass) {
     });
   };
 
-  Modal.prototype.displayDocumentsList = function(documents) {
+  Modal.prototype.displayDocumentsList = function(documents, section) {
     var doc, docs, docsHtml, i, j, len, len1, title;
     this.clear();
     this.setTitle("Random Document Sample in Selected Clusters");
@@ -1870,7 +1870,7 @@ Modal = (function(superClass) {
       results = [];
       for (k = 0, len2 = docs.length; k < len2; k++) {
         doc = docs[k];
-        results.push("<span class='cluster-id' style='background-color:" + (this.colors[doc.cid].getStyle()) + "'></span><a class='document' data-doc-id='" + doc.id + "'>" + doc.title + "</a><br/>");
+        results.push("<span class='cluster-id' style='background-color:" + (this.colors[doc.cid].getStyle()) + "'> </span> <a class='document' data-section='" + section + "' data-doc-id='" + doc.id + "'>" + doc.title + "</a> <br/>");
       }
       return results;
     }).call(this)).join('');
@@ -1878,7 +1878,7 @@ Modal = (function(superClass) {
     return this.setDocumentListHTML(docsHtml);
   };
 
-  Modal.prototype.displayDocument = function(docId) {
+  Modal.prototype.displayDocument = function(docId, section) {
     $("#article-list").hide();
     $(this.modal.similar.id).show();
     $(this.modal.hr.id).show();
@@ -1889,23 +1889,24 @@ Modal = (function(superClass) {
         return _this.setDocumentGuardianLink(data.url);
       };
     })(this));
-    return this.getSimilarDocuments(docId, (function(_this) {
+    return this.getSimilarDocuments(docId, section, (function(_this) {
       return function(data) {
-        return _this.setSimilarDocuments(data.most_similar);
+        return _this.setSimilarDocuments(data.most_similar, section);
       };
     })(this));
   };
 
   Modal.prototype.onClickDocument = function(event) {
-    var docId;
+    var docId, section;
     event.preventDefault();
     docId = $(event.target).data('doc-id');
-    return this.displayDocument(docId);
+    section = $(event.target).data('section');
+    return this.displayDocument(docId, section);
   };
 
   Modal.prototype.getDocumentContents = function(id, callback) {
     return $.ajax({
-      url: '/guardian-galaxy-api/doc/' + id,
+      url: "http://jamiis.2.ngrok.io/guardian-galaxy-api/doc/" + id,
       type: 'GET',
       contentType: 'application/json',
       beforeSend: function() {
@@ -1918,9 +1919,10 @@ Modal = (function(superClass) {
     });
   };
 
-  Modal.prototype.getSimilarDocuments = function(id, callback) {
+  Modal.prototype.getSimilarDocuments = function(id, section, callback) {
+    console.log("http://jamiis.2.ngrok.io/guardian-galaxy-api/doc/" + id + "/section/" + section + "/most_similar");
     return $.ajax({
-      url: '/guardian-galaxy-api/doc/' + id + '/most_similar',
+      url: "http://jamiis.2.ngrok.io/guardian-galaxy-api/doc/" + id + "/section/" + section + "/most_similar",
       type: 'GET',
       contentType: 'application/json',
       beforeSend: function() {
@@ -1940,7 +1942,7 @@ Modal = (function(superClass) {
 module.exports = Modal;
 
 
-},{"./Panel.coffee":6,"./Utility.coffee":13}],10:[function(require,module,exports){
+},{"./Panel.coffee":6}],10:[function(require,module,exports){
 var Storage, Subject,
   bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
@@ -2188,6 +2190,7 @@ Toolbar = (function(superClass) {
     var i, item, len, ref;
     Toolbar.__super__.constructor.call(this, id);
     this.createDispatcher();
+    this.section = 'business';
     ref = this.dispatcher;
     for (i = 0, len = ref.length; i < len; i++) {
       item = ref[i];
@@ -2229,7 +2232,7 @@ Toolbar = (function(superClass) {
   };
 
   Toolbar.prototype.onSelect = function(event, index, newVal, oldVal) {
-    this.section = event.target.value;
+    this.section = event.target.value.toLowerCase().replace(/ /g, '');
     return this.notify(event.data.type);
   };
 

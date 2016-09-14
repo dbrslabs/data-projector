@@ -17,15 +17,22 @@ from flask import Flask, jsonify, request
 #from flask_cors import CORS, cross_origin
 from flask.ext.cors import CORS, cross_origin
 
+# 3rd party
+import requests
+
 # doc2vec
 from gensim.models import Doc2Vec
 from gensim.models.doc2vec import TaggedDocument
-# TODO load all models into lookup dict, change front-end to see many t-sne data.json
-d2v = Doc2Vec.load('ml/doc2vec/models/articles-sections-Science/dm1-mincount5-window8-size100-sample1e-05-neg0.d2v')
-init_rng_state = d2v.random.get_state()
 
-# 3rd party
-import requests
+# load all doc2vec models for all sections
+# NOTE: final diretory not commited to git. get from someone
+d2v = {}
+d2v_dir = 'ml/doc2vec/models/final'
+for filename in os.listdir(d2v_dir):
+    model_path = os.path.join(d2v_dir,filename)
+    # the filename without extension is the section name
+    section = os.path.splitext(filename)[0]
+    d2v[section] = Doc2Vec.load(model_path)
 
 application = Flask(__name__)
 application.config['CORS_HEADERS'] = "Content-Type"
@@ -55,9 +62,9 @@ def get_doc(docid):
     except Exception as err:
         pass
 
-def most_similar(docid_or_vector):
+def most_similar(docid_or_vector, section):
     '''query doc2vec model to find (ids,similarities) of the most similar documents'''
-    similar_docids, similarities = zip(*d2v.docvecs.most_similar([docid_or_vector], topn=5))
+    similar_docids, similarities = zip(*d2v[section].docvecs.most_similar([docid_or_vector], topn=5))
     return similar_docids, similarities
 
 def get_docs_by_ids(docids):
@@ -74,11 +81,11 @@ def merge_docs_and_similarities(docs, similarities):
     return docs
 
 #@application.route("/doc/<docid>/most_similar", methods=['GET']) #dev
-@application.route("/guardian-galaxy-api/doc/<docid>/most_similar", methods=['GET']) #prod
+@application.route("/guardian-galaxy-api/doc/<docid>/section/<section>/most_similar", methods=['GET']) #prod
 @cross_origin(origin='localhost', headers=['Content-Type'])
-def get_doc_most_similar(docid):
+def get_doc_most_similar(docid, section):
     try:
-        similar_docids, similarities = most_similar(docid)
+        similar_docids, similarities = most_similar(docid, section)
         similar_docs = get_docs_by_ids(similar_docids)
         similar_docs = merge_docs_and_similarities(similar_docs, similarities)
         return jsonify({'most_similar': similar_docs})

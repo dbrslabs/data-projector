@@ -47,6 +47,9 @@ class Toolbar extends Panel
 
       @createDispatcher()
 
+      # set to first selected section
+      @section = 'business'
+
       for item in @dispatcher
          if item.type is Toolbar.EVENT_SECTION_SELECTION 
              $(item.id).on('changed.bs.select', { type: item.type }, @onSelect)
@@ -82,7 +85,7 @@ class Toolbar extends Panel
 
    onSelect: (event, index, newVal, oldVal) =>
 
-      @section = event.target.value
+      @section = event.target.value.toLowerCase().replace(/ /g,'')
       @notify(event.data.type)
       
 

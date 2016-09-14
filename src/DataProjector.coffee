@@ -40,16 +40,16 @@ class DataProjector extends Observer
 
       @initialized = false
 
+      @toolbar = new Toolbar('#toolbar')
+      @toolbar.attach(@)
+
       # data read/write access
 
       @storage = new Storage()
       @storage.attach(@)
-      @storage.requestData(@dataUrl('Business')) # initial dataset
+      @storage.requestData(@dataUrl(@toolbar.section)) # initial dataset
 
       # user interface - panels
-
-      @toolbar = new Toolbar('#toolbar')
-      @toolbar.attach(@)
 
       @menu = new Menu('#menu')
       @menu.attach(@)
@@ -94,7 +94,7 @@ class DataProjector extends Observer
                @projector.load(@storage)
                # update visible docs in sidepanel
                visible = @projector.getVisibleDocuments()
-               @sidepanel.displayDocumentsList(visible.documents)
+               @sidepanel.displayDocumentsList(visible.documents, @toolbar.section)
 
             # set all cluster buttons to on
             @menu.setAllOn()
@@ -192,12 +192,7 @@ class DataProjector extends Observer
                @sidepanel.toggleHidden() 
             else
                visible = @projector.getVisibleDocuments()
-               @sidepanel.displayDocumentsList(visible.documents)
-            ##visible = @projector.getVisibleDocuments()
-            ##@sidepanel.displayDocumentsList(visible.documents)
-            # if mobile, toggle sidepanel visibility
-            ##if Utility.isMobile() then @sidepanel.toggleHidden() 
-            ##@sidepanel.toggleHidden() 
+               @sidepanel.displayDocumentsList(visible.documents, @toolbar.section)
 
          when Toolbar.EVENT_SHOW_HELP
             # Show tooltips and stuff
@@ -283,7 +278,7 @@ class DataProjector extends Observer
       # show visible docs in sidepanel so not initially blank
       visible = @projector.getVisibleDocuments()
       @sidepanel.setColors(@colors)
-      @sidepanel.displayDocumentsList(visible.documents)
+      @sidepanel.displayDocumentsList(visible.documents, @toolbar.section)
 
       # Set the "Back to Article List" links
       #@setArticlesListLink()
@@ -303,11 +298,10 @@ class DataProjector extends Observer
    # populate sidepanel with documents that are currently visible
    updateDocumentsDisplay : ->
       visible = @projector.getVisibleDocuments()
-      @sidepanel.displayDocumentsList(visible.documents)
+      @sidepanel.displayDocumentsList(visible.documents, @toolbar.section)
 
 
    dataUrl : (section) ->
-      section = section.toLowerCase().replace(/ /g,'')
       return "https://d16ej4xdzdwuoi.cloudfront.net/data/#{section}.json"
 
 
