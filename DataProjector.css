@@ -37,6 +37,7 @@ button:focus {
 /*#toolbar .button { color: #CCCCCC; font-weight: bold; cursor: pointer }*/
 .navbar-brand {
     line-height: 30px;
+    padding-right: 0 !important;
 }
 
 .navbar-brand h1 {
