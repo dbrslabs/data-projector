@@ -128,12 +128,6 @@ class Modal extends Panel
       # shuffle documents array. we don't want to render all 1,000+
       Array::shuffle = -> @sort -> 0.5 - Math.random()
       docs = documents.shuffle()[0..45]
-      # format doc to be max length, conditionally adding ellipsis
-      len = 47
-      for doc, i in docs
-          title = doc.title.substring(0,len)
-          if title.length == len then title = title + '...'
-          docs[i].title = title
 
       # format html and add to dom
       docsHtml = @getDocumentsListHtml(docs, section)

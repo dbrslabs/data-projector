@@ -1842,10 +1842,10 @@ Modal = (function(superClass) {
   Modal.prototype.getDocumentsListHtml = function(docs, section) {
     var doc, docsHtml;
     return docsHtml = ((function() {
-      var j, len1, results;
+      var i, len, results;
       results = [];
-      for (j = 0, len1 = docs.length; j < len1; j++) {
-        doc = docs[j];
+      for (i = 0, len = docs.length; i < len; i++) {
+        doc = docs[i];
         results.push("<span class='cluster-id' style='background-color:" + (this.colors[doc.cid].getStyle()) + "'> </span> <a class='document' data-section='" + section + "' data-doc-id='" + doc.id + "'>" + doc.title + "</a> <br/>");
       }
       return results;
@@ -1853,7 +1853,7 @@ Modal = (function(superClass) {
   };
 
   Modal.prototype.displayDocumentsList = function(documents, section) {
-    var doc, docs, docsHtml, i, j, len, len1, title;
+    var docs, docsHtml;
     this.clear();
     this.setTitle("Random Document Sample in Selected Clusters");
     $(this.modal.similar.id).hide();
@@ -1864,15 +1864,6 @@ Modal = (function(superClass) {
       });
     };
     docs = documents.shuffle().slice(0, 46);
-    len = 47;
-    for (i = j = 0, len1 = docs.length; j < len1; i = ++j) {
-      doc = docs[i];
-      title = doc.title.substring(0, len);
-      if (title.length === len) {
-        title = title + '...';
-      }
-      docs[i].title = title;
-    }
     docsHtml = this.getDocumentsListHtml(docs, section);
     $("#article-list").show();
     return this.setDocumentListHTML(docsHtml);
