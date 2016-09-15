@@ -1785,7 +1785,6 @@ Modal = (function(superClass) {
   }
 
   Modal.prototype.clear = function() {
-    console.log('clear!');
     this.setTitle("");
     this.setDocumentHTML("");
     this.setSimilarDocuments([]);
@@ -1823,12 +1822,8 @@ Modal = (function(superClass) {
   };
 
   Modal.prototype.setSimilarDocuments = function(documents, section) {
-    var d, html, j, len1;
-    html = "";
-    for (j = 0, len1 = documents.length; j < len1; j++) {
-      d = documents[j];
-      html += "<a class='document' data-section='" + section + "' data-doc-id='" + d.id + "'>" + d.title + "</a><br />";
-    }
+    var html;
+    html = this.getDocumentsListHtml(documents, section);
     $(this.modal.similar.id).text("");
     $(this.modal.similar.id).append(html);
     $(this.modal.similar.id).show();
@@ -1842,6 +1837,19 @@ Modal = (function(superClass) {
         window.dispatchEvent(new Event('resize'));
       }), 1000);
     });
+  };
+
+  Modal.prototype.getDocumentsListHtml = function(docs, section) {
+    var doc, docsHtml;
+    return docsHtml = ((function() {
+      var j, len1, results;
+      results = [];
+      for (j = 0, len1 = docs.length; j < len1; j++) {
+        doc = docs[j];
+        results.push("<span class='cluster-id' style='background-color:" + (this.colors[doc.cid].getStyle()) + "'> </span> <a class='document' data-section='" + section + "' data-doc-id='" + doc.id + "'>" + doc.title + "</a> <br/>");
+      }
+      return results;
+    }).call(this)).join('');
   };
 
   Modal.prototype.displayDocumentsList = function(documents, section) {
@@ -1865,15 +1873,7 @@ Modal = (function(superClass) {
       }
       docs[i].title = title;
     }
-    docsHtml = ((function() {
-      var k, len2, results;
-      results = [];
-      for (k = 0, len2 = docs.length; k < len2; k++) {
-        doc = docs[k];
-        results.push("<span class='cluster-id' style='background-color:" + (this.colors[doc.cid].getStyle()) + "'> </span> <a class='document' data-section='" + section + "' data-doc-id='" + doc.id + "'>" + doc.title + "</a> <br/>");
-      }
-      return results;
-    }).call(this)).join('');
+    docsHtml = this.getDocumentsListHtml(docs, section);
     $("#article-list").show();
     return this.setDocumentListHTML(docsHtml);
   };
@@ -1906,7 +1906,7 @@ Modal = (function(superClass) {
 
   Modal.prototype.getDocumentContents = function(id, callback) {
     return $.ajax({
-      url: "http://jamiis.2.ngrok.io/guardian-galaxy-api/doc/" + id,
+      url: "http://jamiis.2.ngrok.io/doc/" + id,
       type: 'GET',
       contentType: 'application/json',
       beforeSend: function() {
@@ -1920,9 +1920,8 @@ Modal = (function(superClass) {
   };
 
   Modal.prototype.getSimilarDocuments = function(id, section, callback) {
-    console.log("http://jamiis.2.ngrok.io/guardian-galaxy-api/doc/" + id + "/section/" + section + "/most_similar");
     return $.ajax({
-      url: "http://jamiis.2.ngrok.io/guardian-galaxy-api/doc/" + id + "/section/" + section + "/most_similar",
+      url: "http://jamiis.2.ngrok.io/doc/" + id + "/section/" + section + "/most_similar",
       type: 'GET',
       contentType: 'application/json',
       beforeSend: function() {

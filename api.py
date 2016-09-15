@@ -9,7 +9,7 @@ import os.path
 # mongo
 from pymongo import MongoClient
 client = MongoClient('mongodb://52.5.180.63') # elastic ip of mongo-dev
-db = client.guardian.articlesv2
+db = client.guardian
 from bson.objectid import ObjectId
 
 # flask
@@ -38,7 +38,7 @@ application = Flask(__name__)
 application.config['CORS_HEADERS'] = "Content-Type"
 cors = CORS(application, resources={r"/*": {"origins": 'localhost'}})
 
-def format_article(article):
+def format_doc(article):
     return {
         'id': str(article['_id']),
         'text': article['blocks']['body'][0]['bodyTextSummary'],
@@ -48,48 +48,51 @@ def format_article(article):
         'url': article['webUrl'],
     }
 
+
 @application.route("/guardian-galaxy-api", methods=['GET'])
 def sanitytest():
     return "<p>airhornsounds.wav</p>"
+
 
 #@application.route("/doc/<docid>", methods=['GET']) #dev
 @application.route("/guardian-galaxy-api/doc/<docid>", methods=['GET']) #prod
 @cross_origin(origin='localhost', headers=['Content-Type'])
 def get_doc(docid):
     try:
-        article = db.find_one({'_id': ObjectId(docid)})
-        return jsonify(format_article(article))
+        article = db.articlesv2.find_one({'_id': ObjectId(docid)})
+        return jsonify(format_doc(article))
     except Exception as err:
+        # TODO this exception handler is definitely not acceptable
         pass
 
-def most_similar(docid_or_vector, section):
-    '''query doc2vec model to find (ids,similarities) of the most similar documents'''
-    similar_docids, similarities = zip(*d2v[section].docvecs.most_similar([docid_or_vector], topn=5))
-    return similar_docids, similarities
 
 def get_docs_by_ids(docids):
     # retrieve documents from mongo and format
     docs = []
-    for _id in docids:
-        doc = db.find_one({'_id': ObjectId(_id)})
-        docs.append(format_article(doc))
+    for docid in docids:
+        # get document metadata
+        doc = db.articlesv2.find_one({'_id': ObjectId(docid)})
+        doc = format_doc(doc)
+        # get document cluster-membership information
+        cluster_data = db.clusterid.find({'id': docid})[0]
+        doc.update({'cid': cluster_data['cid'], 'section': cluster_data['section']})
+        docs.append(doc)
     return docs
 
-def merge_docs_and_similarities(docs, similarities):
-    # set doc2vec similarity of each article
-    docs = [dict(art.items() + [('similarity',sim)]) for art,sim in zip(docs,similarities)]
-    return docs
 
 #@application.route("/doc/<docid>/most_similar", methods=['GET']) #dev
 @application.route("/guardian-galaxy-api/doc/<docid>/section/<section>/most_similar", methods=['GET']) #prod
 @cross_origin(origin='localhost', headers=['Content-Type'])
 def get_doc_most_similar(docid, section):
     try:
-        similar_docids, similarities = most_similar(docid, section)
-        similar_docs = get_docs_by_ids(similar_docids)
-        similar_docs = merge_docs_and_similarities(similar_docs, similarities)
-        return jsonify({'most_similar': similar_docs})
+        # get the most similar document ids and their measures of similarity
+        docids, sims = zip(*d2v[section].docvecs.most_similar([docid], topn=5))
+        docs = get_docs_by_ids(docids)
+        # merge similarities into the documents we are returning
+        docs = [dict(similarity=s, **d) for s,d in zip(sims,docs)]
+        return jsonify({'most_similar': docs})
     except Exception as err:
+        # TODO this exception handler is definitely not acceptable
         pass
 
 

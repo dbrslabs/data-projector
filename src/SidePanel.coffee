@@ -51,6 +51,7 @@ class Modal extends Panel
       $(".article").hide()
       $("#related-articles-title").hide()
 
+
    setTitle: (title) ->
        $(@modal.title.id).text(title)
 
@@ -73,30 +74,24 @@ class Modal extends Panel
        $("#article-list").html(document)
 
 
+
    setDocumentGuardianLink: (url) ->
        #$(@modal.link.href).text(url) # Doesn't work idk
        $("#read-more-link").attr("href", url)
        $("#read-more-link").show()
 
 
-   # setArticlesLink: ->
-   #    $("#article-list-link").click (event) ->
-   #      event.preventDefault()
-   #      @notify(Modal.EVENT_ARTICLES_LINK)
-
 
    setSimilarDocuments: (documents, section) ->
-      html = ""
-      for d in documents
-         html += "<a class='document' 
-                     data-section='#{section}'
-                     data-doc-id='#{d.id}'>#{d.title}</a><br />"
+      html = @getDocumentsListHtml(documents, section)
       $(@modal.similar.id).text("")
       $(@modal.similar.id).append(html)
       # show similar documents section
       $(@modal.similar.id).show()
       $(@modal.hr.id).show()
       $("#related-articles-title").show()
+
+
 
    toggleHidden: ->
       $('#wrapper').toggleClass('toggled').promise().done ->
@@ -107,10 +102,19 @@ class Modal extends Panel
             window.dispatchEvent new Event('resize')
             return
         ), 1000
+
+
+
+   getDocumentsListHtml: (docs, section) ->
+      docsHtml = (
+         "<span class='cluster-id' 
+            style='background-color:#{@colors[doc.cid].getStyle()}'> </span>
+         <a class='document' 
+            data-section='#{section}'
+            data-doc-id='#{doc.id}'>#{doc.title}</a>
+         <br/>" for doc in docs).join('')
         
-        #$(window).resize()
-        #return
-        
+
 
    # display a list of documents
    displayDocumentsList: (documents, section) ->
@@ -130,14 +134,9 @@ class Modal extends Panel
           title = doc.title.substring(0,len)
           if title.length == len then title = title + '...'
           docs[i].title = title
+
       # format html and add to dom
-      docsHtml = (
-         "<span class='cluster-id' 
-            style='background-color:#{@colors[doc.cid].getStyle()}'> </span>
-         <a class='document' 
-            data-section='#{section}'
-            data-doc-id='#{doc.id}'>#{doc.title}</a>
-         <br/>" for doc in docs).join('')
+      docsHtml = @getDocumentsListHtml(docs, section)
 
       # show article list
       $("#article-list").show()
