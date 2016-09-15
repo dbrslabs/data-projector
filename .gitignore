@@ -10,6 +10,8 @@ ml/nytimes/*.json
 ml/nytimes/data
 
 ml/guardian/data/*
+DataProjector.js
+
 ml/doc2vec/models/*
 ml/tsne/vecs/*
 
