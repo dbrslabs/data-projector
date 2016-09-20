@@ -12,6 +12,10 @@ Utility = require('./Utility.coffee')
 Palette = require('./Palette.coffee')
 Selector = require('./Selector.coffee')
 
+unless Array::filter
+     Array::filter = (callback) ->
+            element for element in this when callback(element)
+
 class Projector extends Subject
 
    # E V E N T S
@@ -202,41 +206,41 @@ class Projector extends Subject
       raycaster = new (THREE.Raycaster)
       raycaster.params.Points.threshold = threshold
       # TODO: delete this
-      console.log @findPoint(0,'56f3172cd4f5ca1daeb6539b')
+      #console.log @findPoint(0,'56f3172cd4f5ca1daeb6539b')
       # create once
       mouse = new (THREE.Vector2)
       mouse.x = event.clientX / @renderer.domElement.width * 2 - 1
       mouse.y = -(event.clientY / @renderer.domElement.height) * 2 + 1
       raycaster.setFromCamera mouse, @cameraPerspective
       recursiveFlag = false
-      intersects = raycaster.intersectObjects(@particles, false)
-      if intersects.length > 0
-         console.log intersects
-         console.log intersects[0].point
-         index = intersects[0].index
-         console.log intersects[0]
-         cid = intersects[0].object.geometry.vertices[0].cid
-         point = @particles[cid].geometry.vertices[ index ]
-         console.log point
-         console.log @points
+      # only get visible particle clouds
+      filtered_particles = @particles.filter (x) -> x.visible
+      if filtered_particles
+         intersects = raycaster.intersectObjects(filtered_particles, false)
+         if intersects.length > 0
+            console.log intersects
+            index = intersects[0].index
+            cid = intersects[0].object.geometry.vertices[0].cid
+            point = @particles[cid].geometry.vertices[ index ]
+            #console.log point
+            #console.log @points
 
-         @context1.clearRect 0, 0, 640, 480
-         message = point.name
-         #message = "hello world"
-         metrics = @context1.measureText(message)
-         width = metrics.width
-         @context1.fillStyle = 'rgba(0,0,0,0.95)'
-         # black border
-         @context1.fillRect 0, 0, width + 8, 20 + 8
-         @context1.fillStyle = 'rgba(255,255,255,0.95)'
-         # white filler
-         @context1.fillRect 2, 2, width + 4, 20 + 4
-         @context1.fillStyle = 'rgba(0,0,0,1)'
-         # text color
-         @context1.fillText message, 4, 20
-         @texture1.needsUpdate = true
+            @context1.clearRect 0, 0, 640, 480
+            message = point.name
+            metrics = @context1.measureText(message)
+            width = metrics.width
+            @context1.fillStyle = 'rgba(0,0,0,0.95)'
+            # black border
+            @context1.fillRect 0, 0, width + 8, 20 + 8
+            @context1.fillStyle = 'rgba(255,255,255,0.95)'
+            # white filler
+            @context1.fillRect 2, 2, width + 4, 20 + 4
+            @context1.fillStyle = 'rgba(0,0,0,1)'
+            # text color
+            @context1.fillText message, 4, 20
+            @texture1.needsUpdate = true
 
-         @sprite1.position.copy intersects[0].point
+            @sprite1.position.copy intersects[0].point
 
       # make sure we're at least in right cluster
       ###
@@ -494,7 +498,8 @@ class Projector extends Subject
 
       for p in [0...clusters]
          material = new THREE.ParticleBasicMaterial( { size: 2.0, sizeAttenuation: false, vertexColors: true } )
-         @particles[p] = new THREE.ParticleSystem( @points[p], material )
+         #@particles[p] = new THREE.ParticleSystem( @points[p], material )
+         @particles[p] = new THREE.Points( @points[p], material )
          @box.add( @particles[p] ) # put them in the data cage
 
       @notify(Projector.EVENT_DATA_LOADED)
