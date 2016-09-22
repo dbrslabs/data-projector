@@ -32,6 +32,7 @@ for filename in os.listdir(d2v_dir):
     # the filename without extension is the section name
     section, extension = os.path.splitext(filename)
     if extension == '.d2v':
+        print 'loading doc2vec model: ', section
         model_path = os.path.join(d2v_dir,filename)
         d2v[section] = Doc2Vec.load(model_path)
 
@@ -44,7 +45,6 @@ def format_doc(article):
         'id': str(article['_id']),
         'text': article['blocks']['body'][0]['bodyTextSummary'],
         'html': article['blocks']['body'][0]['bodyHtml'],
-        # TODO shortened title?
         'title': article['webTitle'],
         'url': article['webUrl'],
     }
@@ -55,16 +55,12 @@ def sanitytest():
     return "<p>airhornsounds.wav</p>"
 
 
-#@application.route("/doc/<docid>", methods=['GET']) #dev
-@application.route("/guardian-galaxy-api/doc/<docid>", methods=['GET']) #prod
+#@application.route("/guardian-galaxy-api/doc/<docid>", methods=['GET']) #prod
+@application.route("/doc/<docid>", methods=['GET']) #dev
 @cross_origin(origin='localhost', headers=['Content-Type'])
 def get_doc(docid):
-    try:
-        article = db.articlesv2.find_one({'_id': ObjectId(docid)})
-        return jsonify(format_doc(article))
-    except Exception as err:
-        # TODO this exception handler is definitely not acceptable
-        pass
+    article = db.articlesv2.find_one({'_id': ObjectId(docid)})
+    return jsonify(format_doc(article))
 
 
 def get_docs_by_ids(docids):
@@ -81,20 +77,16 @@ def get_docs_by_ids(docids):
     return docs
 
 
-#@application.route("/doc/<docid>/most_similar", methods=['GET']) #dev
-@application.route("/guardian-galaxy-api/doc/<docid>/section/<section>/most_similar", methods=['GET']) #prod
+#@application.route("/guardian-galaxy-api/doc/<docid>/section/<section>/most_similar", methods=['GET']) #prod
+@application.route("/doc/<docid>/section/<section>/most_similar", methods=['GET']) #dev
 @cross_origin(origin='localhost', headers=['Content-Type'])
 def get_doc_most_similar(docid, section):
-    try:
-        # get the most similar document ids and their measures of similarity
-        docids, sims = zip(*d2v[section].docvecs.most_similar([docid], topn=5))
-        docs = get_docs_by_ids(docids)
-        # merge similarities into the documents we are returning
-        docs = [dict(similarity=s, **d) for s,d in zip(sims,docs)]
-        return jsonify({'most_similar': docs})
-    except Exception as err:
-        # TODO this exception handler is definitely not acceptable
-        pass
+    # get the most similar document ids and their measures of similarity
+    docids, sims = zip(*d2v[section].docvecs.most_similar([docid], topn=5))
+    docs = get_docs_by_ids(docids)
+    # merge similarities into the documents we are returning
+    docs = [dict(similarity=s, **d) for s,d in zip(sims,docs)]
+    return jsonify({'most_similar': docs})
 
 
 if __name__ == "__main__":
