@@ -29,10 +29,11 @@ from gensim.models.doc2vec import TaggedDocument
 d2v = {}
 d2v_dir = 'ml/doc2vec/models/final'
 for filename in os.listdir(d2v_dir):
-    model_path = os.path.join(d2v_dir,filename)
     # the filename without extension is the section name
-    section = os.path.splitext(filename)[0]
-    d2v[section] = Doc2Vec.load(model_path)
+    section, extension = os.path.splitext(filename)
+    if extension == '.d2v':
+        model_path = os.path.join(d2v_dir,filename)
+        d2v[section] = Doc2Vec.load(model_path)
 
 application = Flask(__name__)
 application.config['CORS_HEADERS'] = "Content-Type"
