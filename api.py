@@ -5,6 +5,7 @@ from urlparse import urlparse
 from urllib import urlencode
 import json
 import os.path
+import urllib3.contrib.pyopenssl
 
 # mongo
 from pymongo import MongoClient
