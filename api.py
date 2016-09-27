@@ -56,8 +56,8 @@ def sanitytest():
     return "<p>airhornsounds.wav</p>"
 
 
-@application.route("/guardian-galaxy-api/doc/<docid>", methods=['GET']) #prod
-#@application.route("/doc/<docid>", methods=['GET']) #dev
+#@application.route("/guardian-galaxy-api/doc/<docid>", methods=['GET']) #prod
+@application.route("/doc/<docid>", methods=['GET']) #dev
 @cross_origin(origin='localhost', headers=['Content-Type'])
 def get_doc(docid):
     article = db.articlesv2.find_one({'_id': ObjectId(docid)})
@@ -78,8 +78,8 @@ def get_docs_by_ids(docids):
     return docs
 
 
-@application.route("/guardian-galaxy-api/doc/<docid>/section/<section>/most_similar", methods=['GET']) #prod
-#@application.route("/doc/<docid>/section/<section>/most_similar", methods=['GET']) #dev
+#@application.route("/guardian-galaxy-api/doc/<docid>/section/<section>/most_similar", methods=['GET']) #prod
+@application.route("/doc/<docid>/section/<section>/most_similar", methods=['GET']) #dev
 @cross_origin(origin='localhost', headers=['Content-Type'])
 def get_doc_most_similar(docid, section):
     # get the most similar document ids and their measures of similarity
