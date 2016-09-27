@@ -41,13 +41,15 @@ application = Flask(__name__)
 application.config['CORS_HEADERS'] = "Content-Type"
 cors = CORS(application, resources={r"/*": {"origins": 'localhost'}})
 
-def format_doc(article):
+def format_doc(a):
     return {
-        'id': str(article['_id']),
-        'text': article['blocks']['body'][0]['bodyTextSummary'],
-        'html': article['blocks']['body'][0]['bodyHtml'],
-        'title': article['webTitle'],
-        'url': article['webUrl'],
+        'id': str(a['_id']),
+        'text': a['blocks']['body'][0]['bodyTextSummary'],
+        'html': a['blocks']['body'][0]['bodyHtml'],
+        'title': a['webTitle'],
+        'url': a['webUrl'],
+        'date': a['publicationDateObj'],
+        'keywords': [t['webTitle'] for t in a['tags'] if t['type'] == 'keyword'],
     }
 
 
