@@ -629,6 +629,20 @@ Palette = require('./Palette.coffee');
 
 Selector = require('./Selector.coffee');
 
+if (!Array.prototype.filter) {
+  Array.prototype.filter = function(callback) {
+    var element, k, len, results;
+    results = [];
+    for (k = 0, len = this.length; k < len; k++) {
+      element = this[k];
+      if (callback(element)) {
+        results.push(element);
+      }
+    }
+    return results;
+  };
+}
+
 Projector = (function(superClass) {
   extend(Projector, superClass);
 
@@ -745,7 +759,10 @@ Projector = (function(superClass) {
     this.onMouseUp = bind(this.onMouseUp, this);
     this.onMouseMove = bind(this.onMouseMove, this);
     this.onMouseDown = bind(this.onMouseDown, this);
+    this.getTooltip = bind(this.getTooltip, this);
     this.onWindowResize = bind(this.onWindowResize, this);
+    this.setTooltips = bind(this.setTooltips, this);
+    this.findPoint = bind(this.findPoint, this);
     Projector.__super__.constructor.call(this);
     this.addUIListeners();
     this.scene = new THREE.Scene();
@@ -762,6 +779,8 @@ Projector = (function(superClass) {
     this.createRenderingEngine();
     this.onWindowResize(null);
     this.animate();
+    this.setTooltips();
+    this.mobileWeb = /Mobile|iP(hone|od|ad)|Android|BlackBerry|IEMobile|Kindle|NetFront|Silk-Accelerated|(hpw|web)OS|Fennec|Minimo|Opera M(obi|ini)|Blazer|Dolfin|Dolphin|Skyfire|Zune/i.test(navigator.userAgent);
   }
 
   $('.btn-toggle').click(function() {
@@ -770,6 +789,40 @@ Projector = (function(superClass) {
     }
     return $(this).find('.btn').toggleClass('btn-default');
   });
+
+  Projector.prototype.findPoint = function(cid, docid) {
+    var d, i, k, len, mDocs;
+    mDocs = this.points[cid].documents;
+    i = 0;
+    for (k = 0, len = mDocs.length; k < len; k++) {
+      d = mDocs[k];
+      if (d.id === docid) {
+        return d;
+      }
+      i++;
+    }
+    return {};
+  };
+
+  Projector.prototype.setTooltips = function() {
+    var canvas1, spriteMaterial;
+    canvas1 = document.createElement('canvas');
+    this.context1 = canvas1.getContext('2d');
+    this.context1.font = 'Bold 12px Arial';
+    this.context1.fillStyle = 'rgba(0,0,0,0.95)';
+    this.context1.fillText('', 0, 20);
+    this.texture1 = new THREE.Texture(canvas1);
+    this.texture1.minFilter = THREE.LinearFilter;
+    this.texture1.needsUpdate = true;
+    spriteMaterial = new THREE.SpriteMaterial({
+      map: this.texture1,
+      useScreenCoordinates: true
+    });
+    this.sprite1 = new THREE.Sprite(spriteMaterial);
+    this.sprite1.scale.set(200, 100, 1.0);
+    this.sprite1.position.set(50, 50, 0);
+    return this.scene.add(this.sprite1);
+  };
 
   Projector.prototype.onWindowResize = function(event) {
     this.SCREEN_WIDTH = window.innerWidth - $('#sidebar-wrapper').width();
@@ -801,6 +854,10 @@ Projector = (function(superClass) {
     return this.controls.handleResize();
   };
 
+  Projector.prototype.getTooltip = function() {
+    return '';
+  };
+
   Projector.prototype.onMouseDown = function(event) {
     if (this.mode === Projector.VIEW.DUAL) {
       event.preventDefault();
@@ -815,12 +872,56 @@ Projector = (function(superClass) {
   };
 
   Projector.prototype.onMouseMove = function(event) {
+    var cid, cornerRadius, filtered_particles, height, index, intersects, message, metrics, mouse, point, point_data, raycaster, rectHeight, rectWidth, rectX, rectY, recursiveFlag, threshold, width;
     if (this.mode === Projector.VIEW.DUAL) {
       event.preventDefault();
       if (this.dragging) {
         this.updateMouse3D();
         this.selector.update(this.mouse);
-        return event.stopPropagation();
+        event.stopPropagation();
+      }
+    }
+    this.sprite1.position.set(event.clientX, event.clientY - 20, 0);
+    this.mouse.x = event.clientX / window.innerWidth * 2 - 1;
+    this.mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+    threshold = 1;
+    cornerRadius = 20;
+    raycaster = new THREE.Raycaster;
+    raycaster.params.Points.threshold = threshold;
+    mouse = new THREE.Vector2;
+    mouse.x = event.clientX / this.renderer.domElement.width * 2 - 1;
+    mouse.y = -(event.clientY / this.renderer.domElement.height) * 2 + 1;
+    raycaster.setFromCamera(mouse, this.cameraPerspective);
+    recursiveFlag = false;
+    filtered_particles = this.particles.filter(function(x) {
+      return x.visible;
+    });
+    if (filtered_particles) {
+      intersects = raycaster.intersectObjects(filtered_particles, false);
+      if (intersects.length > 0) {
+        index = intersects[0].index;
+        cid = intersects[0].object.geometry.vertices[0].cid;
+        point = this.particles[cid].geometry.vertices[index];
+        point_data = this.findPoint(cid, point.name);
+        this.context1.lineJoin = 'round';
+        this.context1.lineWidth = cornerRadius;
+        rectX = 0;
+        rectY = 0;
+        rectWidth = width;
+        rectHeight = height;
+        this.context1.arcTo(rectX + rectWidth, rectY, rectX + rectWidth, rectY + cornerRadius, cornerRadius);
+        this.context1.clearRect(0, 0, 640, 480);
+        message = point_data.title;
+        metrics = this.context1.measureText(point_data.title);
+        width = metrics.width;
+        height = metrics.height;
+        this.context1.fillStyle = 'rgba(0,0,0,0.95)';
+        this.context1.fillRect(0, 0, width + 8, height + 4);
+        this.context1.fillStyle = 'rgba(255,255,255,0.95)';
+        this.context1.fillRect(2, 2, width + 4, height);
+        this.context1.fillText(message, 4, 20);
+        this.texture1.needsUpdate = true;
+        return this.sprite1.position.copy(intersects[0].point);
       }
     }
   };
@@ -982,7 +1083,7 @@ Projector = (function(superClass) {
         sizeAttenuation: false,
         vertexColors: true
       });
-      this.particles[p] = new THREE.ParticleSystem(this.points[p], material);
+      this.particles[p] = new THREE.Points(this.points[p], material);
       this.box.add(this.particles[p]);
     }
     return this.notify(Projector.EVENT_DATA_LOADED);
@@ -995,6 +1096,8 @@ Projector = (function(superClass) {
     vertex.x = parseFloat(nodeData.x);
     vertex.y = parseFloat(nodeData.y);
     vertex.z = parseFloat(nodeData.z);
+    vertex.cid = nodeData.cid;
+    vertex.name = nodeData.document.id;
     this.points[index].vertices.push(vertex);
     color = this.colors[index].clone();
     this.points[index].colors.push(color);

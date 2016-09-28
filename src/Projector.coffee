@@ -120,6 +120,10 @@ class Projector extends Subject
 
       @setTooltips()
 
+      # detect if mobile
+      @mobileWeb = /Mobile|iP(hone|od|ad)|Android|BlackBerry|IEMobile|Kindle|NetFront|Silk-Accelerated|(hpw|web)OS|Fennec|Minimo|Opera M(obi|ini)|Blazer|Dolfin|Dolphin|Skyfire|Zune/i.test(navigator.userAgent)
+
+
    # E V E N T   H A N D L E R S
 
    # New controls! ~ .dh
@@ -131,25 +135,23 @@ class Projector extends Subject
 
    findPoint : (cid, docid) => # maybe pass along cid to make search faster?
       mDocs = @points[cid].documents
-      console.log @points[cid]
-      console.log(mDocs)
       i = 0
       for d in mDocs
          if d.id is docid
-            console.log d
-            console.log @points[cid].colors[i]
-            console.log @points[cid].documents[i]
+            return d
          i++
+      return {}
            #console.log @points[cid].colors[d]
    setTooltips: () =>
 
       canvas1 = document.createElement('canvas')
       @context1 = canvas1.getContext('2d')
-      @context1.font = 'Bold 20px Arial'
+      @context1.font = 'Bold 12px Arial'
       @context1.fillStyle = 'rgba(0,0,0,0.95)'
-      @context1.fillText 'Hello, world!', 0, 20
+      @context1.fillText '', 0, 20
       # canvas contents will be used for a texture
       @texture1 = new (THREE.Texture)(canvas1)
+      @texture1.minFilter = THREE.LinearFilter # doesnt need to be power of 2
       @texture1.needsUpdate = true
       #//////////////////////////////////////
       spriteMaterial = new (THREE.SpriteMaterial)({
@@ -201,70 +203,11 @@ class Projector extends Subject
       @controls.handleResize()
 
 
+   getTooltip: () =>
+      return ''
+
    onMouseDown : (event) =>
-      threshold = 1
-      raycaster = new (THREE.Raycaster)
-      raycaster.params.Points.threshold = threshold
-      # TODO: delete this
-      #console.log @findPoint(0,'56f3172cd4f5ca1daeb6539b')
-      # create once
-      mouse = new (THREE.Vector2)
-      mouse.x = event.clientX / @renderer.domElement.width * 2 - 1
-      mouse.y = -(event.clientY / @renderer.domElement.height) * 2 + 1
-      raycaster.setFromCamera mouse, @cameraPerspective
-      recursiveFlag = false
-      # only get visible particle clouds
-      filtered_particles = @particles.filter (x) -> x.visible
-      if filtered_particles
-         intersects = raycaster.intersectObjects(filtered_particles, false)
-         if intersects.length > 0
-            console.log intersects
-            index = intersects[0].index
-            cid = intersects[0].object.geometry.vertices[0].cid
-            point = @particles[cid].geometry.vertices[ index ]
-            #console.log point
-            #console.log @points
 
-            @context1.clearRect 0, 0, 640, 480
-            message = point.name
-            metrics = @context1.measureText(message)
-            width = metrics.width
-            @context1.fillStyle = 'rgba(0,0,0,0.95)'
-            # black border
-            @context1.fillRect 0, 0, width + 8, 20 + 8
-            @context1.fillStyle = 'rgba(255,255,255,0.95)'
-            # white filler
-            @context1.fillRect 2, 2, width + 4, 20 + 4
-            @context1.fillStyle = 'rgba(0,0,0,1)'
-            # text color
-            @context1.fillText message, 4, 20
-            @texture1.needsUpdate = true
-
-            @sprite1.position.copy intersects[0].point
-
-      # make sure we're at least in right cluster
-      ###
-      i = 0
-      while i < 1
-         intersects[i].object.material.color.set 0xff0000
-         i++
-      ###
-      ###
-      particleMaterial = new THREE.SpriteMaterial({
-         color: 0x000000
-         program: (context) ->
-            context.beginPath()
-            context.arc(0, 0, 0.5, 0, PI2, true)
-            context.fill()
-      })
-
-      if intersects.length > 0
-         intersects[0].object.material.color.setHex Math.random() * 0xffffff
-         particle = new (THREE.Sprite)(particleMaterial)
-         particle.position.copy intersects[0].point
-         particle.scale.x = particle.scale.y = 16
-         @scene.add particle
-      ###
 
       if @mode is Projector.VIEW.DUAL
 
@@ -297,6 +240,55 @@ class Projector extends Subject
       # update the mouse variable
       @mouse.x = event.clientX / window.innerWidth * 2 - 1
       @mouse.y = -(event.clientY / window.innerHeight) * 2 + 1
+
+      threshold = 1
+      cornerRadius = 20
+      raycaster = new (THREE.Raycaster)
+      raycaster.params.Points.threshold = threshold
+      # TODO: delete this
+      #console.log @findPoint(0,'56f3172cd4f5ca1daeb6539b')
+      # create once
+      mouse = new (THREE.Vector2)
+      mouse.x = event.clientX / @renderer.domElement.width * 2 - 1
+      mouse.y = -(event.clientY / @renderer.domElement.height) * 2 + 1
+      raycaster.setFromCamera mouse, @cameraPerspective
+      recursiveFlag = false
+      # only get visible particle clouds
+      filtered_particles = @particles.filter (x) -> x.visible
+      if filtered_particles
+         intersects = raycaster.intersectObjects(filtered_particles, false)
+         if intersects.length > 0
+            index = intersects[0].index
+            cid = intersects[0].object.geometry.vertices[0].cid
+            point = @particles[cid].geometry.vertices[ index ]
+            point_data = @findPoint(cid, point.name)
+            # fake rounded corners
+            @context1.lineJoin = 'round'
+            @context1.lineWidth = cornerRadius
+            rectX = 0
+            rectY = 0
+            rectWidth = width
+            rectHeight = height
+            @context1.arcTo(rectX + rectWidth, rectY, rectX + rectWidth, rectY + cornerRadius, cornerRadius)
+            @context1.clearRect 0, 0, 640, 480
+            message = point_data.title
+            metrics = @context1.measureText(point_data.title)
+            width = metrics.width
+            height = metrics.height
+            @context1.fillStyle = 'rgba(0,0,0,0.95)'
+            # black border
+            @context1.fillRect 0, 0, width + 8, height + 4
+            @context1.fillStyle = 'rgba(255,255,255,0.95)'
+            # white filler
+            @context1.fillRect 2, 2, width + 4, height
+            # add some opacity
+            #@context1.globalAlpha = 0.7
+            # text color
+            #@context1.fillStyle = 'rgba(0,0,0,1)'
+            @context1.fillText message, 4, 20
+            @texture1.needsUpdate = true
+
+            @sprite1.position.copy intersects[0].point
 
    onMouseUp : (event) =>
       if @mode is Projector.VIEW.DUAL
