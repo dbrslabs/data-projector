@@ -9,9 +9,15 @@ ml/nytimes/articles
 ml/nytimes/*.json
 ml/nytimes/data
 
-ml/guardian/data
+ml/guardian/data/*
+DataProjector.js
 
-ml/venv
+ml/doc2vec/models/*
+ml/tsne/vecs/*
+
+data/*
+
+venv
 
 *.log
 

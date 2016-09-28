@@ -122,14 +122,7 @@ class Menu extends Panel
       # swatch IDs are c0, c1, c2...
 
       for i in [0...@clusters]
-         #html = "<span class='toggle' id='t#{i}'>[+]</span>
-                  #<span class='button' id='b#{i}'> Cluster</span>
-                  #<span class='color' id='c#{i}'> 
-         #html = "<input type='checkbox' class='toggle' id='t#{i}' checked>
-                     #<span class='button' id='b#{i}'></span> 
-                     #<span class='color' id='c#{i}'>Cluster #{i} </span>"
          html = "<button href='#' id='c#{i}' class='btn btn-circle checked'></button>"
-
          $("#menu").append(html) 
 
       $(@allId).click(@onToggleAll)
@@ -153,6 +146,18 @@ class Menu extends Panel
          if state is Menu.TOGGLE_ON then result++
 
       return result
+
+
+
+   setAllOn: ->
+
+      @setState @allId, Menu.TOGGLE_ON
+
+      for i in [0...@clusters]
+         tag = '#c' + String(i)
+         @setState tag, Menu.TOGGLE_ON
+
+      @notify(Menu.EVENT_TOGGLE_ALL_ON)   
 
 
 

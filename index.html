@@ -5,8 +5,15 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
 
+        <!-- Bootstrap -->
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+
+        <!-- Bootstrap-Select -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.11.0/css/bootstrap-select.min.css">
+
+        <!-- Font Awesome -->
         <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-T8Gy5hrqNKT+hzMclPo118YTQO6cYprQmhrYwIiQ/3axmI1hQomh7Ud2hPOy8SP1" crossorigin="anonymous">
+
         <link rel="stylesheet" type="text/css" href="DataProjector.css">
 
         <link rel="apple-touch-icon" sizes="57x57" href="img/favicons/apple-touch-icon-57x57.png?v=OmmXEAkJbg">
@@ -39,9 +46,27 @@
                         <h1>GUARDIAN GALAXY</h1>
                     </div>
                     <span class="navbar-text pull-right">
-                        <button id="toggleArticlesButton" class="visible-xs-inline-block btn btn-primary" aria-expanded="false">
+                        <button id="toggleArticlesButton" class="hidden btn btn-primary" aria-expanded="false">
                             <i class="fa fa-files-o"></i>
                         </button>
+                        <select id="sectionSelector"
+                          class="selectpicker"
+                          data-width="110px"
+                          data-style="btn-primary">
+                          <optgroup label="Section">
+                            <option>Business</option>
+                            <option>Film</option>
+                            <option>Football</option>
+                            <option>Money</option>
+                            <option>Music</option>
+                            <option>Politics</option>
+                            <option>Science</option>
+                            <option>Sport</option>
+                            <option>Technology</option>
+                            <option>Travel</option>
+                            <option>World News</option>
+                          </optgroup>
+                        </select>
                         <span id="toggleSpinButton">
                             <button class="btn btn-primary">
                                 <i class="fa fa-pause"></i>
@@ -129,7 +154,7 @@
                             <br /><br />
                             <a href="#">Learn more about GUARDIAN GALAXY</a>.</p>
 
-                            <p id="tt-2" class="toolTip_text">Each circle below represents a group of related articles, or “cluster". Machine Learning algorithms convert the words of each article into numerical vector-based representations. Articles with similar vectors are closer to one another than articles with dissimilar vectors. The t-SNE algorithm then converts those coordinates from high-dimensional space (think lattitude and longitude, but with way more numbers) to three dimensional space.
+                            <p id="tt-2" class="toolTip_text">Each circle below represents a group of related articles, or “cluster". Machine Learning algorithms convert the words of each article into numerical vector-based representations. Articles with similar vectors are closer to one another than articles with dissimilar vectors. The t-SNE algorithm then converts those coordinates from high-dimensional space (think latitude and longitude, but with way more numbers) to three dimensional space.
                             <br /><br />
                             To see all or none of the clusters, click on the grey button or left-most button.</p>
 
@@ -146,13 +171,21 @@
             <nav class="navbar navbar-default navbar-fixed-bottom" id="menu">
                 <button href='#' id='toggleAll' class='btn btn-circle checked'></button>
             </nav>
+        </div>
 
         <script src="./jquery-2.0.2.min.js"></script>
         <!--<script src="./node_modules/three/build/three.min.js"></script>-->
+        <script src="./jquery.mobile-events.min.js"></script>
         <script src="./node_modules/three/build/three.min.js"></script>
         <script src="./TweenLite.min.js"></script>
         <script src="./TrackballControls.js"></script>
+
+        <!-- Bootstrap -->
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+
+        <!-- Bootstrap-Select -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.11.0/js/bootstrap-select.min.js"></script>
+
         <!-- Piwik -->
         <script type="text/javascript">
           var _paq = _paq || [];

@@ -32,10 +32,12 @@ class Toolbar extends Panel
    @EVENT_SPIN_TOGGLE : "EVENT_SPIN_TOGGLE"
    @EVENT_SHOW_DOCUMENTS : "EVENT_SHOW_DOCUMENTS"
    @EVENT_SHOW_HELP : "EVENT_SHOW_HELP"
+   @EVENT_SECTION_SELECTION: "EVENT_SECTION_SELECTION"
 
    # M E M B E R S
    
    dispatcher : null # map of IDs and event handlers
+   section: null # the currently selected section from the dropdown
 
    # C O N S T R U C T O R
 
@@ -45,8 +47,14 @@ class Toolbar extends Panel
 
       @createDispatcher()
 
+      # set to first selected section
+      @section = 'business'
+
       for item in @dispatcher
-         $(item.id).click({ type : item.type }, @onClick)
+         if item.type is Toolbar.EVENT_SECTION_SELECTION 
+             $(item.id).on('changed.bs.select', { type: item.type }, @onSelect)
+         else
+             $(item.id).click({ type : item.type }, @onClick)
 
       document.addEventListener('keydown', @onKeyDown, false)
 
@@ -68,8 +76,19 @@ class Toolbar extends Panel
          if (item.key is event.keyCode) and (item.modifier is modifier) then @notify(item.type)
 
    
+
    onClick : (event) =>
+
       @notify(event.data.type)
+
+
+
+   onSelect: (event, index, newVal, oldVal) =>
+
+      @section = event.target.value.toLowerCase().replace(/ /g,'')
+      @notify(event.data.type)
+      
+
 
    # M E T H O D S
 
@@ -96,6 +115,7 @@ class Toolbar extends Panel
                       { id : "#spinRightButton", key : 0, modifier : Utility.NO_KEY, type : Toolbar.EVENT_SPIN_RIGHT },
                     # { id : "#animateButton", key : 0, modifier : Utility.NO_KEY, type : Toolbar.EVENT_ANIMATE },
                       { id : "#toggleSpinButton", key : 0, modifier : Utility.NO_KEY, type : Toolbar.EVENT_SPIN_TOGGLE },
+                      { id : "#sectionSelector", key : 0, modifier : Utility.NO_KEY, type : Toolbar.EVENT_SECTION_SELECTION },
                       { id : "#toggleArticlesButton", key : 0, modifier : Utility.NO_KEY, type : Toolbar.EVENT_SHOW_DOCUMENTS },
                       { id : "#toggleHelpButton", key : 0, modifier : Utility.NO_KEY, type : Toolbar.EVENT_SHOW_HELP },
                     ]

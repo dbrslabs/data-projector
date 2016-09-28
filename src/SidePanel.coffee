@@ -1,8 +1,6 @@
 # Controls application document presentation in the side panel
 
 Panel = require('./Panel.coffee')
-Utility = require('./Utility.coffee')
-#Projector = require('./Projector.coffee')
 
 class Modal extends Panel
 
@@ -53,6 +51,7 @@ class Modal extends Panel
       $(".article").hide()
       $("#related-articles-title").hide()
 
+
    setTitle: (title) ->
        $(@modal.title.id).text(title)
 
@@ -75,28 +74,24 @@ class Modal extends Panel
        $("#article-list").html(document)
 
 
+
    setDocumentGuardianLink: (url) ->
        #$(@modal.link.href).text(url) # Doesn't work idk
        $("#read-more-link").attr("href", url)
        $("#read-more-link").show()
 
 
-   # setArticlesLink: ->
-   #    $("#article-list-link").click (event) ->
-   #      event.preventDefault()
-   #      @notify(Modal.EVENT_ARTICLES_LINK)
 
-
-   setSimilarDocuments: (documents) ->
-      html = ""
-      for d in documents
-         html += "<a class='document' data-doc-id='" + d.id + "'>" + d.title + "</a><br />"
+   setSimilarDocuments: (documents, section) ->
+      html = @getDocumentsListHtml(documents, section)
       $(@modal.similar.id).text("")
       $(@modal.similar.id).append(html)
       # show similar documents section
       $(@modal.similar.id).show()
       $(@modal.hr.id).show()
       $("#related-articles-title").show()
+
+
 
    toggleHidden: ->
       $('#wrapper').toggleClass('toggled').promise().done ->
@@ -107,13 +102,22 @@ class Modal extends Panel
             window.dispatchEvent new Event('resize')
             return
         ), 1000
-        
-        #$(window).resize()
-        #return
+
+
+
+   getDocumentsListHtml: (docs, section) ->
+      docsHtml = (
+         "<span class='cluster-id' 
+            style='background-color:#{@colors[doc.cid].getStyle()}'> </span>
+         <a class='document' 
+            data-section='#{section}'
+            data-doc-id='#{doc.id}'>#{doc.title}</a>
+         <br/>" for doc in docs).join('')
         
 
+
    # display a list of documents
-   displayDocumentsList: (documents) ->
+   displayDocumentsList: (documents, section) ->
       @clear()
       @setTitle "Random Document Sample in Selected Clusters"
 
@@ -124,18 +128,9 @@ class Modal extends Panel
       # shuffle documents array. we don't want to render all 1,000+
       Array::shuffle = -> @sort -> 0.5 - Math.random()
       docs = documents.shuffle()[0..45]
-      # format doc to be max length, conditionally adding ellipsis
-      len = 47
-      for doc, i in docs
-          title = doc.title.substring(0,len)
-          if title.length == len then title = title + '...'
-          docs[i].title = title
-          #console.log Object.getOwnPropertyNames(docs[i])
-      # format html and add to dom
-      #docsHtml = ("<span class='cluster-id' style='color:#{@colors['c1'].getStyle()}'></span><a class='document' data-doc-id='#{doc.id}'>#{doc.title}</a><br/>" for doc in docs).join('')
-      docsHtml = ("<span class='cluster-id' style='background-color:#{@colors[doc.cid].getStyle()}'></span><a class='document' data-doc-id='#{doc.id}'>#{doc.title}</a><br/>" for doc in docs).join('')
 
-      #console.log Object.getOwnPropertyNames(docs[0])
+      # format html and add to dom
+      docsHtml = @getDocumentsListHtml(docs, section)
 
       # show article list
       $("#article-list").show()
@@ -144,7 +139,7 @@ class Modal extends Panel
 
 
    # display one particular document
-   displayDocument: (docId) ->
+   displayDocument: (docId, section) ->
 
       # hide document list
       $("#article-list").hide()
@@ -159,20 +154,20 @@ class Modal extends Panel
          @setDocumentHTML data.html
          @setDocumentGuardianLink data.url
 
-      @getSimilarDocuments docId, (data) =>
-
-         @setSimilarDocuments data.most_similar
+      @getSimilarDocuments(docId, section, (data) =>
+         @setSimilarDocuments(data.most_similar, section))
 
 
 
    onClickDocument: (event) =>
       event.preventDefault()
       docId = $(event.target).data 'doc-id' 
-      @displayDocument docId
+      section = $(event.target).data 'section' 
+      @displayDocument docId, section
 
 
 
-   getDocumentContents: (id, callback) ->
+   getDocumentContents: (id, callback) =>
 
       $.ajax(
         #url: 'http://127.0.0.1:5000/doc/' + id #dev
@@ -188,11 +183,11 @@ class Modal extends Panel
 
 
 
-   getSimilarDocuments: (id, callback) ->
+   getSimilarDocuments: (id, section, callback) =>
 
      $.ajax(
-       #url: 'http://127.0.0.1:5000/doc/' + id + '/most_similar' #dev
-       url: '/guardian-galaxy-api/doc/' + id + '/most_similar' #prod
+       #url: "http://127.0.0.1:5000/doc/#{id}/section/#{section}/most_similar" #dev
+       url: "/guardian-galaxy-api/doc/#{id}/section/#{section}/most_similar" #prod
        type: 'GET'
        contentType: 'application/json'
        beforeSend: ->

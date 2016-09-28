@@ -73,7 +73,7 @@ class Projector extends Subject
 
    # visual representations of loaded data
    points : null # Array<THREE.Geometry>
-   particles : null # Array<THREE.ParticleSystem>
+   particles : null # Array<THREE.Points>
    clusters : null # array of particle systems one per cluster
 
    selected : -1 # currently selected cluster
@@ -465,9 +465,12 @@ class Projector extends Subject
       container = $('#container').get(0)
       container.appendChild( @renderer.domElement )
 
-
    # Load JSON data to visualize.
    load : (@storage) =>
+
+      # first, remove visible points
+      # we do not want to remove the first 4 objects in the box
+      @box.remove(@box.children[4]) while @box.children.length > 4
 
       data = @storage.getData() # JSON
       clusters = @storage.getClusters() # number of clusters
