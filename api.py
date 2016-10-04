@@ -50,6 +50,7 @@ def format_doc(a):
         'url': a['webUrl'],
         'date': a['publicationDateObj'],
         'keywords': [t['webTitle'] for t in a['tags'] if t['type'] == 'keyword'],
+        'byline': a.get('fields').get('byline')
     }
 
 
