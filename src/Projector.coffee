@@ -16,6 +16,87 @@ unless Array::filter
      Array::filter = (callback) ->
             element for element in this when callback(element)
 
+ToolTip = (canvas, region, text, width, timeout) ->
+  console.log 'creating tooltip'
+  me = this
+  div = document.createElement('div')
+  div.classList.add('tooltip')
+  parent = canvas.parentNode
+  visible = false
+  # current status
+  # set some initial styles, can be replaced by class-name etc.
+  # hide the tool-tip
+
+  hide = ->
+    #visible = false
+    # hide it after timeout
+    #parent.removeChild div
+    # remove from DOM
+    return
+
+  # check mouse position, add limits as wanted... just for example:
+
+  check = (e) ->
+    pos = getPos(e)
+    posAbs =
+      x: e.clientX
+      y: e.clientY
+    # div is fixed, so use clientX/Y
+    if !visible and pos.x >= region.x and pos.x < region.x + region.w and pos.y >= region.y and pos.y < region.y + region.h
+      me.show posAbs
+      # show tool-tip at this pos
+    else
+      setDivPos posAbs
+    # otherwise, update position
+    return
+
+  # get mouse position relative to canvas
+
+  getPos = (e) ->
+    r = canvas.getBoundingClientRect()
+    {
+      x: e.clientX - (r.left)
+      y: e.clientY - (r.top)
+    }
+
+  # update and adjust div position if needed (anchor to a different corner etc.)
+
+  setDivPos = (pos) ->
+    if visible
+      if pos.x < 0
+        pos.x = 0
+      if pos.y < 0
+        pos.y = 0
+      # other bound checks here
+      div.style.left = pos.x + 'px'
+      div.style.top = pos.y + 'px'
+    return
+
+  div.style.cssText = 'position:fixed;padding:7px;background:gold;pointer-events:none;width:' + width + 'px'
+  div.innerHTML = text
+  # show the tool-tip
+
+  @show = (pos) ->
+    console.log 'show'
+    if !visible
+      # ignore if already shown (or reset time)
+      visible = true
+      # lock so it's only shown once
+      setDivPos pos
+      # set position
+      parent.appendChild div
+      # add to parent of canvas
+      setTimeout hide, timeout
+      # timeout for hide
+    return
+
+  # we need to use shared event handlers:
+  console.log canvas
+  canvas.addEventListener 'mousemove', check
+  canvas.addEventListener 'click', check
+  return
+
+
 class Projector extends Subject
 
    # E V E N T S
@@ -133,7 +214,18 @@ class Projector extends Subject
          $(this).find('.btn').toggleClass 'btn-primary'
       $(this).find('.btn').toggleClass 'btn-default'
 
+   #TODO: figure out what the prod url for this is
+   getPointDetails : (docid) =>
+     $.ajax
+         url: "http://localhost:5000/guardian-galaxy-api/doc/" + docid
+         dataType: "json"
+         error: (jqXHR, textStatus, errorThrown) ->
+            console.log "AJAX Error: #{textStatus}"
+         success: @makeTooltip
+
    findPoint : (cid, docid) => # maybe pass along cid to make search faster?
+      @getPointDetails(docid)
+      console.log(docid)
       mDocs = @points[cid].documents
       i = 0
       for d in mDocs
@@ -143,16 +235,17 @@ class Projector extends Subject
       return {}
            #console.log @points[cid].colors[d]
    setTooltips: () =>
-
       canvas1 = document.createElement('canvas')
       @context1 = canvas1.getContext('2d')
-      @context1.font = 'Bold 12px Arial'
+      @context1.font = 'Bold 6px Arial'
       @context1.fillStyle = 'rgba(0,0,0,0.95)'
       @context1.fillText '', 0, 20
+
       # canvas contents will be used for a texture
       @texture1 = new (THREE.Texture)(canvas1)
       @texture1.minFilter = THREE.LinearFilter # doesnt need to be power of 2
       @texture1.needsUpdate = true
+
       #//////////////////////////////////////
       spriteMaterial = new (THREE.SpriteMaterial)({
       map: @texture1
@@ -161,6 +254,18 @@ class Projector extends Subject
       @sprite1.scale.set 200, 100, 1.0
       @sprite1.position.set 50, 50, 0
       @scene.add @sprite1
+      """
+      @canvas = document.createElement('canvas')
+      ctx = @canvas.getContext('2d')
+      @region =
+      x: 50
+      y: 50
+      w: 100
+      h: 100
+      ctx.fillStyle = '#79f'
+      ctx.fillRect @region.x, @region.y, @region.w, @region.h
+      """
+
 
    # Make updates related to window size changes.
    # Also used when view configuration is switched.
@@ -236,13 +341,12 @@ class Projector extends Subject
 
             event.stopPropagation()
 
+      # for tooltips
       @sprite1.position.set event.clientX, event.clientY - 20, 0
-      # update the mouse variable
       @mouse.x = event.clientX / window.innerWidth * 2 - 1
       @mouse.y = -(event.clientY / window.innerHeight) * 2 + 1
 
       threshold = 1
-      cornerRadius = 20
       raycaster = new (THREE.Raycaster)
       raycaster.params.Points.threshold = threshold
       # TODO: delete this
@@ -261,34 +365,47 @@ class Projector extends Subject
             index = intersects[0].index
             cid = intersects[0].object.geometry.vertices[0].cid
             point = @particles[cid].geometry.vertices[ index ]
-            point_data = @findPoint(cid, point.name)
-            # fake rounded corners
-            @context1.lineJoin = 'round'
-            @context1.lineWidth = cornerRadius
-            rectX = 0
-            rectY = 0
-            rectWidth = width
-            rectHeight = height
-            @context1.arcTo(rectX + rectWidth, rectY, rectX + rectWidth, rectY + cornerRadius, cornerRadius)
-            @context1.clearRect 0, 0, 640, 480
-            message = point_data.title
-            metrics = @context1.measureText(point_data.title)
-            width = metrics.width
-            height = metrics.height
-            @context1.fillStyle = 'rgba(0,0,0,0.95)'
-            # black border
-            @context1.fillRect 0, 0, width + 8, height + 4
-            @context1.fillStyle = 'rgba(255,255,255,0.95)'
-            # white filler
-            @context1.fillRect 2, 2, width + 4, height
-            # add some opacity
-            #@context1.globalAlpha = 0.7
-            # text color
-            #@context1.fillStyle = 'rgba(0,0,0,1)'
-            @context1.fillText message, 4, 20
-            @texture1.needsUpdate = true
+            #point_data = @getPointDetails(point.name)
+            @getPointDetails(point.name)
+            @intersects = intersects
+            #t1 = new ToolTip(@canvas, @region, "This is a tool-tip sdfsfds", 150, 3000)
+            #@canvas.addEventListener 'mousemove', t1.check
+            #@canvas.addEventListener 'click', t1.check
 
-            @sprite1.position.copy intersects[0].point
+
+
+   makeTooltip: (pointData) =>
+      console.log pointData
+      rectX = 0
+      rectY = 0
+      rectWidth = width
+      rectHeight = height
+      @context1.clearRect 0, 0, 640, 500
+      message = pointData.title
+      metrics = @context1.measureText(pointData.title)
+      console.log(metrics)
+      width = metrics.width
+      height = 100
+      # black border
+      @context1.fillStyle = 'rgba(0,0,0,0.95)'
+      @context1.fillRect 0, 0, width + 8, height + 8
+      console.log height
+      # white filler
+      @context1.fillStyle = 'rgba(255,255,255,0.95)'
+      @context1.fillRect 2, 2, width + 4, height+4
+      # add some opacity
+      #@context1.globalAlpha = 0.7
+      # text color
+      @context1.fillStyle = 'rgba(0,0,0,1)'
+      @context1.fillText pointData.title, 4, 20
+      @context1.fillText pointData.date, 4, 30
+      @context1.fillText "keywords: " + pointData.keywords.join(", "), 4, 40
+
+
+
+      @texture1.needsUpdate = true
+
+      @sprite1.position.copy @intersects[0].point
 
    onMouseUp : (event) =>
       if @mode is Projector.VIEW.DUAL
