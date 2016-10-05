@@ -230,7 +230,7 @@ class Toolbar extends Panel
 
    setHelpModal : =>
 
-       $('#myModal').modal 'show'
+       #$('#myModal').modal 'show'
 
        $('p.toolTip_text').removeClass 'active'
        $('p.toolTip_text').first().addClass 'active'
