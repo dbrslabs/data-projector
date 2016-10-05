@@ -60,6 +60,7 @@ class Modal extends Panel
 
 
    setDocumentHTML: (document) ->
+       $("#landing-intro-container").hide()
        $(@modal.document.id).show()
        $(@modal.document.id).text("")
        $(@modal.document.id).html(document)
@@ -72,7 +73,8 @@ class Modal extends Panel
        $(".article").text("")
        $("#article-list").text("")
        $("#article-list").html(document)
-
+       $("#article-list-link").show()
+       $("#landing-intro-container").show()
 
 
    setDocumentGuardianLink: (url) ->
