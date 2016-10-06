@@ -36,14 +36,13 @@
         <script>try{Typekit.load({ async: true });}catch(e){}</script>
     </head>
     <body>
-        <nav class="navbar navbar-default navbar-fixed-top hidden-md hidden-lg" id="toolbar">
+        <nav class="navbar navbar-default navbar-fixed-top hidden-sm hidden-md hidden-lg" id="toolbar">
             <div class="container-fluid">
                 <div class="navbar-header">
                     <div class="navbar-brand">
                         <img src="img/guardian_logo_blue_220px.png" alt="" />
                         <img src="img/labs_logo_blue_220px.png" alt="" />
-                        <!--<h1>Guardian Galaxy</h1>-->
-                        <h1>GUARDIAN GALAXY</h1>
+                        <h1 class="hidden">GUARDIAN GALAXY</h1>
                     </div>
                     <span class="navbar-text pull-right">
                         <button id="toggleArticlesButton" class="hidden btn btn-primary" aria-expanded="false">
@@ -68,11 +67,11 @@
                           </optgroup>
                         </select>
                         <span id="toggleSpinButton">
-                            <button class="btn btn-primary">
+                            <button class="btn btn-primary hidden">
                                 <i class="fa fa-pause"></i>
                             </button>
                         </span>
-                        <button id="toggleHelpButton" class="btn btn-primary">
+                        <button id="toggleHelpButton" class="btn btn-primary hidden">
                             <i class="fa fa-question"></i>
                         </button>
                     </span>
@@ -109,8 +108,8 @@
  
         <div id="wrapper">
             <div id="sidebar-wrapper">
-                <div id="landing-intro-header" class="hidden-sm hidden-xs">
-                    <div class="header-logos">
+                <div id="landing-intro-header">
+                    <div class="header-logos hidden-xs">
                         <img src="img/guardian_logo_blue_220px.png" alt="" />
                         <img src="img/labs_logo_blue_220px.png" alt="" />
                     </div>
@@ -192,10 +191,8 @@
                     </div>
                 </div>
             </div>
-
-            <nav class="navbar navbar-default navbar-fixed-bottom hidden-md hidden-lg" id="menu">
-                <button href='#' id='toggleAll' class='btn btn-circle checked'></button>
-            </nav>
+            <!-- This line has to be one line because whitespace messes up the spacing of the button -->
+            <nav class="navbar navbar-default navbar-fixed-bottom hidden-sm hidden-md hidden-lg" id="menu"><button href='#' id='toggleAll' class='btn btn-square checked'></button></nav>
         </div>
 
         <script src="./jquery-2.0.2.min.js"></script>

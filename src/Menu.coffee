@@ -122,7 +122,7 @@ class Menu extends Panel
       # swatch IDs are c0, c1, c2...
 
       for i in [0...@clusters]
-         html = "<button href='#' id='c#{i}' class='btn btn-circle checked'></button>"
+         html = "<button href='#' id='c#{i}' class='btn btn-square checked'></button>"
          $("#menu").append(html) 
 
       $(@allId).click(@onToggleAll)
@@ -177,7 +177,6 @@ class Menu extends Panel
          # if uncheck, make circle into a ring
          $(tag).removeClass 'checked'
          $(tag).css 'background-color', 'white'
-      
 
 
    getState: (tag) ->

@@ -73,7 +73,7 @@ class Modal extends Panel
        $(".article").text("")
        $("#article-list").text("")
        $("#article-list").html(document)
-       $("#article-list-link").show()
+       #$("#article-list-link").hide()
        $("#landing-intro-container").show()
 
 
