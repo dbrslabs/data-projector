@@ -1,0 +1,38 @@
+# http://humanstxt.org/
+
+/* TEAM */
+
+Amelia Winger-Bearskin
+Director
+
+JB Rubinovitz
+Machine Learning Scientist
+
+Jamis Johnson
+Machine Learning Scientist
+
+David Huerta
+Developer
+
+Fletcher Bach
+Designer
+
+Joelle Fleurantin
+Designer
+
+Callum Cooper
+Writer
+
+/* THANKS */
+
+Data Projector
+https://github.com/datacratic/data-projector
+
+The Guardian
+https://www.theguardian.com/
+
+Sunrise Market
+http://sunrisemart.org/
+
+/* SITE */
+Python, Coffeescript, jQuery, WebGL
