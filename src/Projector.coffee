@@ -16,87 +16,6 @@ unless Array::filter
      Array::filter = (callback) ->
             element for element in this when callback(element)
 
-ToolTip = (canvas, region, text, width, timeout) ->
-  console.log 'creating tooltip'
-  me = this
-  div = document.createElement('div')
-  div.classList.add('tooltip')
-  parent = canvas.parentNode
-  visible = false
-  # current status
-  # set some initial styles, can be replaced by class-name etc.
-  # hide the tool-tip
-
-  hide = ->
-    #visible = false
-    # hide it after timeout
-    #parent.removeChild div
-    # remove from DOM
-    return
-
-  # check mouse position, add limits as wanted... just for example:
-
-  check = (e) ->
-    pos = getPos(e)
-    posAbs =
-      x: e.clientX
-      y: e.clientY
-    # div is fixed, so use clientX/Y
-    if !visible and pos.x >= region.x and pos.x < region.x + region.w and pos.y >= region.y and pos.y < region.y + region.h
-      me.show posAbs
-      # show tool-tip at this pos
-    else
-      setDivPos posAbs
-    # otherwise, update position
-    return
-
-  # get mouse position relative to canvas
-
-  getPos = (e) ->
-    r = canvas.getBoundingClientRect()
-    {
-      x: e.clientX - (r.left)
-      y: e.clientY - (r.top)
-    }
-
-  # update and adjust div position if needed (anchor to a different corner etc.)
-
-  setDivPos = (pos) ->
-    if visible
-      if pos.x < 0
-        pos.x = 0
-      if pos.y < 0
-        pos.y = 0
-      # other bound checks here
-      div.style.left = pos.x + 'px'
-      div.style.top = pos.y + 'px'
-    return
-
-  div.style.cssText = 'position:fixed;padding:7px;background:gold;pointer-events:none;width:' + width + 'px'
-  div.innerHTML = text
-  # show the tool-tip
-
-  @show = (pos) ->
-    console.log 'show'
-    if !visible
-      # ignore if already shown (or reset time)
-      visible = true
-      # lock so it's only shown once
-      setDivPos pos
-      # set position
-      parent.appendChild div
-      # add to parent of canvas
-      setTimeout hide, timeout
-      # timeout for hide
-    return
-
-  # we need to use shared event handlers:
-  console.log canvas
-  canvas.addEventListener 'mousemove', check
-  canvas.addEventListener 'click', check
-  return
-
-
 class Projector extends Subject
 
    # E V E N T S
@@ -237,7 +156,7 @@ class Projector extends Subject
    setTooltips: () =>
       canvas1 = document.createElement('canvas')
       @context1 = canvas1.getContext('2d')
-      @context1.font = 'Bold 6px Arial'
+      @context1.font = '5px Helvetica'
       @context1.fillStyle = 'rgba(0,0,0,0.95)'
       @context1.fillText '', 0, 20
 
@@ -254,17 +173,6 @@ class Projector extends Subject
       @sprite1.scale.set 200, 100, 1.0
       @sprite1.position.set 50, 50, 0
       @scene.add @sprite1
-      """
-      @canvas = document.createElement('canvas')
-      ctx = @canvas.getContext('2d')
-      @region =
-      x: 50
-      y: 50
-      w: 100
-      h: 100
-      ctx.fillStyle = '#79f'
-      ctx.fillRect @region.x, @region.y, @region.w, @region.h
-      """
 
 
    # Make updates related to window size changes.
@@ -310,6 +218,68 @@ class Projector extends Subject
 
    getTooltip: () =>
       return ''
+
+   roundRect: (ctx, x, y, width, height, radius, fill, stroke) ->
+      if typeof stroke == 'undefined'
+         stroke = true
+      if typeof radius == 'undefined'
+         radius = 5
+      if typeof radius == 'number'
+         radius =
+            tl: radius
+            tr: radius
+            br: radius
+            bl: radius
+      else
+         defaultRadius =
+            tl: 0
+            tr: 0
+            br: 0
+            bl: 0
+         for side of defaultRadius
+            radius[side] = radius[side] or defaultRadius[side]
+      ctx.beginPath()
+      ctx.moveTo x + radius.tl, y
+      ctx.lineTo x + width - (radius.tr), y
+      ctx.quadraticCurveTo x + width, y, x + width, y + radius.tr
+      ctx.lineTo x + width, y + height - (radius.br)
+      ctx.quadraticCurveTo x + width, y + height, x + width - (radius.br), y + height
+      ctx.lineTo x + radius.bl, y + height
+      ctx.quadraticCurveTo x, y + height, x, y + height - (radius.bl)
+      ctx.lineTo x, y + radius.tl
+      ctx.quadraticCurveTo x, y, x + radius.tl, y
+      ctx.closePath()
+      if fill
+         ctx.fill()
+      if stroke
+         ctx.stroke()
+      return
+
+   # wrap text on a canvas context
+   wrapText: (context, text, x, y, maxWidth, maxHeight, lineHeight) ->
+      console.log 'inside wrap text'
+      cars = text.split('\n')
+      console.log cars
+      ii = 0
+      while ii < cars.length
+         line = ''
+         words = cars[ii].split(' ')
+         n = 0
+         while n < words.length
+            testLine = line + words[n] + ' '
+            metrics = context.measureText(testLine)
+            testWidth = metrics.width
+            if testWidth > maxWidth
+               context.fillText line, x, y
+               line = words[n] + ' '
+               y += lineHeight
+            else
+               line = testLine
+            n++
+         context.fillText line, x, y
+         y += lineHeight
+         ii++
+      return y
 
    onMouseDown : (event) =>
 
@@ -365,41 +335,33 @@ class Projector extends Subject
             index = intersects[0].index
             cid = intersects[0].object.geometry.vertices[0].cid
             point = @particles[cid].geometry.vertices[ index ]
-            #point_data = @getPointDetails(point.name)
             @getPointDetails(point.name)
             @intersects = intersects
-            #t1 = new ToolTip(@canvas, @region, "This is a tool-tip sdfsfds", 150, 3000)
-            #@canvas.addEventListener 'mousemove', t1.check
-            #@canvas.addEventListener 'click', t1.check
 
 
 
    makeTooltip: (pointData) =>
-      console.log pointData
       rectX = 0
       rectY = 0
-      rectWidth = width
+      rectWidth = 100
       rectHeight = height
       @context1.clearRect 0, 0, 640, 500
-      message = pointData.title
       metrics = @context1.measureText(pointData.title)
       console.log(metrics)
-      width = metrics.width
+      width = rectWidth
       height = 100
-      # black border
-      @context1.fillStyle = 'rgba(0,0,0,0.95)'
-      @context1.fillRect 0, 0, width + 8, height + 8
-      console.log height
-      # white filler
-      @context1.fillStyle = 'rgba(255,255,255,0.95)'
-      @context1.fillRect 2, 2, width + 4, height+4
       # add some opacity
-      #@context1.globalAlpha = 0.7
+      @context1.globalAlpha = 0.7
+      @context1.strokeStyle = "#2d6"
+      @context1.fillStyle = "#444444"
+      radius = 5
+      @roundRect(@context1, 2, 2, width+4, height+4, radius, true, false)
       # text color
-      @context1.fillStyle = 'rgba(0,0,0,1)'
-      @context1.fillText pointData.title, 4, 20
-      @context1.fillText pointData.date, 4, 30
-      @context1.fillText "keywords: " + pointData.keywords.join(", "), 4, 40
+      @context1.fillStyle ="#FFF"
+      lastY = @wrapText(@context1, pointData.title, 4, 20, width,  rectHeight, 10)
+      lastY = @wrapText(@context1, pointData.date, 4, lastY, width, rectHeight, 10)
+      @wrapText(@context1, "Keywords: " + pointData.keywords.join(", "), 4, lastY, width, rectHeight, 10)
+
 
 
 
