@@ -84,6 +84,8 @@ Then fetch and merge the latest changes with the git pull command:
 
     git pull origin new-new-layout
 
+The document corpus files are _not_ versioned in git, so after new ones are generated, each corpus's .d2v file needs to be copied to `/home/ubuntu/www/guardian-galaxy/ml/doc2vec/models/final`. Currently, `/home/ubuntu/www/guardian-galaxy-api/ml/doc2vec/models/final` is symlinked to `/home/ubuntu/www/guardian-galaxy/ml/doc2vec/models/final`to save space and to prevent having conflicting versions of the same .d2v files.
+
 ### Server(s) Configurations
 
 Both the frontend and backend nginx configurations are defined in the same config file as the main dbrslabs.com site at `/etc/nginx/sites-available/dbrslabs-web`.
