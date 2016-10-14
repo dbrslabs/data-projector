@@ -4,12 +4,18 @@ A visual exploration of document similarity and clustering performed on Guardian
 
 Note: the beautiful frontend was [created by DataCritic](ec2-54-88-15-234.compute-1.amazonaws.com).
 
-The dev and prod environments are totes different, so until we come up with a more elegant way of switching out URLs for dev and prod environments, you'll have to manually change the API URLs in these files (look for lines with #dev and #prod):
+The dev and prod environments are totes different. config.py specifices the different URLs used for api.py. In order to use it in your developer environment, you'll need to create a `.env` file in the root of this repo's folder. This is what should be in it:
 
-* src/SidePanel.coffee
-* api.py
+    source venv/bin/activate
+    export APP_SETTINGS="config.DevelopmentConfig"
 
-To rebuild from coffeescript source:
+    export DB_URL=""
+    export DB_USER=""
+    export DB_PASS=""
+
+(Substitute the blank strings with the URL/credentials for the mongo DB we're using)
+
+To build `DataProjector.js` from coffeescript source:
 
     $ npm install
     $ node_modules/.bin/browserify -t coffeeify src/DataProjector.coffee > DataProjector.js

@@ -35,3 +35,4 @@ uwsgi==2.0.13.1
 gensim==0.13.1
 urllib3==1.17
 pyopenssl==16.1.0
+autoenv==1.0.0
