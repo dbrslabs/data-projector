@@ -15,6 +15,8 @@ The dev and prod environments are totes different. config.py specifices the diff
 
 (Substitute the blank strings with the URL/credentials for the mongo DB we're using)
 
+In production, environment variables are set by uwsgi for the guardian-galaxy-api service in `/etc/init/guardian-galaxy-api.conf`.
+
 To build `DataProjector.js` from coffeescript source:
 
     $ npm install
@@ -29,8 +31,11 @@ First install all python dependencies and then run the flask server:
 
     $ virtualenv venv
     $ source venv/bin/activate
+    $ pip install scipy==0.18.0
     $ pip install -r web-requirements.txt
     $ python api.py
+
+NOTE: scipy has to be install separately on production becuase it's installer uses an absurd amount of memory and will cause out of memory exceptions if you run `pip install -r web-requirements.txt`. No idea why.
 
 If you are planning do throw down some machine learning biz, you'll want to install all the math libraries in `ml-requirements.txt` instead of just `web-requirements.txt`:
 
