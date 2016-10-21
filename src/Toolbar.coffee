@@ -121,7 +121,7 @@ class Toolbar extends Panel
                     ]
 
    initialize : =>
-      @addLegend()
+      #@addLegend() TODO: readd later when done
       @setButtonSelected("#menuButton", true)
       @setButtonSelected("#infoButton", true)
 
@@ -272,7 +272,6 @@ class Toolbar extends Panel
 
 
    addLegend: =>
-      console.log 'adding legend'
       $('#container').append "<div id='legend'>I am legend</div>"
 
 
