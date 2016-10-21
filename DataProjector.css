@@ -62,7 +62,7 @@ button:focus {
       padding: 16px;
       /*font-size: 14px;*/
    }
-   
+
    .navbar-brand h1 {
        display: none;
    }
@@ -115,6 +115,20 @@ button:focus {
 #menu .button { color: #CCCCCC; font-weight: bold; cursor: pointer }
 #menu .color { color: #CCCCCC; font-weight: bold; cursor: pointer }*/
 
+#legend{
+    width: 100px;
+    height: 100px;
+    background-color: rgba(72, 72, 72, 1);
+    color: black;
+    border-color: green;
+    z-index: 50;
+    position: absolute;
+    top: 100px;
+    left: 5px;
+    color: white;
+    border-radius: 5px;
+    opacity: 0.8;
+}
 #menu {
    padding: 15px 10px;
    text-align: center;

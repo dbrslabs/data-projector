@@ -35,7 +35,7 @@ class Toolbar extends Panel
    @EVENT_SECTION_SELECTION: "EVENT_SECTION_SELECTION"
 
    # M E M B E R S
-   
+
    dispatcher : null # map of IDs and event handlers
    section: null # the currently selected section from the dropdown
 
@@ -51,7 +51,7 @@ class Toolbar extends Panel
       @section = 'business'
 
       for item in @dispatcher
-         if item.type is Toolbar.EVENT_SECTION_SELECTION 
+         if item.type is Toolbar.EVENT_SECTION_SELECTION
              $(item.id).on('changed.bs.select', { type: item.type }, @onSelect)
          else
              $(item.id).click({ type : item.type }, @onClick)
@@ -75,7 +75,7 @@ class Toolbar extends Panel
       for item in @dispatcher
          if (item.key is event.keyCode) and (item.modifier is modifier) then @notify(item.type)
 
-   
+
 
    onClick : (event) =>
 
@@ -87,7 +87,7 @@ class Toolbar extends Panel
 
       @section = event.target.value.toLowerCase().replace(/ /g,'')
       @notify(event.data.type)
-      
+
 
 
    # M E T H O D S
@@ -121,7 +121,7 @@ class Toolbar extends Panel
                     ]
 
    initialize : =>
-
+      @addLegend()
       @setButtonSelected("#menuButton", true)
       @setButtonSelected("#infoButton", true)
 
@@ -163,7 +163,7 @@ class Toolbar extends Panel
 
 
    unblinkButton : (id) =>
-   
+
       #console.log "Toolbar.unblinkButton " + id
       @setButtonSelected(id, false)
 
@@ -186,12 +186,12 @@ class Toolbar extends Panel
 
 
    blinkResetButton : =>
-   
+
       @blinkButton("#resetButton")
 
 
    blinkClearButton : =>
-   
+
       @blinkButton("#clearButton")
 
 
@@ -264,12 +264,16 @@ class Toolbar extends Panel
           return
 
    showHelpModal : =>
-    
+
       $('#myModal').modal 'show'
 
       $('p.toolTip_text').removeClass 'active'
       $('p.toolTip_text').first().addClass 'active'
-             
+
+
+   addLegend: =>
+      console.log 'adding legend'
+      $('#container').append "<div id='legend'>I am legend</div>"
 
 
 module.exports = Toolbar

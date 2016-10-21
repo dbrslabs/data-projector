@@ -120,6 +120,8 @@ class Projector extends Subject
 
       @setTooltips()
 
+      @setLegend()
+
       # detect if mobile
       @mobileWeb = /Mobile|iP(hone|od|ad)|Android|BlackBerry|IEMobile|Kindle|NetFront|Silk-Accelerated|(hpw|web)OS|Fennec|Minimo|Opera M(obi|ini)|Blazer|Dolfin|Dolphin|Skyfire|Zune/i.test(navigator.userAgent)
 
@@ -189,6 +191,34 @@ class Projector extends Subject
       @sprite1.scale.set 200, 100, 1.0
       @sprite1.position.set 50, 50, 0
       @scene.add @sprite1
+
+
+   setLegend: () =>
+      canvas2 = document.createElement('canvas')
+      ctx = canvas2
+      ratio =1
+      canvas2.getContext("2d").setTransform(ratio, 0, 0, ratio, 0, 0)
+      canvas2.retinaResoultionEnabled = false
+      @context2 = canvas2.getContext('2d')
+      @context2.font = '10px PT Sans'
+      @context2.fillStyle = 'rgba(0,0,0,0.95)'
+      @context2.fillText 'Test legend', 0, 20
+
+      # canvas contents will be used for a texture
+      @texture2 = new (THREE.Texture)(canvas2)
+      @texture2.minFilter = THREE.LinearFilter # doesnt need to be power of 2
+      @texture2.needsUpdate = false
+      @texture2.generateMipmaps = false
+
+      #//////////////////////////////////////
+      spriteMaterial = new (THREE.SpriteMaterial)({
+      map: @texture2
+      useScreenCoordinates: true})
+      @sprite2 = new (THREE.Sprite)(spriteMaterial)
+      @sprite2.scale.set 200, 100, 1.0
+      @sprite2.position.set 50, 50, 0
+      @scene2 = new THREE.Scene()
+      @scene2.add @sprite2
 
 
    # Make updates related to window size changes.
@@ -353,7 +383,6 @@ class Projector extends Subject
             point = @particles[cid].geometry.vertices[ index ]
             @getPointDetails(point.name)
             @intersects = intersects
-
 
 
    makeTooltip: (pointData) =>
