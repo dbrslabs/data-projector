@@ -196,6 +196,10 @@ button:focus {
 }*/
 /*#info .button { color: #CCCCCC; font-weight: bold; cursor: pointer }*/
 
+#container {
+  cursor: url('img/donut_cursor.svg'), auto;
+}
+
 .modal {
   outline: none;
 }
