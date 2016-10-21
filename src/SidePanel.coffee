@@ -14,12 +14,17 @@ class Modal extends Panel
 
    colors : null # Array<THREE.Color> generated color values for visualization
 
+   baseApiUrl: '/guardian-galaxy-api' # Fallback on prod URL if dev env is not detected
+
    # C O N S T R U C T O R
 
    # Create info console panel.
    constructor: (id) ->
 
       super(id)
+
+      if window.location.hostname == '127.0.0.1' or window.location.hostname == '0.0.0.0' or window.location.hostname == 'localhost'
+         @baseApiUrl = 'http://' + '127.0.0.1' + ':5000' # dev url
 
       @modal = 
          title:    { id : "#sidePanelTitle" }
@@ -60,8 +65,7 @@ class Modal extends Panel
 
 
    setDocumentHTML: (document) ->
-       $(@modal.document.id).show()
-       $(@modal.document.id).text("")
+       
        $(@modal.document.id).html(document)
        $(@modal.document.id).append("<div class='fold-fade'> </div>")
        #@setArticlesLink()
@@ -72,7 +76,8 @@ class Modal extends Panel
        $(".article").text("")
        $("#article-list").text("")
        $("#article-list").html(document)
-
+       #$("#article-list-link").hide()
+       $("#landing-intro-container").show()
 
 
    setDocumentGuardianLink: (url) ->
@@ -81,16 +86,14 @@ class Modal extends Panel
        $("#read-more-link").show()
 
 
-
    setSimilarDocuments: (documents, section) ->
-      html = @getDocumentsListHtml(documents, section)
       $(@modal.similar.id).text("")
+      html = @getDocumentsListHtml(documents, section)
       $(@modal.similar.id).append(html)
       # show similar documents section
       $(@modal.similar.id).show()
       $(@modal.hr.id).show()
       $("#related-articles-title").show()
-
 
 
    toggleHidden: ->
@@ -104,22 +107,19 @@ class Modal extends Panel
         ), 1000
 
 
-
    getDocumentsListHtml: (docs, section) ->
       docsHtml = (
-         "<span class='cluster-id' 
-            style='background-color:#{@colors[doc.cid].getStyle()}'> </span>
-         <a class='document' 
+         "<a class='document'
+            style='color:#{@colors[doc.cid].getStyle()}'
             data-section='#{section}'
             data-doc-id='#{doc.id}'>#{doc.title}</a>
          <br/>" for doc in docs).join('')
         
 
-
    # display a list of documents
    displayDocumentsList: (documents, section) ->
       @clear()
-      @setTitle "Random Document Sample in Selected Clusters"
+      @setTitle "Sample of Documents in Selected Clusters"
 
       # hide similar documents section
       $(@modal.similar.id).hide()
@@ -142,11 +142,18 @@ class Modal extends Panel
    displayDocument: (docId, section) ->
 
       # hide document list
+      @setTitle ""
       $("#article-list").hide()
-         
+      # hide intro
+      $("#landing-intro-container").hide()
       # show similar documents section
       $(@modal.similar.id).show()
       $(@modal.hr.id).show()
+      # scroll to top of the article
+      $("#sidebar-wrapper").scrollTop(300)
+      # clear out any currently viewed articles before loading the new one
+      $(@modal.document.id).text("")
+      $(@modal.document.id).show()
 
       # async retrieve document contents and similar docs, then set html
       @getDocumentContents docId, (data) =>
@@ -158,7 +165,6 @@ class Modal extends Panel
          @setSimilarDocuments(data.most_similar, section))
 
 
-
    onClickDocument: (event) =>
       event.preventDefault()
       docId = $(event.target).data 'doc-id' 
@@ -166,12 +172,10 @@ class Modal extends Panel
       @displayDocument docId, section
 
 
-
    getDocumentContents: (id, callback) =>
 
       $.ajax(
-        #url: 'http://127.0.0.1:5000/doc/' + id #dev
-        url: '/guardian-galaxy-api/doc/' + id #prod
+        url: "#{@baseApiUrl}/doc/#{id}"
         type: 'GET'
         contentType: 'application/json'
         beforeSend: ->
@@ -182,12 +186,10 @@ class Modal extends Panel
       )
 
 
-
    getSimilarDocuments: (id, section, callback) =>
 
      $.ajax(
-       #url: "http://127.0.0.1:5000/doc/#{id}/section/#{section}/most_similar" #dev
-       url: "/guardian-galaxy-api/doc/#{id}/section/#{section}/most_similar" #prod
+       url: "#{@baseApiUrl}/doc/#{id}/section/#{section}/most_similar"
        type: 'GET'
        contentType: 'application/json'
        beforeSend: ->
@@ -196,7 +198,6 @@ class Modal extends Panel
             $('#sidePanelBody i.related-articles-spinner').removeClass('fa fa-spinner fa-pulse fa-3x fa-fw')
             callback(data)
      )
-
 
 
 module.exports = Modal

@@ -4,6 +4,7 @@
 from urlparse import urlparse
 from urllib import urlencode
 import json
+import os
 import os.path
 import urllib3.contrib.pyopenssl
 
@@ -41,7 +42,10 @@ application = Flask(__name__)
 application.config['CORS_HEADERS'] = "Content-Type"
 cors = CORS(application, resources={r"/*": {"origins": 'localhost'}})
 
-def format_doc(a):
+#application.debug = config.DEBUG
+application.config.from_object(os.environ['APP_SETTINGS'])
+
+def format_doc(article):
     return {
         'id': str(a['_id']),
         'text': a['blocks']['body'][0]['bodyTextSummary'],
@@ -59,8 +63,7 @@ def sanitytest():
     return "<p>airhornsounds.wav</p>"
 
 
-@application.route("/guardian-galaxy-api/doc/<docid>", methods=['GET']) #prod
-#@application.route("/doc/<docid>", methods=['GET']) #dev
+@application.route("/" + application.config['API_URL'] + "doc/<docid>", methods=['GET'])
 @cross_origin(origin='localhost', headers=['Content-Type'])
 def get_doc(docid):
     article = db.articlesv2.find_one({'_id': ObjectId(docid)})
@@ -81,8 +84,7 @@ def get_docs_by_ids(docids):
     return docs
 
 
-@application.route("/guardian-galaxy-api/doc/<docid>/section/<section>/most_similar", methods=['GET']) #prod
-#@application.route("/doc/<docid>/section/<section>/most_similar", methods=['GET']) #dev
+@application.route("/" + application.config['API_URL'] + "doc/<docid>/section/<section>/most_similar", methods=['GET']) #dev
 @cross_origin(origin='localhost', headers=['Content-Type'])
 def get_doc_most_similar(docid, section):
     # get the most similar document ids and their measures of similarity

@@ -4,12 +4,20 @@ A visual exploration of document similarity and clustering performed on Guardian
 
 Note: the beautiful frontend was [created by DataCritic](ec2-54-88-15-234.compute-1.amazonaws.com).
 
-The dev and prod environments are totes different, so until we come up with a more elegant way of switching out URLs for dev and prod environments, you'll have to manually change the API URLs in these files (look for lines with #dev and #prod):
+The dev and prod environments are totes different. config.py specifices the different URLs used for api.py. In order to use it in your developer environment, you'll need to create a `.env` file in the root of this repo's folder. This is what should be in it:
 
-* src/SidePanel.coffee
-* api.py
+    source venv/bin/activate
+    export APP_SETTINGS="config.DevelopmentConfig"
 
-To rebuild from coffeescript source:
+    export DB_URL=""
+    export DB_USER=""
+    export DB_PASS=""
+
+(Substitute the blank strings with the URL/credentials for the mongo DB we're using)
+
+In production, environment variables are set by uwsgi for the guardian-galaxy-api service in `/etc/init/guardian-galaxy-api.conf`.
+
+To build `DataProjector.js` from coffeescript source:
 
     $ npm install
     $ node_modules/.bin/browserify -t coffeeify src/DataProjector.coffee > DataProjector.js
@@ -23,8 +31,11 @@ First install all python dependencies and then run the flask server:
 
     $ virtualenv venv
     $ source venv/bin/activate
+    $ pip install scipy==0.18.0
     $ pip install -r web-requirements.txt
     $ python api.py
+
+NOTE: scipy has to be install separately on production becuase it's installer uses an absurd amount of memory and will cause out of memory exceptions if you run `pip install -r web-requirements.txt`. No idea why.
 
 If you are planning do throw down some machine learning biz, you'll want to install all the math libraries in `ml-requirements.txt` instead of just `web-requirements.txt`:
 
@@ -83,6 +94,8 @@ The backend is the same repo as the frontend, but this one just handles the API 
 Then fetch and merge the latest changes with the git pull command:
 
     git pull origin new-new-layout
+
+The document corpus files are _not_ versioned in git, so after new ones are generated, each corpus's .d2v file needs to be copied to `/home/ubuntu/www/guardian-galaxy/ml/doc2vec/models/final`. Currently, `/home/ubuntu/www/guardian-galaxy-api/ml/doc2vec/models/final` is symlinked to `/home/ubuntu/www/guardian-galaxy/ml/doc2vec/models/final`to save space and to prevent having conflicting versions of the same .d2v files.
 
 ### Server(s) Configurations
 

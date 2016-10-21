@@ -25,6 +25,10 @@ button:focus {
     outline: none !important;
 }
 
+#toolbar .container-fluid {
+    padding-right: 0;
+}
+
 /*#toolbar {
    position: absolute;
    top: 10px;
@@ -50,11 +54,43 @@ button:focus {
     vertical-align: middle;
 }
 
+#sidebar-wrapper h1 {
+    color: #000;
+    letter-spacing: 2px;
+    font-weight: bold;
+    font-size: 20px;
+    text-align: center;
+    margin-top: 10px;
+    margin-bottom: 5px;
+}
+
+.subtitle {
+    text-align: center;
+}
+
+.sidepanel-line-break {
+    width: 50%;
+    border-width: 2px;
+    border-color: #000;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
 .navbar-brand img {
     /*margin-right: 5px;*/
     height: 30px;
     width: auto;
     display: inline-block;
+}
+
+.header-logos {
+    margin-top: 1em;
+    text-align: center;
+}
+
+.header-logos img {
+    height: 40px;
+    width: auto;
 }
 
 @media only screen and (max-width : 480px) {
@@ -84,6 +120,15 @@ button:focus {
       max-height: 280px;
       overflow-y: scroll;
    }
+
+    /*#sidebar-wrapper {
+      padding-top: 64px !important;
+      padding-bottom: 64px !important;
+    }
+
+    #sidePanelBody {
+      padding-bottom: 64px !important;
+    }*/
 }
 
 .navbar-text label {
@@ -100,6 +145,18 @@ button:focus {
     -moz-box-shadow:    0 0 20px 0 #000;
     -webkit-box-shadow: 0 0 20px 0 #000;
     box-shadow:         0 0 20px 0 #000;
+}
+
+@media only screen and (max-width : 768px) {
+
+    #sidebar-wrapper {
+      padding-top: 64px !important;
+      /*padding-bottom: 64px !important;*/ /* nope */
+    }
+
+    #sidePanelBody {
+      padding-bottom: 64px !important;
+    }
 }
 
 /*#menu {
@@ -222,8 +279,21 @@ h3#myModalLabel {
     margin: 0 2px;
 }
 
+.btn-square {
+    width: 30px;
+    height: 30px;
+    text-align: center;
+    padding: 6px 0;
+    font-size: 12px;
+    line-height: 1.42;
+    border-color: lightgrey;
+    border-width: 3px;
+    background-color: white;
+    margin: 0 2px;
+}
+
 @media only screen and (max-width : 360px) {
-  .btn-circle {
+  .btn-circle, .btn-square {
     margin: 8px 4px 0;
   }
 
@@ -238,7 +308,12 @@ h3#myModalLabel {
    }
 
    #sidebar-wrapper {
-      padding-bottom: 128px !important;
+      /*padding-bottom: 104px !important;*/ /* Doesn't work */
+      overflow-y: scroll;
+   }
+
+   #sidePanelBody {
+      padding-bottom: 104px !important;
    }
 
    #wrapper.toggled {
@@ -289,7 +364,7 @@ h3#myModalLabel {
     -moz-transition: all 0.5s ease;
     -o-transition: all 0.5s ease;
     transition: all 0.5s ease;
-    padding: 64px 14px;
+    padding: 0 14px;
 }
 
 #wrapper.toggled #sidebar-wrapper {
@@ -313,9 +388,14 @@ h3#myModalLabel {
     color: #000;
     letter-spacing: 2px;
     font-weight: bold;
-    font-size: 18px;
-    text-align: center;
+    font-size: 16px;
+    /*text-align: center;*/
 }
+
+/*#sidePanelBody {
+  height: 100%;
+  width: auto;
+}*/
 
 #sidePanelBody hr {
     border-top-color: #CCC;
@@ -415,6 +495,10 @@ a.document {
   height: 2em;
   width: 100%;
   background: linear-gradient(to top, rgba(248, 248, 248, 1), rgba(255, 255, 255, 0));
+}
+
+#read-more-link {
+    text-decoration: underline;
 }
 
 .article-list-link-container {

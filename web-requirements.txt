@@ -32,6 +32,9 @@ tqdm==4.7.0
 traitlets==4.2.1
 Werkzeug==0.11.9
 uwsgi==2.0.13.1
+scipy==0.17.0
+numpy==1.11.0
 gensim==0.13.1
 urllib3==1.17
 pyopenssl==16.1.0
+autoenv==1.0.0

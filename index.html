@@ -32,18 +32,19 @@
         <link rel="icon" type="image/png" href="img/favicons/android-chrome-192x192.png?v=OmmXEAkJbg" sizes="192x192">
         <link rel="icon" type="image/png" href="img/favicons/favicon-16x16.png?v=OmmXEAkJbg" sizes="16x16">
 
+        <link type="text/plain" rel="author" href="humans.txt" />
+
         <script src="https://use.typekit.net/uxc2cnw.js"></script>
         <script>try{Typekit.load({ async: true });}catch(e){}</script>
     </head>
     <body>
-        <nav class="navbar navbar-default navbar-fixed-top" id="toolbar">
+        <nav class="navbar navbar-default navbar-fixed-top hidden-sm hidden-md hidden-lg" id="toolbar">
             <div class="container-fluid">
                 <div class="navbar-header">
                     <div class="navbar-brand">
                         <img src="img/guardian_logo_blue_220px.png" alt="" />
                         <img src="img/labs_logo_blue_220px.png" alt="" />
-                        <!--<h1>Guardian Galaxy</h1>-->
-                        <h1>GUARDIAN GALAXY</h1>
+                        <h1 class="hidden">GUARDIAN GALAXY</h1>
                     </div>
                     <span class="navbar-text pull-right">
                         <button id="toggleArticlesButton" class="hidden btn btn-primary" aria-expanded="false">
@@ -68,11 +69,11 @@
                           </optgroup>
                         </select>
                         <span id="toggleSpinButton">
-                            <button class="btn btn-primary">
+                            <button class="btn btn-primary hidden">
                                 <i class="fa fa-pause"></i>
                             </button>
                         </span>
-                        <button id="toggleHelpButton" class="btn btn-primary">
+                        <button id="toggleHelpButton" class="btn btn-primary hidden">
                             <i class="fa fa-question"></i>
                         </button>
                     </span>
@@ -109,22 +110,47 @@
 
         <div id="wrapper">
             <div id="sidebar-wrapper">
+                <div id="landing-intro-header">
+                    <div class="header-logos hidden-xs">
+                        <img src="img/guardian_logo_blue_220px.png" alt="" />
+                        <img src="img/labs_logo_blue_220px.png" alt="" />
+                    </div>
+                    <h1>GUARDIAN GALAXY</h1>
+                    <p class="subtitle">A joint project from <br />
+                        <a href="https://www.theguardian.com/">The Guardian</a> and <a href="https://dbrslabs.com">DBRS Innovation Labs</a>
+                    </p>
+                    <hr class="sidepanel-line-break" />
+                </div>
+                <article id="landing-intro-container">
+                    <h2 class="title">Mapping the Guardian</h2>
+                    <p>Machine learning, a subfield of computer science, is good at pattern recognition, classification, and predictive analytics. Machine learning algorithms can learn from sample data sets and apply that learning to data that it has never before encountered.</p>
+
+                    <p>Guardian Galaxy is a visualization of all of the articles from The Guardian from 1921 to present, arranged by relationship. The more related two articles are, the closer their placement. In other words, if you were to draw a line between two articles, that line’s length corresponds to how related those two articles are. Visualizing The Guardian archives allows us to explore articles in a way that favors discovery over directed search and emphasizes broader relationships and trends.</p>
+
+                    <h2 class="title">How does the relationship engine work?</h2>
+                    <p>Using the <a href="https://arxiv.org/abs/1607.05368">doc2vec</a> algorithm, each article is assigned values for hundreds of parameters. These values are determined by an <a href="https://en.wikipedia.org/wiki/Unsupervised_learning">unsupervised learning</a> pass. This means that the number assigned to a parameter is inferred alorithmically based on its properties and context.</p>
+
+                    <p>The result is that articles share similar values with similar articles. But how can we represent these similarities without having to compare hundreds of numbers between each article we want to compare?</p>
+
+                    <p>The <a href="https://en.wikipedia.org/wiki/T-distributed_stochastic_neighbor_embedding">t-SNE</a> algorithm converts high-dimensional data to low-dimensional data while retaining as much information as possible. Think of the hundreds of parameters like coordinates in hundred+ dimensional space (like latitude and longitude but with way more numbers). Pretty hard to imagine right? By flattening hundreds dimensions to just three, we can now represent that relationship between articles in a way that is easily understandable!</p>
+                </article>
+                <div class="article-list-link-container">
+                    <a id="article-list-link" class="title" href="#">
+                        <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span> BACK TO INTRO
+                    </a>
+                </div>
                 <h2 class="title" id="sidePanelTitle"></h2>
                 <div id="sidePanelBody">
-                    <hr />
                     <i class="article-spinner"> </i>
                     <div id="article-list"></div>
                     <div class="article"></div>
                     <div class="read-more-link-container">
-                      <a id="read-more-link" class="title" href="#" target="_blank">Read More at the Guardian &rsaquo;</a>
+                      <a id="read-more-link" class="title" href="#" target="_blank">Read More at the Guardian</a>
                     </div>
-                    <hr />
+                    <br />
                     <h3 class="title" id="related-articles-title">Top Related Articles</h3>
                     <i class="related-articles-spinner"> </i>
                     <div class="similar"></div>
-                    <div class="article-list-link-container">
-                      <a id="article-list-link" class="title" href="#">&lsaquo; Back to Article List</a>
-                    </div>
                 </div>
             </div>
 
@@ -167,10 +193,8 @@
                     </div>
                 </div>
             </div>
-
-            <nav class="navbar navbar-default navbar-fixed-bottom" id="menu">
-                <button href='#' id='toggleAll' class='btn btn-circle checked'></button>
-            </nav>
+            <!-- This line has to be one line because whitespace messes up the spacing of the button -->
+            <nav class="navbar navbar-default navbar-fixed-bottom hidden-sm hidden-md hidden-lg" id="menu"><button href='#' id='toggleAll' class='btn btn-square checked'></button></nav>
         </div>
 
         <script src="./jquery-2.0.2.min.js"></script>
