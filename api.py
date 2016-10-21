@@ -45,7 +45,7 @@ cors = CORS(application, resources={r"/*": {"origins": 'localhost'}})
 #application.debug = config.DEBUG
 application.config.from_object(os.environ['APP_SETTINGS'])
 
-def format_doc(article):
+def format_doc(a):
     return {
         'id': str(a['_id']),
         'text': a['blocks']['body'][0]['bodyTextSummary'],
@@ -61,7 +61,6 @@ def format_doc(article):
 @application.route("/guardian-galaxy-api", methods=['GET'])
 def sanitytest():
     return "<p>airhornsounds.wav</p>"
-
 
 @application.route("/" + application.config['API_URL'] + "doc/<docid>", methods=['GET'])
 @cross_origin(origin='localhost', headers=['Content-Type'])
