@@ -90,6 +90,9 @@ class Projector extends Subject
 
       super()
 
+      if window.location.hostname == '127.0.0.1' or window.location.hostname == '0.0.0.0' or window.location.hostname == 'localhost'
+         @baseApiUrl = 'http://' + '127.0.0.1' + ':5000' # dev url
+
       @addUIListeners() # listen for UI events
 
       @scene = new THREE.Scene() # 3D world
@@ -138,7 +141,7 @@ class Projector extends Subject
    #TODO: figure out what the prod url for this is
    getPointDetails : (docid) =>
      $.ajax
-         url: "http://localhost:5000/guardian-galaxy-api/doc/" + docid
+         url: "#{@baseApiUrl}/doc/#{docid}"
          dataType: "json"
          error: (jqXHR, textStatus, errorThrown) ->
             console.log "AJAX Error: #{textStatus}"
@@ -146,7 +149,6 @@ class Projector extends Subject
 
    findPoint : (cid, docid) => # maybe pass along cid to make search faster?
       @getPointDetails(docid)
-      console.log(docid)
       mDocs = @points[cid].documents
       i = 0
       for d in mDocs
@@ -167,7 +169,6 @@ class Projector extends Subject
       h = canvas1.height
       canvas1.width =  w * ratio
       canvas1.height =  h * ratio
-      console.log ratio
       #canvas1.style.width =  + "px"
       #canvas1.style.height = h + "px"
       canvas1.getContext("2d").setTransform(ratio, 0, 0, ratio, 0, 0)
@@ -303,9 +304,7 @@ class Projector extends Subject
 
    # wrap text on a canvas context
    wrapText: (context, text, x, y, maxWidth, maxHeight, lineHeight) ->
-      console.log 'inside wrap text'
       cars = text.split('\n')
-      console.log cars
       ii = 0
       while ii < cars.length
          line = ''
@@ -405,7 +404,7 @@ class Projector extends Subject
       @roundRect(@context1, 2, 2, width+4, height+4, radius, true, false)
       # text color
       @context1.fillStyle ="#FFF"
-      lastY = @wrapText(@context1, pointData.title, 4, 20, width,  rectHeight, 10)
+      lastY = @wrapText(@context1, pointData.title, 4, 10, width,  rectHeight, 10)
       lastY = @wrapText(@context1, pointData.date, 4, lastY, width, rectHeight, 10)
       @wrapText(@context1, "Keywords: " + pointData.keywords.join(", "), 4, lastY, width, rectHeight, 10)
 
