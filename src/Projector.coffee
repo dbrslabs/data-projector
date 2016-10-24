@@ -308,10 +308,14 @@ class Projector extends Subject
       camera = @cameraPerspective # this.ugh
       # Also add some zoom events to zoom controls
       $('#zoom-in').click (event) =>
-        event.preventDefault()
-        camera.zoom(1)
+        # event.preventDefault()
+        # Note: http://stackoverflow.com/a/33905654/666790
+        camera.zoom = camera.zoom + 0.5
         camera.updateProjectionMatrix()
         #controls.dollyOut(1)
+      $('#zoom-out').click (event) =>
+         camera.zoom = camera.zoom - 0.5
+         camera.updateProjectionMatrix()
 
 
    # Bounding box where the data is displayed.

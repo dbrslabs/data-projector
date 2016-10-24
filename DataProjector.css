@@ -157,6 +157,12 @@ button:focus {
     #sidePanelBody {
       padding-bottom: 64px !important;
     }
+
+    #controls-container {
+      padding-top: 64px;
+      top: 0;
+      left: 0;
+    }
 }
 
 /*#menu {
@@ -283,8 +289,8 @@ h3#myModalLabel {
 }
 
 #controls-container {
-    width: 50px;
-    max-width: 50px;
+    width: 60px;
+    max-width: 60px;
     height: auto;
     z-index: 101;
     position: absolute;
@@ -297,6 +303,7 @@ h3#myModalLabel {
 #zoom-in, #zoom-out, #pause-spin {
     margin-top: 10px;
     margin-right: 10px;
+    margin-left: 10px;
     padding: 0;
     color: #FFF;
     background: rgba(72,72,72,0.8);
