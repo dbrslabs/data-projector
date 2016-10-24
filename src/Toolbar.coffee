@@ -33,6 +33,8 @@ class Toolbar extends Panel
    @EVENT_SHOW_DOCUMENTS : "EVENT_SHOW_DOCUMENTS"
    @EVENT_SHOW_HELP : "EVENT_SHOW_HELP"
    @EVENT_SECTION_SELECTION: "EVENT_SECTION_SELECTION"
+   @EVENT_ZOOM_IN: "EVENT_ZOOM_IN"
+   @EVENT_ZOOM_OUT: "EVENT_ZOOM_OUT"
 
    # M E M B E R S
    
@@ -118,6 +120,9 @@ class Toolbar extends Panel
                       { id : "#sectionSelector", key : 0, modifier : Utility.NO_KEY, type : Toolbar.EVENT_SECTION_SELECTION },
                       { id : "#toggleArticlesButton", key : 0, modifier : Utility.NO_KEY, type : Toolbar.EVENT_SHOW_DOCUMENTS },
                       { id : "#toggleHelpButton", key : 0, modifier : Utility.NO_KEY, type : Toolbar.EVENT_SHOW_HELP },
+                      { id : "#pause-spin", key : 0, modifier : Utility.NO_KEY, type : Toolbar.EVENT_SPIN_TOGGLE },
+                      { id : "#zoom-in", key : 0, modifier : Utility.NO_KEY, type : Toolbar.EVENT_ZOOM_IN },
+                      { id : "#zoom-out", key : 0, modifier : Utility.NO_KEY, type : Toolbar.EVENT_ZOOM_OUT },
                     ]
 
    initialize : =>
@@ -271,5 +276,6 @@ class Toolbar extends Panel
       $('p.toolTip_text').first().addClass 'active'
              
 
+      
 
 module.exports = Toolbar
