@@ -179,8 +179,10 @@ class DataProjector extends Observer
 
          when Toolbar.EVENT_SPIN_TOGGLE
             spinning = not @projector.spinOn # slightly hacky, sorry
-            icon = (style) -> $('#toggleSpinButton button i').attr 'class', style
-            if spinning then icon 'fa fa-play' else icon 'fa fa-pause'
+            #icon = (style) -> $('#toggleSpinButton button i').attr 'class', style
+            #if spinning then icon 'fa fa-play' else icon 'fa fa-pause'
+            icon = (style) -> $('#pause-spin span').attr 'class', style
+            if spinning then icon 'glyphicon glyphicon-play' else icon 'glyphicon glyphicon-pause'
             @projector.toggleSpin()
 
          when Toolbar.EVENT_SECTION_SELECTION

@@ -36,6 +36,24 @@
 
         <script src="https://use.typekit.net/uxc2cnw.js"></script>
         <script>try{Typekit.load({ async: true });}catch(e){}</script>
+        <script>
+            // Check for WebGL support, some tablets don't have it yet *cough* Lenovo
+            // This has to be checked before the rest of the data-projector code loads
+            var has_webgl_support = null;
+            
+            try { 
+                canvas = document.createElement('canvas');
+                has_webgl_support = canvas.getContext("webgl");
+            }
+            catch (x)
+            { 
+                has_webgl_support = null;
+            }
+
+            if (has_webgl_support === null) {
+                alert("Your browser does not support WebGL. Please try viewing on another browser or device.");
+            }
+        </script>
     </head>
     <body>
         <nav class="navbar navbar-default navbar-fixed-top hidden-sm hidden-md hidden-lg" id="toolbar">
@@ -155,7 +173,19 @@
             </div>
 
             <div id="page-content-wrapper">
-                <div id="container"></div>
+                <div id="container">
+                    <div id="controls-container">
+                        <button id="zoom-in">
+                            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                        </button>
+                        <button id="zoom-out">
+                            <span class="glyphicon glyphicon-minus" aria-hidden="true"></span>
+                        </button>
+                        <button id="pause-spin">
+                            <span class="glyphicon glyphicon-pause" aria-hidden="true"></span>
+                        </button>
+                    </div>
+                </div>
                 <div id="screenshots"></div>
             </div>
 
