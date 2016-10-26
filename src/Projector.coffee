@@ -393,7 +393,6 @@ class Projector extends Subject
       @context1.font = '5px PT Sans'
 
       metrics = @context1.measureText(pointData.title)
-      console.log(metrics)
       width = rectWidth
       height = 100
       # add some opacity
@@ -406,7 +405,12 @@ class Projector extends Subject
       @context1.fillStyle ="#FFF"
       lastY = @wrapText(@context1, pointData.title, 4, 10, width,  rectHeight, 10)
       lastY = @wrapText(@context1, pointData.date, 4, lastY, width, rectHeight, 10)
-      @wrapText(@context1, "Keywords: " + pointData.keywords.join(", "), 4, lastY, width, rectHeight, 10)
+      keywords = pointData.keywords
+      # only use up to 6 keywords
+      keywords = if keywords.length > 6 then keywords.slice(0,6) else keywords
+      # put keywords into string
+      keywords = keywords.join(", ")
+      @wrapText(@context1, "Keywords: " + keywords, 4, lastY, width, rectHeight, 10)
 
 
 
