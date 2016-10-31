@@ -395,7 +395,7 @@ class Projector extends Subject
 
       metrics = @context1.measureText(pointData.title)
       width = rectWidth
-      height = 60
+      height = 75
       # add some opacity
       @context1.globalAlpha = 0.7
       @context1.strokeStyle = "#2d6"
