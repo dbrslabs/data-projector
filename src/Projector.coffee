@@ -158,11 +158,12 @@ class Projector extends Subject
       return {}
            #console.log @points[cid].colors[d]
 
+    setTooltips: () =>
 
-   setTooltips: () =>
       canvas1 = document.createElement('canvas')
       ctx = canvas1
       dpr = window.devicePixelRatio or 1
+      console.log dpr
       bsr = ctx.webkitBackingStorePixelRatio or ctx.mozBackingStorePixelRatio or ctx.msBackingStorePixelRatio or ctx.oBackingStorePixelRatio or ctx.backingStorePixelRatio or 1
       ratio = dpr / bsr
       w = canvas1.width
@@ -172,7 +173,6 @@ class Projector extends Subject
       #canvas1.style.width =  + "px"
       #canvas1.style.height = h + "px"
       canvas1.getContext("2d").setTransform(ratio, 0, 0, ratio, 0, 0)
-      canvas1.retinaResoultionEnabled = false
       @context1 = canvas1.getContext('2d')
       @context1.font = '5px PT Sans'
       @context1.fillStyle = 'rgba(0,0,0,0.95)'
@@ -195,6 +195,7 @@ class Projector extends Subject
 
 
    setLegend: () =>
+      # I do not think we are using this
       canvas2 = document.createElement('canvas')
       ctx = canvas2
       ratio =1
@@ -394,7 +395,7 @@ class Projector extends Subject
 
       metrics = @context1.measureText(pointData.title)
       width = rectWidth
-      height = 100
+      height = 75
       # add some opacity
       @context1.globalAlpha = 0.7
       @context1.strokeStyle = "#2d6"
