@@ -174,7 +174,7 @@ class Projector extends Subject
       #canvas1.style.height = h + "px"
       canvas1.getContext("2d").setTransform(ratio, 0, 0, ratio, 0, 0)
       @context1 = canvas1.getContext('2d')
-      @context1.font = '5px PT Sans'
+      @context1.font = '100px PT Sans'
       @context1.fillStyle = 'rgba(0,0,0,0.95)'
       #@context1.fillText '', 0, 20
 
@@ -395,7 +395,7 @@ class Projector extends Subject
 
       metrics = @context1.measureText(pointData.title)
       width = rectWidth
-      height = 75
+      height = 60
       # add some opacity
       @context1.globalAlpha = 0.7
       @context1.strokeStyle = "#2d6"
