@@ -34,7 +34,7 @@ class Menu extends Panel
 
 
    # C O N S T R U C T O R
-   
+
    constructor : (id) ->
 
       super(id)
@@ -42,7 +42,7 @@ class Menu extends Panel
 
    # E V E N T   H A N D L E R S
 
-   # Toggle visibility of all clusters at once. 
+   # Toggle visibility of all clusters at once.
    onToggleAll : (event) =>
 
       state = @getState @allId
@@ -57,7 +57,7 @@ class Menu extends Panel
                tag = '#c' + String(i)
                @setState tag, Menu.TOGGLE_ON
 
-            @notify(Menu.EVENT_TOGGLE_ALL_ON)   
+            @notify(Menu.EVENT_TOGGLE_ALL_ON)
 
          when Menu.TOGGLE_ON # turn all off
 
@@ -67,12 +67,12 @@ class Menu extends Panel
                tag = '#c' + String(i)
                @setState tag, Menu.TOGGLE_OFF
 
-            @notify(Menu.EVENT_TOGGLE_ALL_OFF)   
+            @notify(Menu.EVENT_TOGGLE_ALL_OFF)
 
 
    onToggle : (event) =>
 
-      identifier = event.target.id 
+      identifier = event.target.id
       id = identifier.replace("c", "")
       index = parseInt(id)
 
@@ -94,7 +94,7 @@ class Menu extends Panel
       @notify(Menu.EVENT_CLUSTER_ID, { id : index })
 
 
-   # Flip toggle given by its index. 
+   # Flip toggle given by its index.
    doToggle : (index) ->
 
       tag = "#c" + String(index)
@@ -114,7 +114,7 @@ class Menu extends Panel
    # M E T H O D S
 
    # Create dynamically menu for given number of clusters.
-   # Use given set of colors for color coding to match visualization. 
+   # Use given set of colors for color coding to match visualization.
    create : (@clusters, @colors) ->
 
       # button IDs are b0, b1, b2...
@@ -123,7 +123,7 @@ class Menu extends Panel
 
       for i in [0...@clusters]
          html = "<button href='#' id='c#{i}' class='btn btn-square checked'></button>"
-         $("#menu").append(html) 
+         $("#menu").append(html)
 
       $(@allId).click(@onToggleAll)
 
@@ -132,7 +132,7 @@ class Menu extends Panel
          $("#c" + String(i)).click( @onToggle )
          $("#b" + String(i)).click( @onCluster )
 
-      @updateSwatches()  
+      @updateSwatches()
 
 
    # Count how many toggles are on.
@@ -157,7 +157,7 @@ class Menu extends Panel
          tag = '#c' + String(i)
          @setState tag, Menu.TOGGLE_ON
 
-      @notify(Menu.EVENT_TOGGLE_ALL_ON)   
+      @notify(Menu.EVENT_TOGGLE_ALL_ON)
 
 
 
@@ -176,17 +176,17 @@ class Menu extends Panel
       else
          # if uncheck, make circle into a ring
          $(tag).removeClass 'checked'
-         $(tag).css 'background-color', 'white'
+         $(tag).css 'background-color', 'rgba(72, 72, 72, 1)'
 
 
    getState: (tag) ->
 
       return $(tag).hasClass 'checked'
-      
+
 
 
    # Based on the state of all cluster toggles, set the master toggle.
-   updateMasterToggle : () ->      
+   updateMasterToggle : () ->
 
       shown = @togglesOn()
 
