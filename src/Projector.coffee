@@ -166,8 +166,8 @@ class Projector extends Subject
       ratio = dpr / bsr
       w = canvas1.width
       h = canvas1.height
-      canvas1.width =  w * ratio
-      canvas1.height =  h * ratio
+      canvas1.width =  (w * ratio)
+      canvas1.height =  (h * ratio)
       #canvas1.style.width =  + "px"
       #canvas1.style.height = h + "px"
       canvas1.getContext("2d").setTransform(ratio, 0, 0, ratio, 0, 0)
@@ -360,7 +360,7 @@ class Projector extends Subject
       rectWidth = 100
       rectHeight = height
       @context1.clearRect 0, 0, 640, 500
-      @context1.font = '5px PT Sans'
+      @context1.font = '7px PT Sans'
 
       metrics = @context1.measureText(pointData.title)
       width = rectWidth
@@ -375,11 +375,14 @@ class Projector extends Subject
       @context1.fillStyle ="#FFF"
       lastY = @wrapText(@context1, pointData.title, 4, 10, width,  rectHeight, 10)
       lastY = @wrapText(@context1, pointData.date, 4, lastY, width, rectHeight, 10)
+      console.log lastY
       keywords = pointData.keywords
       # only use up to 6 keywords
       keywords = if keywords.length > 6 then keywords.slice(0,6) else keywords
       # put keywords into string
       keywords = keywords.join(", ")
+      if keywords.length > 22 and lastY >= 50
+         keywords = keywords.slice(0, 95) + "..."
       @wrapText(@context1, "Keywords: " + keywords, 4, lastY, width, rectHeight, 10)
 
 
