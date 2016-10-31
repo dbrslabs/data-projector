@@ -9,7 +9,7 @@ class Modal extends Panel
    #@EVENT_ARTICLES_LINK : "EVENT_ARTICLES_LINK"
 
    # M E M B E R S
-   
+
    modal: null
 
    colors : null # Array<THREE.Color> generated color values for visualization
@@ -25,8 +25,7 @@ class Modal extends Panel
 
       if window.location.hostname == '127.0.0.1' or window.location.hostname == '0.0.0.0' or window.location.hostname == 'localhost'
          @baseApiUrl = 'http://' + '127.0.0.1' + ':5000' # dev url
-
-      @modal = 
+      @modal =
          title:    { id : "#sidePanelTitle" }
          similar:  { id : "#sidePanelBody .similar" }
          document: { id : "#sidePanelBody .article" }
@@ -35,7 +34,7 @@ class Modal extends Panel
 
       # handle clicking document links
       $(id).on 'click', '.document', @onClickDocument
-      
+
       # Remove the viz's custom events and use defaults in sidepanel
       # NOTE: None of these unbindings actually works. This is here so you know it won't work before you try ~ .dh
       $('#sidebar-wrapper').unbind 'scroll'
@@ -65,7 +64,7 @@ class Modal extends Panel
 
 
    setDocumentHTML: (document) ->
-       
+
        $(@modal.document.id).html(document)
        $(@modal.document.id).append("<div class='fold-fade'> </div>")
        #@setArticlesLink()
@@ -114,7 +113,7 @@ class Modal extends Panel
             data-section='#{section}'
             data-doc-id='#{doc.id}'>#{doc.title}</a>
          <br/>" for doc in docs).join('')
-        
+
 
    # display a list of documents
    displayDocumentsList: (documents, section) ->
@@ -134,7 +133,7 @@ class Modal extends Panel
 
       # show article list
       $("#article-list").show()
-      
+
       @setDocumentListHTML(docsHtml)
 
 
@@ -167,8 +166,8 @@ class Modal extends Panel
 
    onClickDocument: (event) =>
       event.preventDefault()
-      docId = $(event.target).data 'doc-id' 
-      section = $(event.target).data 'section' 
+      docId = $(event.target).data 'doc-id'
+      section = $(event.target).data 'section'
       @displayDocument docId, section
 
 

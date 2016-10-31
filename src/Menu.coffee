@@ -21,6 +21,7 @@ class Menu extends Panel
    @TOGGLE_ON :  true
    @TOGGLE_OFF : false
    @TOGGLE_MIX : false
+   @WIDTH: $(document).width()
 
    # M E M B E R S
 
@@ -176,7 +177,11 @@ class Menu extends Panel
       else
          # if uncheck, make circle into a ring
          $(tag).removeClass 'checked'
-         $(tag).css 'background-color', 'rgba(72, 72, 72, 1)'
+         if Menu.WIDTH > 768
+            bgColor = 'rgba(72, 72, 72, 1)'
+         else
+            bgColor = 'white'
+         $(tag).css 'background-color', bgColor
 
 
    getState: (tag) ->
