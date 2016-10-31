@@ -179,18 +179,23 @@ button:focus {
 #menu .color { color: #CCCCCC; font-weight: bold; cursor: pointer }*/
 
 #legend{
-    width: 100px;
-    height: 100px;
+    width: 150px;
+    height: 175px;
     background-color: rgba(72, 72, 72, 1);
     color: black;
     border-color: green;
     z-index: 50;
     position: absolute;
-    top: 100px;
-    left: 5px;
+    top: 10px;
+    left: 10px;
     color: white;
     border-radius: 5px;
     opacity: 0.8;
+    padding-top:10px;
+    padding-left:10px;
+    padding-right:5px;
+    padding-bottom:10px;
+    font-size:12px;
 }
 #menu {
    padding: 15px 10px;
@@ -298,9 +303,16 @@ h3#myModalLabel {
     line-height: 1.42;
     border-color: lightgrey;
     border-width: 3px;
-    background-color: white;
     margin: 0 2px;
 }
+
+.btn-square.btn-small{
+  width: 15px;
+  height: 15px;
+  padding: 0px 0px;
+  margin-bottom: 5px;
+}
+
 
 #controls-container {
     width: 60px;
