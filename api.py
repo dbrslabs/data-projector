@@ -46,6 +46,10 @@ cors = CORS(application, resources={r"/*": {"origins": 'localhost'}})
 application.config.from_object(os.environ['APP_SETTINGS'])
 
 def format_doc(a):
+    if a.get('fields'):
+      byline = a.get('fields').get('byline')
+    else:
+      byline = ""
     return {
         'id': str(a['_id']),
         'text': a['blocks']['body'][0]['bodyTextSummary'],
@@ -54,7 +58,7 @@ def format_doc(a):
         'url': a['webUrl'],
         'date': a['publicationDateObj'],
         'keywords': [t['webTitle'] for t in a['tags'] if t['type'] == 'keyword'],
-        'byline': a.get('fields').get('byline')
+        'byline': byline
     }
 
 
