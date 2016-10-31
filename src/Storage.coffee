@@ -67,6 +67,7 @@ class Storage extends Subject
       # process JSON data
       $.each(@data.points, @processPoint)
       @notify(Storage.EVENT_DATA_READY)
+      $('#corpus-loading-overlay').addClass('hidden')
 
 
 
@@ -98,6 +99,7 @@ class Storage extends Subject
       #file = @datafile + "?" + String(Math.round(Math.random() * 99999))
       # it's not a problem, it's an optimization ~ .dh
       file = @datafile
+      $('#corpus-loading-overlay').removeClass('hidden')
       $.getJSON(file, @onJSON)
 
 
