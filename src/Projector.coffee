@@ -203,7 +203,7 @@ class Projector extends Subject
       canvas2.retinaResoultionEnabled = false
       @context2 = canvas2.getContext('2d')
       @context2.font = '10px PT Sans'
-      @context2.fillStyle = 'rgba(0,0,0,0.95)'
+      @context2.fillStyle = 'rgba( 0, 0, 0, 0.8 )'
       @context2.fillText 'Test legend', 0, 20
 
       # canvas contents will be used for a texture
