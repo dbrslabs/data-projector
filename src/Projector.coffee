@@ -86,6 +86,9 @@ class Projector extends Subject
 
       super()
 
+      if window.location.hostname == '127.0.0.1' or window.location.hostname == '0.0.0.0' or window.location.hostname == 'localhost'
+        @baseApiUrl = 'http://' + '127.0.0.1' + ':5000' # dev url
+
       @addUIListeners() # listen for UI events
 
       @scene = new THREE.Scene() # 3D world
