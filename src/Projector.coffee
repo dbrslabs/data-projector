@@ -432,6 +432,8 @@ class Projector extends Subject
       vertex.x = parseFloat( nodeData.x )
       vertex.y = parseFloat( nodeData.y )
       vertex.z = parseFloat( nodeData.z )
+      vertex.cid = nodeData.cid
+      vertex.name = nodeData.document.id
       @points[index].vertices.push( vertex )
 
       # NOTE Although initially all points in the same cluster have the same color
