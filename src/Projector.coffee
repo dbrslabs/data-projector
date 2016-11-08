@@ -167,6 +167,16 @@ class Projector extends Subject
 
       @controls.handleResize()
 
+   renderArticleSidepanel : (doc) =>
+      console.log doc
+
+   getDoc : (docid) =>
+      $.ajax
+         url: "#{@baseApiUrl}/doc/#{docid}"
+         dataType: "json"
+         error: (jqXHR, textStatus, errorThrown) ->
+            console.log "AJAX Error: #{textStatus}"
+         success: @renderArticleSidepanel
 
    onMouseDown : (event) =>
 
@@ -182,6 +192,27 @@ class Projector extends Subject
             @selector.start(@mouseStart.clone())
 
             event.stopPropagation()
+
+      # get point clicked
+      threshold = 1
+      raycaster = new (THREE.Raycaster)
+      raycaster.params.Points.threshold = threshold
+      mouse = new (THREE.Vector2)
+      mouse.x = event.clientX / @renderer.domElement.width * 2 - 1
+      mouse.y = -(event.clientY / @renderer.domElement.height) * 2 + 1
+      raycaster.setFromCamera mouse, @cameraPerspective
+      recursiveFlag = false
+      # only get visible particle clouds
+      filtered_particles = @particles.filter (x) -> x.visible
+      if filtered_particles
+         intersects = raycaster.intersectObjects(filtered_particles, false)
+         if intersects.length > 0
+            index = intersects[0].index
+            cid = intersects[0].object.geometry.vertices[0].cid
+            point = @particles[cid].geometry.vertices[ index ]
+            @getDoc(point.name)
+            @intersects = intersects
+
 
 
    onMouseMove : (event) =>
