@@ -382,7 +382,7 @@ class Projector extends Subject
       keywords = if keywords.length > 6 then keywords.slice(0,6) else keywords
       # put keywords into string
       keywords = keywords.join(", ")
-      if keywords.length > 22 and lastY >= 40
+      if keywords.length > 22 and lastY >= 30
          keywords = keywords.slice(0, 95) + "..."
       @wrapText(@context1, "Keywords: " + keywords, 4, lastY, width, rectHeight, 10)
 
