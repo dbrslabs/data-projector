@@ -162,7 +162,7 @@ class Projector extends Subject
       ctx = canvas1
       dpr = window.devicePixelRatio or 1
       # hardcode at 2 for now
-      dpr = 2
+      dpr = dpr + 0.5
       bsr = ctx.webkitBackingStorePixelRatio or ctx.mozBackingStorePixelRatio or ctx.msBackingStorePixelRatio or ctx.oBackingStorePixelRatio or ctx.backingStorePixelRatio or 1
       ratio = dpr / bsr
       w = canvas1.width
