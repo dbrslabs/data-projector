@@ -282,7 +282,7 @@ class Toolbar extends Panel
       # this should probably be an underscore script template
       $('#container').append '<div id="legend">
          <div class="row">
-            <div class="col-sm-8">
+            <div class="col-sm-8" id="c0-label">
                Cluster 1
             </div>
             <div class="col-sm-4">
@@ -290,7 +290,7 @@ class Toolbar extends Panel
             </div>
          </div>
          <div class="row">
-            <div class="col-sm-8">
+            <div class="col-sm-8" id="c1-label">
                Cluster 2
             </div>
             <div class="col-sm-4">
@@ -298,7 +298,7 @@ class Toolbar extends Panel
             </div>
          </div>
          <div class="row">
-            <div class="col-sm-8">
+            <div class="col-sm-8" id="c2-label">
                Cluster 3
             </div>
             <div class="col-sm-4">
@@ -306,15 +306,15 @@ class Toolbar extends Panel
             </div>
          </div>
          <div class="row">
-            <div class="col-sm-8">
+            <div class="col-sm-8" id="c3-label">
                Cluster 4
             </div>
-            <div class="col-sm-4">
+            <div class="col-sm-4" id="c4-label">
                <button href="#" id="c3" class="btn btn-square btn-small checked" style="background-color: rgb(71, 71, 209); border-color: rgb(71, 71, 209);"></button>
             </div>
          </div>
          <div class="row">
-            <div class="col-sm-8">
+            <div class="col-sm-8" id="c5-label">
                Cluster 5
             </div>
             <div class="col-sm-4">
@@ -322,7 +322,7 @@ class Toolbar extends Panel
             </div>
          </div>
          <div class="row">
-            <div class="col-sm-8">
+            <div class="col-sm-8" id="c6-label">
                Cluster 6
             </div>
             <div class="col-sm-4">
@@ -330,7 +330,7 @@ class Toolbar extends Panel
             </div>
          </div>
          <div class="row">
-            <div class="col-sm-8">
+            <div class="col-sm-8" id="c7-label">
                Cluster 7
             </div>
             <div class="col-sm-4">
@@ -338,7 +338,7 @@ class Toolbar extends Panel
             </div>
          </div>
          <div class="row">
-            <div class="col-sm-8">
+            <div class="col-sm-8" id="c7-label">
                Cluster 8
             </div>
             <div class="col-sm-4">
@@ -346,7 +346,7 @@ class Toolbar extends Panel
             </div>
          </div>
          <div class="row">
-            <div class="col-sm-8">
+            <div class="col-sm-8" id="c8-label">
                Cluster 9
             </div>
             <div class="col-sm-4">
