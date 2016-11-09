@@ -282,74 +282,74 @@ class Toolbar extends Panel
       # this should probably be an underscore script template
       $('#container').append '<div id="legend">
          <div class="row">
-            <div class="col-sm-8" id="c0-label">
-               Cluster 1
+            <div class="col-sm-9" id="c0-label">
+              Rates
             </div>
-            <div class="col-sm-4">
+            <div class="col-sm-3">
                <button href="#" id="c0" class="btn btn-square btn-small checked" style="background-color: rgb(71, 209, 71); border-color: rgb(71, 209, 71);"></button>
             </div>
          </div>
          <div class="row">
-            <div class="col-sm-8" id="c1-label">
-               Cluster 2
+            <div class="col-sm-9" id="c1-label">
+              Energy & Production
             </div>
-            <div class="col-sm-4">
+            <div class="col-sm-3">
                <button href="#" id="c1" class="btn btn-square btn-small checked" style="background-color: rgb(71, 209, 163); border-color: rgb(71, 209, 163);"></button>
             </div>
          </div>
          <div class="row">
-            <div class="col-sm-8" id="c2-label">
-               Cluster 3
+            <div class="col-sm-9" id="c2-label">
+               Crisis
             </div>
-            <div class="col-sm-4">
+            <div class="col-sm-3">
                <button href="#" id="c2" class="btn btn-square btn-small checked" style="background-color: rgb(71, 163, 209); border-color: rgb(71, 163, 209);"></button>
             </div>
          </div>
          <div class="row">
-            <div class="col-sm-8" id="c3-label">
-               Cluster 4
+            <div class="col-sm-9" id="c3-label">
+              London & UK
             </div>
-            <div class="col-sm-4" id="c4-label">
+            <div class="col-sm-3">
                <button href="#" id="c3" class="btn btn-square btn-small checked" style="background-color: rgb(71, 71, 209); border-color: rgb(71, 71, 209);"></button>
             </div>
          </div>
          <div class="row">
-            <div class="col-sm-8" id="c5-label">
-               Cluster 5
+            <div class="col-sm-9" id="c5-label">
+              Shops
             </div>
-            <div class="col-sm-4">
+            <div class="col-sm-3">
                <button href="#" id="c4" class="btn btn-square btn-small checked" style="background-color: rgb(71, 71, 209); border-color: rgb(71, 71, 209);"></button>
             </div>
          </div>
          <div class="row">
-            <div class="col-sm-8" id="c6-label">
-               Cluster 6
+            <div class="col-sm-9" id="c6-label">
+              Regulations
             </div>
-            <div class="col-sm-4">
+            <div class="col-sm-3">
                <button href="#" id="c5" class="btn btn-square btn-small checked" style="background-color: rgb(209, 71, 163); border-color: rgb(209, 71, 163);"></button>
             </div>
          </div>
          <div class="row">
-            <div class="col-sm-8" id="c7-label">
-               Cluster 7
+            <div class="col-sm-9" id="c7-label">
+              Executives & Governance
             </div>
-            <div class="col-sm-4">
+            <div class="col-sm-3">
                <button href="#" id="c6" class="btn btn-square btn-small checked" style="background-color: background-color: rgb(209, 71, 71); border-color: rgb(209, 71, 71);"></button>
             </div>
          </div>
          <div class="row">
-            <div class="col-sm-8" id="c7-label">
-               Cluster 8
+            <div class="col-sm-9" id="c7-label">
+              Expectations & Reports
             </div>
-            <div class="col-sm-4">
+            <div class="col-sm-3">
                <button href="#" id="c7" class="btn btn-square btn-small checked" style="background-color: rgb(209, 163, 71); border-color: rgb(209, 163, 71);"></button>
             </div>
          </div>
          <div class="row">
-            <div class="col-sm-8" id="c8-label">
-               Cluster 9
+            <div class="col-sm-9" id="c8-label">
+              Networks & Transport
             </div>
-            <div class="col-sm-4">
+            <div class="col-sm-3">
                <button href="#" id="c8" class="btn btn-square btn-small checked" style="background-color: rgb(163, 209, 71); border-color: rgb(163, 209, 71);"></button>
             </div>
          </div>
