@@ -71,7 +71,7 @@
                         <button id="toggleArticlesButton" class="hidden btn btn-primary" aria-expanded="false">
                             <i class="fa fa-files-o"></i>
                         </button>
-                        <select id="sectionSelector"
+                        <select id="section-selector-toolbar"
                           class="selectpicker" 
                           data-width="110px"
                           data-style="btn-primary">
@@ -178,6 +178,24 @@
             <div id="page-content-wrapper">
                 <div id="container">
                     <div id="controls-container">
+                        <select id="section-selector-in-viz" 
+                          data-width="130px"
+                          data-style="section-selector-in-viz"
+                          class="selectpicker hidden-xs">
+                          <optgroup label="Section">
+                            <option>Business</option>
+                            <option>Film</option>
+                            <option>Football</option>
+                            <option>Money</option>
+                            <option>Music</option>
+                            <option>Politics</option>
+                            <option>Science</option>
+                            <option>Sport</option>
+                            <option>Technology</option>
+                            <option>Travel</option>
+                            <option>World News</option>
+                          </optgroup>
+                        </select>
                         <button id="zoom-in">
                             <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
                         </button>

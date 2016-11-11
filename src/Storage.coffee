@@ -70,7 +70,6 @@ class Storage extends Subject
       $('#corpus-loading-overlay').addClass('hidden')
 
 
-
    # Server response to saving image on disk.
    onSaveResponse : (message) =>
    
