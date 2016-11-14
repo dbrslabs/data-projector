@@ -98,7 +98,7 @@ button:focus {
       padding: 16px;
       /*font-size: 14px;*/
    }
-   
+
    .navbar-brand h1 {
        display: none;
    }
@@ -601,4 +601,14 @@ a.document {
         position: relative;
         margin-right: 0;
     }
+}
+
+#footer{
+    height: 195px;
+    z-index: 50;
+    position: absolute;
+    top: 95%;
+    left: 10px;
+    color: white;
+    font-size:1em;
 }
