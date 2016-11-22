@@ -256,7 +256,8 @@ class DataProjector extends Observer
             else 
                @info.display("No cluster selected")
 
-
+         when Projector.EVENT_POINT_SELECTED
+            @sidepanel.displayDocument data.doc_id, @toolbar.section
 
    # M E T H O D S   
 

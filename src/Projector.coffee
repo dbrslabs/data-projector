@@ -19,6 +19,7 @@ class Projector extends Subject
    @EVENT_DATA_LOADED : "EVENT_DATA_LOADED"
    @EVENT_POINTS_SELECTED : "EVENT_POINTS_SELECTED"
    @EVENT_CLUSTER_SELECTED : "EVENT_CLUSTER_SELECTED"
+   @EVENT_POINT_SELECTED : "EVENT_POINT_SELECTED"
 
    # C O N S T A N T S
 
@@ -168,7 +169,8 @@ class Projector extends Subject
       @controls.handleResize()
 
    renderArticleSidepanel : (doc) =>
-      console.log doc
+      #console.log doc
+      @notify(Projector.EVENT_POINT_SELECTED, { doc_id: doc.id })
 
    getDoc : (docid) =>
       $.ajax
