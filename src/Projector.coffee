@@ -79,6 +79,12 @@ class Projector extends Subject
 
    timeStamp : 0
 
+   # for toggling color on click
+   selectedParticleIndex: null
+
+   selectedParticleCluster: null
+
+
    # C O N S T R U C T O R
 
    # Create projector.
@@ -214,7 +220,19 @@ class Projector extends Subject
             point = @particles[cid].geometry.vertices[ index ]
             @getDoc(point.name)
             @intersects = intersects
+            @particles[cid].geometry.colorsNeedUpdate = true
+            pointColor = @particles[cid].geometry.colors[index]
+            @particles[cid].geometry.colors[index] = new THREE.Color("rgb(255,255,255)")
+            if @selectedParticleIndex
+              #@particles[@selectedParticleCluster].geometry.colorsNeedUpdate = true
+              @particles[@selectedParticleCluster].geometry.colors[@selectedParticleIndex] = @colors[@selectedParticleCluster]
+              # if so, set them back to old color value
+              @particles[cid].geometry.colorsNeedUpdate = true
+              @selectedParticle = @colors[cid].clone()
 
+            # store selected points indicies
+            @selectedParticleIndex = index
+            @selectedParticleCluster = cid
 
 
    onMouseMove : (event) =>
