@@ -16,127 +16,127 @@ Subject = require('./Subject.coffee')
 
 class Storage extends Subject
 
-   # E V E N T S
+    # E V E N T S
 
-   @EVENT_DATAFILE_READY : "EVENT_DATAFILE_READY" # fired when data file name was received
-   @EVENT_JSON_READY : "EVENT_JSON_READY" # fired when JSON data source was downloaded
-   @EVENT_DATA_READY : "EVENT_DATA_READY" # fired when JSON data was processed and ready for use
-   @EVENT_SCREENSHOT_OK : "EVENT_SCREENSHOT_OK" # fired when screenshot was saved OK
+    @EVENT_DATAFILE_READY : "EVENT_DATAFILE_READY" # fired when data file name was received
+    @EVENT_JSON_READY : "EVENT_JSON_READY" # fired when JSON data source was downloaded
+    @EVENT_DATA_READY : "EVENT_DATA_READY" # fired when JSON data was processed and ready for use
+    @EVENT_SCREENSHOT_OK : "EVENT_SCREENSHOT_OK" # fired when screenshot was saved OK
 
-   # M E M B E R S
+    # M E M B E R S
 
-   datafile : null # name of the data file to be used
-   data : null # JSON data
+    datafile : null # name of the data file to be used
+    data : null # JSON data
 
-   points : 0 # counts data points loaded
-   clusterIDs : null # array of cluster IDs loaded
-   clusters : 0 # number of unique clusters
+    points : 0 # counts data points loaded
+    clusterIDs : null # array of cluster IDs loaded
+    clusters : 0 # number of unique clusters
 
-   saved : 0 # save screenshot counter
-
-
-   # C O N S T R U C T O R
-
-   constructor : ->
-
-      super()
-
-      @clusterIDs = new Array()
+    saved : 0 # save screenshot counter
 
 
-   # E V E N T   H A N D L E R S
+    # C O N S T R U C T O R
+
+    constructor : ->
+
+        super()
+
+        @clusterIDs = new Array()
 
 
-   # Server response to filename request.
-   onDatafile : (@datafile) =>
+    # E V E N T   H A N D L E R S
+
+
+    # Server response to filename request.
+    onDatafile : (@datafile) =>
    
-      @notify(Storage.EVENT_DATAFILE_READY)
-      @requestJSON(@datafile)
+        @notify(Storage.EVENT_DATAFILE_READY)
+        @requestJSON(@datafile)
 
 
-   # Called when data arrives.
-   onJSON : (@data) =>
+    # Called when data arrives.
+    onJSON : (@data) =>
 
-      @notify(Storage.EVENT_JSON_READY)
+        @notify(Storage.EVENT_JSON_READY)
 
-      # clear existing data
-      @clusterIDs = new Array()
-      @points = 0
-      @clusters = 0
+        # clear existing data
+        @clusterIDs = new Array()
+        @points = 0
+        @clusters = 0
 
-      # process JSON data
-      $.each(@data.points, @processPoint)
-      @notify(Storage.EVENT_DATA_READY)
-      $('#corpus-loading-overlay').addClass('hidden')
+        # process JSON data
+        $.each(@data.points, @processPoint)
+        @notify(Storage.EVENT_DATA_READY)
+        $('#corpus-loading-overlay').addClass('hidden')
 
 
-   # Server response to saving image on disk.
-   onSaveResponse : (message) =>
+    # Server response to saving image on disk.
+    onSaveResponse : (message) =>
    
-      #console.log "DataProjector.onSaveResponse " + message   
-      @notify(Storage.EVENT_SCREENSHOT_OK)
+        #console.log "DataProjector.onSaveResponse " + message   
+        @notify(Storage.EVENT_SCREENSHOT_OK)
 
 
-   # M E T H O D S   
+    # M E T H O D S   
 
 
-   # This is a two step process. First data file name is retrieved. Then data itself.
-   requestData : (filename) ->
+    # This is a two step process. First data file name is retrieved. Then data itself.
+    requestData : (filename) ->
 
-      @requestDatafile(filename)
-
-
-   # Get the name of the data file to use in visualization.
-   requestDatafile : (filename) ->
-       @onDatafile filename
+        @requestDatafile(filename)
 
 
-   # Use jQuery JSON loader to fetch data.
-   requestJSON : (@datafile) ->
-
-      # attach random value to avoid browser cache problem
-      #file = @datafile + "?" + String(Math.round(Math.random() * 99999))
-      # it's not a problem, it's an optimization ~ .dh
-      file = @datafile
-      $('#corpus-loading-overlay').removeClass('hidden')
-      $.getJSON(file, @onJSON)
+    # Get the name of the data file to use in visualization.
+    requestDatafile : (filename) ->
+        @onDatafile filename
 
 
-   # Save copy of the given image to storage.
-   saveImage : (base64Image) ->
+    # Use jQuery JSON loader to fetch data.
+    requestJSON : (@datafile) ->
 
-      $.post('/upload', { id : ++@saved, image : base64Image }, @onSaveResponse)
-
-
-   # Called for each data point loaded in JSON file.
-   # Initial scan of loaded data to extract some info about it.
-   processPoint : (nodeName, nodeData) =>
-
-      unless nodeData.cid in @clusterIDs
-         @clusterIDs.push(nodeData.cid)
-         @clusters = @clusterIDs.length
-
-      @points++
+        # attach random value to avoid browser cache problem
+        #file = @datafile + "?" + String(Math.round(Math.random() * 99999))
+        # it's not a problem, it's an optimization ~ .dh
+        file = @datafile
+        $('#corpus-loading-overlay').removeClass('hidden')
+        $.getJSON(file, @onJSON)
 
 
-   # Get the data file name.
-   getDatafile : -> return @datafile
+    # Save copy of the given image to storage.
+    saveImage : (base64Image) ->
+
+        $.post('/upload', { id : ++@saved, image : base64Image }, @onSaveResponse)
 
 
-   # Get the JSON data.
-   getData : -> return @data   
+    # Called for each data point loaded in JSON file.
+    # Initial scan of loaded data to extract some info about it.
+    processPoint : (nodeName, nodeData) =>
+
+        unless nodeData.cid in @clusterIDs
+            @clusterIDs.push(nodeData.cid)
+            @clusters = @clusterIDs.length
+
+        @points++
 
 
-   # Get number of unique clusters found in data.
-   getClusters : -> return @clusters
+    # Get the data file name.
+    getDatafile : -> return @datafile
 
 
-   # Get number of points found in data.
-   getPoints : -> return @points
+    # Get the JSON data.
+    getData : -> return @data   
 
 
-   # Get number of saved screenshots.
-   getSaved : -> return @saved
+    # Get number of unique clusters found in data.
+    getClusters : -> return @clusters
+
+
+    # Get number of points found in data.
+    getPoints : -> return @points
+
+
+    # Get number of saved screenshots.
+    getSaved : -> return @saved
 
 
 module.exports = Storage

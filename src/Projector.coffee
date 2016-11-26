@@ -14,820 +14,809 @@ Selector = require('./Selector.coffee')
 
 class Projector extends Subject
 
-   # E V E N T S
+    # E V E N T S
 
-   @EVENT_DATA_LOADED : "EVENT_DATA_LOADED"
-   @EVENT_POINTS_SELECTED : "EVENT_POINTS_SELECTED"
-   @EVENT_CLUSTER_SELECTED : "EVENT_CLUSTER_SELECTED"
-   @EVENT_POINT_SELECTED : "EVENT_POINT_SELECTED"
+    @EVENT_DATA_LOADED : "EVENT_DATA_LOADED"
+    @EVENT_POINTS_SELECTED : "EVENT_POINTS_SELECTED"
+    @EVENT_CLUSTER_SELECTED : "EVENT_CLUSTER_SELECTED"
+    @EVENT_POINT_SELECTED : "EVENT_POINT_SELECTED"
 
-   # C O N S T A N T S
+    # C O N S T A N T S
 
-   # three view/display modes
-   @VIEW : { NONE: -1, PERSPECTIVE: 0, ORTHOGRAPHIC: 1, DUAL: 2 }
+    # three view/display modes
+    @VIEW : { NONE: -1, PERSPECTIVE: 0, ORTHOGRAPHIC: 1, DUAL: 2 }
 
-   # spin clock or counter clockwise
-   @SPIN : { LEFT: -1, NONE: 0, RIGHT: +1 }
+    # spin clock or counter clockwise
+    @SPIN : { LEFT: -1, NONE: 0, RIGHT: +1 }
 
-   @SPIN_STEP : Utility.DEGREE / 10 # 0.1 degree - default step
+    @SPIN_STEP : Utility.DEGREE / 10 # 0.1 degree - default step
 
-   # M E M B E R S
+    # M E M B E R S
 
-   # these are pseudo constants which are redefined when browser resizes
-   SCREEN_WIDTH : window.innerWidth - $('#sidebar-wrapper').width()
-   SCREEN_HEIGHT : window.innerHeight
+    # these are pseudo constants which are redefined when browser resizes
+    SCREEN_WIDTH : window.innerWidth - $('#sidebar-wrapper').width()
+    SCREEN_HEIGHT : window.innerHeight
 
-   mode : Projector.VIEW.PERSPECTIVE # starting default
+    mode : Projector.VIEW.PERSPECTIVE # starting default
 
-   storage : null # reference to the data storage
+    storage : null # reference to the data storage
 
-   colors : null # Array<THREE.Color> generated color values for visualization
+    colors : null # Array<THREE.Color> generated color values for visualization
 
-   scene : null # THREE.Scene
+    scene : null # THREE.Scene
 
-   # perspective (3D) and orthographic (2D) projection cameras
+    # perspective (3D) and orthographic (2D) projection cameras
 
-   cameraPerspective : null # THREE.PerspectiveCamera
-   cameraOrthographic : null # THREE.OrthographicCamera
+    cameraPerspective : null # THREE.PerspectiveCamera
+    cameraOrthographic : null # THREE.OrthographicCamera
 
-   renderer : null # THREE.WebGLRenderer
+    renderer : null # THREE.WebGLRenderer
 
-   # mouse tracking variables
-   mouse : new THREE.Vector3() # current mouse coordinates when selecting
-   mouseStart : new THREE.Vector3() # mouse down coordinates when selecting
-   mouseEnd : new THREE.Vector3() # mouse up coordinates when selecting
-   dragging : false # true when rubber banding...
+    # mouse tracking variables
+    mouse : new THREE.Vector3() # current mouse coordinates when selecting
+    mouseStart : new THREE.Vector3() # mouse down coordinates when selecting
+    mouseEnd : new THREE.Vector3() # mouse up coordinates when selecting
+    dragging : false # true when rubber banding...
 
-   selector : null # Selector
+    selector : null # Selector
 
-   # visual helpers for data display
-   box : null # THREE.Mesh - data cage
-   viewport : null # parent of selectable view rectangles
-   direction : Utility.DIRECTION.TOP # default 2D view is from top
-   view1 : null # THREE.Line - 2D orthographic view box - top
-   view2 : null # THREE.Line - 2D orthographic view box - front
-   view3 : null # THREE.Line - 2D orthographic view box - side
+    # visual helpers for data display
+    box : null # THREE.Mesh - data cage
+    viewport : null # parent of selectable view rectangles
+    direction : Utility.DIRECTION.TOP # default 2D view is from top
+    view1 : null # THREE.Line - 2D orthographic view box - top
+    view2 : null # THREE.Line - 2D orthographic view box - front
+    view3 : null # THREE.Line - 2D orthographic view box - side
 
-   # visual representations of loaded data
-   points : null # Array<THREE.Geometry>
-   particles : null # Array<THREE.Points>
-   clusters : null # array of particle systems one per cluster
+    # visual representations of loaded data
+    points : null # Array<THREE.Geometry>
+    particles : null # Array<THREE.Points>
+    clusters : null # array of particle systems one per cluster
 
-   selected : -1 # currently selected cluster
+    selected : -1 # currently selected cluster
 
-   controls : null # THREE.TrackballControls
+    controls : null # THREE.TrackballControls
 
-   timeStamp : 0
+    timeStamp : 0
 
-   # for toggling color on click
-   selectedParticleIndex: null
+    # for toggling color on click
+    selectedParticleIndex: null
 
-   selectedParticleCluster: null
+    selectedParticleCluster: null
 
 
-   # C O N S T R U C T O R
+    # C O N S T R U C T O R
 
-   # Create projector.
-   # Constructor creates all initial setup to make projector ready for data.
-   constructor: ->
+    # Create projector.
+    # Constructor creates all initial setup to make projector ready for data.
+    constructor: ->
 
-      super()
+        super()
 
-      if window.location.hostname == '127.0.0.1' or window.location.hostname == '0.0.0.0' or window.location.hostname == 'localhost'
-        @baseApiUrl = 'http://' + '127.0.0.1' + ':5000' # dev url
+        if window.location.hostname == '127.0.0.1' or window.location.hostname == '0.0.0.0' or window.location.hostname == 'localhost'
+            @baseApiUrl = 'http://' + '127.0.0.1' + ':5000' # dev url
 
-      @addUIListeners() # listen for UI events
+        @addUIListeners() # listen for UI events
 
-      @scene = new THREE.Scene() # 3D world
+        @scene = new THREE.Scene() # 3D world
 
-      @createPerspectiveCamera() # left side (dual mode): 3D perspective camera
-      @createOrthographicCamera() # right side (dual mode): 2D ortographic projection camera
+        @createPerspectiveCamera() # left side (dual mode): 3D perspective camera
+        @createOrthographicCamera() # right side (dual mode): 2D ortographic projection camera
 
-      @createControls() # trackball simulation controls
+        @createControls() # trackball simulation controls
 
-      @createBox() # bounding box for the data
-      # @box.visible = false # hide cube
+        @createBox() # bounding box for the data
+        # @box.visible = false # hide cube
 
-      @cameraPerspective.lookAt( @box.position )
-      @cameraOrthographic.lookAt( @box.position )
+        @cameraPerspective.lookAt( @box.position )
+        @cameraOrthographic.lookAt( @box.position )
 
-      @createViews()
-      @updateView(true)
+        @createViews()
+        @updateView(true)
 
-      @setViewsVisible(false, false, false); # hide square
+        @setViewsVisible(false, false, false); # hide square
+
+        @selector = new Selector(@box) # 3D rubber band selector
+
+        @createRenderingEngine() # set up WebGL renderer on canvas
+
+        @onWindowResize(null)
+
+        @animate() # start rendering loop!
+
+
+    # E V E N T   H A N D L E R S
+
+    # New controls! ~ .dh
+    $('.btn-toggle').click ->
+        #$(this).find('.btn').toggleClass 'active'
+        if $(this).find('.btn-primary').size() > 0
+            $(this).find('.btn').toggleClass 'btn-primary'
+        $(this).find('.btn').toggleClass 'btn-default'
+
+    # Make updates related to window size changes.
+    # Also used when view configuration is switched.
+    onWindowResize : (event) =>
 
-      @selector = new Selector(@box) # 3D rubber band selector
+        @SCREEN_WIDTH = window.innerWidth - $('#sidebar-wrapper').width()
+        @SCREEN_HEIGHT = window.innerHeight
+
+        if @renderer?
 
-      @createRenderingEngine() # set up WebGL renderer on canvas
-
-      @onWindowResize(null)
-
-      @animate() # start rendering loop!
-
-
-   # E V E N T   H A N D L E R S
-
-   # New controls! ~ .dh
-   $('.btn-toggle').click ->
-      #$(this).find('.btn').toggleClass 'active'
-      if $(this).find('.btn-primary').size() > 0
-         $(this).find('.btn').toggleClass 'btn-primary'
-      $(this).find('.btn').toggleClass 'btn-default'
-
-   # Make updates related to window size changes.
-   # Also used when view configuration is switched.
-   onWindowResize : (event) =>
-
-      @SCREEN_WIDTH = window.innerWidth - $('#sidebar-wrapper').width()
-      @SCREEN_HEIGHT = window.innerHeight
-
-      #console.log "Screen #{@SCREEN_WIDTH} x #{@SCREEN_HEIGHT}"
-      #alert "Resized!"
+            @renderer.setSize( @SCREEN_WIDTH, @SCREEN_HEIGHT )
 
-      if @renderer?
+            switch @mode
 
-         @renderer.setSize( @SCREEN_WIDTH, @SCREEN_HEIGHT )
+                when Projector.VIEW.PERSPECTIVE
+                    @cameraPerspective.aspect = @SCREEN_WIDTH / @SCREEN_HEIGHT
+                    @cameraPerspective.updateProjectionMatrix()
 
-         switch @mode
+                when Projector.VIEW.ORTHOGRAPHIC
+                    @cameraOrthographic.left   = - (@SCREEN_WIDTH / 8)
+                    @cameraOrthographic.right  = + (@SCREEN_WIDTH / 8)
+                    @cameraOrthographic.top    = + (@SCREEN_HEIGHT / 8)
+                    @cameraOrthographic.bottom = - (@SCREEN_HEIGHT / 8)
+                    @cameraOrthographic.updateProjectionMatrix()
 
-            when Projector.VIEW.PERSPECTIVE
-               @cameraPerspective.aspect = @SCREEN_WIDTH / @SCREEN_HEIGHT
-               @cameraPerspective.updateProjectionMatrix()
+                when Projector.VIEW.DUAL
+                    # left side
+                    @cameraPerspective.aspect = 0.5 * @SCREEN_WIDTH / @SCREEN_HEIGHT
+                    @cameraPerspective.updateProjectionMatrix()
+                    # right side
+                    @cameraOrthographic.left   = - (@SCREEN_WIDTH / 10)
+                    @cameraOrthographic.right  = + (@SCREEN_WIDTH / 10)
+                    @cameraOrthographic.top    = + (@SCREEN_HEIGHT / 5)
+                    @cameraOrthographic.bottom = - (@SCREEN_HEIGHT / 5)
+                    @cameraOrthographic.updateProjectionMatrix()
 
-            when Projector.VIEW.ORTHOGRAPHIC
-               @cameraOrthographic.left   = - (@SCREEN_WIDTH / 8)
-               @cameraOrthographic.right  = + (@SCREEN_WIDTH / 8)
-               @cameraOrthographic.top    = + (@SCREEN_HEIGHT / 8)
-               @cameraOrthographic.bottom = - (@SCREEN_HEIGHT / 8)
-               @cameraOrthographic.updateProjectionMatrix()
+        @controls.handleResize()
 
-            when Projector.VIEW.DUAL
-               # left side
-               @cameraPerspective.aspect = 0.5 * @SCREEN_WIDTH / @SCREEN_HEIGHT
-               @cameraPerspective.updateProjectionMatrix()
-               # right side
-               @cameraOrthographic.left   = - (@SCREEN_WIDTH / 10)
-               @cameraOrthographic.right  = + (@SCREEN_WIDTH / 10)
-               @cameraOrthographic.top    = + (@SCREEN_HEIGHT / 5)
-               @cameraOrthographic.bottom = - (@SCREEN_HEIGHT / 5)
-               @cameraOrthographic.updateProjectionMatrix()
+    renderArticleSidepanel : (doc) =>
+        @notify(Projector.EVENT_POINT_SELECTED, { doc_id: doc.id })
 
-      @controls.handleResize()
+    getDoc : (docid) =>
+        $.ajax
+            url: "#{@baseApiUrl}/doc/#{docid}"
+            dataType: "json"
+            error: (jqXHR, textStatus, errorThrown) ->
+                console.log "AJAX Error: #{textStatus}"
+            success: @renderArticleSidepanel
 
-   renderArticleSidepanel : (doc) =>
-      #console.log doc
-      @notify(Projector.EVENT_POINT_SELECTED, { doc_id: doc.id })
+    onMouseDown : (event) =>
 
-   getDoc : (docid) =>
-      $.ajax
-         url: "#{@baseApiUrl}/doc/#{docid}"
-         dataType: "json"
-         error: (jqXHR, textStatus, errorThrown) ->
-            console.log "AJAX Error: #{textStatus}"
-         success: @renderArticleSidepanel
+        if @mode is Projector.VIEW.DUAL
 
-   onMouseDown : (event) =>
+            event.preventDefault()
 
-      if @mode is Projector.VIEW.DUAL
+            if event.shiftKey
 
-         event.preventDefault()
+                @dragging = true
+                @updateMouse3D()
+                @mouseStart.copy(@mouse)
+                @selector.start(@mouseStart.clone())
 
-         if event.shiftKey
+                event.stopPropagation()
 
-            @dragging = true
-            @updateMouse3D()
-            @mouseStart.copy(@mouse)
-            @selector.start(@mouseStart.clone())
+        # get point clicked
+        threshold = 1
+        raycaster = new (THREE.Raycaster)
+        raycaster.params.Points.threshold = threshold
+        mouse = new (THREE.Vector2)
+        mouse.x = event.clientX / @renderer.domElement.width * 2 - 1
+        mouse.y = -(event.clientY / @renderer.domElement.height) * 2 + 1
+        raycaster.setFromCamera mouse, @cameraPerspective
+        recursiveFlag = false
+        # only get visible particle clouds
+        filtered_particles = @particles.filter (x) -> x.visible
+        if filtered_particles
+            intersects = raycaster.intersectObjects(filtered_particles, false)
+            if intersects.length > 0
+                index = intersects[0].index
+                cid = intersects[0].object.geometry.vertices[0].cid
+                point = @particles[cid].geometry.vertices[ index ]
+                @getDoc(point.name)
+                @intersects = intersects
+                @particles[cid].geometry.colorsNeedUpdate = true
+                pointColor = @particles[cid].geometry.colors[index]
+                @particles[cid].geometry.colors[index] = new THREE.Color("rgb(255,255,255)")
+                if @selectedParticleIndex
+                    #@particles[@selectedParticleCluster].geometry.colorsNeedUpdate = true
+                    @particles[@selectedParticleCluster].geometry.colors[@selectedParticleIndex] = @colors[@selectedParticleCluster]
+                    # if so, set them back to old color value
+                    @particles[cid].geometry.colorsNeedUpdate = true
+                    @selectedParticle = @colors[cid].clone()
 
-            event.stopPropagation()
+                # store selected points indicies
+                @selectedParticleIndex = index
+                @selectedParticleCluster = cid
 
-      # get point clicked
-      threshold = 1
-      raycaster = new (THREE.Raycaster)
-      raycaster.params.Points.threshold = threshold
-      mouse = new (THREE.Vector2)
-      mouse.x = event.clientX / @renderer.domElement.width * 2 - 1
-      mouse.y = -(event.clientY / @renderer.domElement.height) * 2 + 1
-      raycaster.setFromCamera mouse, @cameraPerspective
-      recursiveFlag = false
-      # only get visible particle clouds
-      filtered_particles = @particles.filter (x) -> x.visible
-      if filtered_particles
-         intersects = raycaster.intersectObjects(filtered_particles, false)
-         if intersects.length > 0
-            index = intersects[0].index
-            cid = intersects[0].object.geometry.vertices[0].cid
-            point = @particles[cid].geometry.vertices[ index ]
-            @getDoc(point.name)
-            @intersects = intersects
-            @particles[cid].geometry.colorsNeedUpdate = true
-            pointColor = @particles[cid].geometry.colors[index]
-            @particles[cid].geometry.colors[index] = new THREE.Color("rgb(255,255,255)")
-            if @selectedParticleIndex
-              #@particles[@selectedParticleCluster].geometry.colorsNeedUpdate = true
-              @particles[@selectedParticleCluster].geometry.colors[@selectedParticleIndex] = @colors[@selectedParticleCluster]
-              # if so, set them back to old color value
-              @particles[cid].geometry.colorsNeedUpdate = true
-              @selectedParticle = @colors[cid].clone()
 
-            # store selected points indicies
-            @selectedParticleIndex = index
-            @selectedParticleCluster = cid
+    onMouseMove : (event) =>
 
+        if @mode is Projector.VIEW.DUAL
 
-   onMouseMove : (event) =>
+            event.preventDefault()
 
-      if @mode is Projector.VIEW.DUAL
+            if @dragging
+                @updateMouse3D()
+                @selector.update(@mouse)
+                event.stopPropagation()
 
-         event.preventDefault()
 
-         if @dragging
+    onMouseUp : (event) =>
 
-            @updateMouse3D()
-            @selector.update(@mouse)
+        if @mode is Projector.VIEW.DUAL
 
-            event.stopPropagation()
+            event.preventDefault()
 
+            if @dragging
 
-   onMouseUp : (event) =>
+                @dragging = false
+                @updateMouse3D()
+                @mouseEnd.copy(@mouse)
+                @selector.end(@mouseEnd.clone())
+                @updateSelection()
 
-      if @mode is Projector.VIEW.DUAL
+                event.stopPropagation()
 
-         event.preventDefault()
 
-         if @dragging
+    # Toggle next cluster during the animated walk through.
+    onTimer : (index) =>
 
-            @dragging = false
-            @updateMouse3D()
-            @mouseEnd.copy(@mouse)
-            @selector.end(@mouseEnd.clone())
-            @updateSelection()
+        @toggleClusterVisibility(index)
+        if ++index is @storage.getClusters() then index = 0
+        if @animateOn then @startTimer(index)
 
-            event.stopPropagation()
 
+    # M E T H O D S
 
-   # Toggle next cluster during the animated walk through.
-   onTimer : (index) =>
+    # Set the current mode.
+    setMode : (@mode) =>
 
-      @toggleClusterVisibility(index)
-      if ++index is @storage.getClusters() then index = 0
-      if @animateOn then @startTimer(index)
+        @onWindowResize(null)
 
 
-   # M E T H O D S
+    # Use given color set for visualization.
+    setColors : (@colors) =>
 
-   # Set the current mode.
-   setMode : (@mode) =>
 
-      @onWindowResize(null)
+    # Toggle box visibility. Return current state.
+    toggleBox : => return (@box.visible = not @box.visible)
 
 
-   # Use given color set for visualization.
-   setColors : (@colors) =>
+    # Toggle viewport visibility. Return current state.
+    toggleViewport : => return @updateView(not @viewport.visible)
 
 
-   # Toggle box visibility. Return current state.
-   toggleBox : => return (@box.visible = not @box.visible)
+    toggleSelector : =>
 
+        state = @selector.toggle()
+        @updateSelection()
+        return state
 
-   # Toggle viewport visibility. Return current state.
-   toggleViewport : => return @updateView(not @viewport.visible)
 
+    # Get the base 64 encoded image of the current state of the projector.
+    getImage : =>
 
-   toggleSelector : =>
+        return document.getElementById("renderer").toDataURL("image/png")
 
-      state = @selector.toggle()
-      @updateSelection()
-      return state
 
+    # Hook up to browser and mouse events.
+    addUIListeners : =>
 
-   # Get the base 64 encoded image of the current state of the projector.
-   getImage : =>
+        window.addEventListener('resize', @onWindowResize, false)
 
-      return document.getElementById("renderer").toDataURL("image/png")
+        # container will hold WebGL canvas
+        $('#container').mousedown(@onMouseDown)
+        $('#container').mousemove(@onMouseMove)
+        $('#container').mouseup(@onMouseUp)
 
 
-   # Hook up to browser and mouse events.
-   addUIListeners : =>
+    # Proper 3D camera.
+    createPerspectiveCamera : =>
 
-      window.addEventListener('resize', @onWindowResize, false)
+        # NOTE Cameras aspect ratio setup matches the half screen viewports for initial dual mode
 
-      # container will hold WebGL canvas
+        @cameraPerspective = new THREE.PerspectiveCamera( 50, 0.5 * @SCREEN_WIDTH / @SCREEN_HEIGHT, 150, 1000 )
+        @cameraPerspective.position.set(0, 0, 350)
+        @scene.add( @cameraPerspective )
 
-      $('#container').mousedown(@onMouseDown)
-      $('#container').mousemove(@onMouseMove)
-      $('#container').mouseup(@onMouseUp)
 
+    # Flat, 2D, no perspective camera.
+    createOrthographicCamera : =>
 
-   # Proper 3D camera.
-   createPerspectiveCamera : =>
-
-      # NOTE Cameras aspect ratio setup matches the half screen viewports for initial dual mode
-
-      @cameraPerspective = new THREE.PerspectiveCamera( 50, 0.5 * @SCREEN_WIDTH / @SCREEN_HEIGHT, 150, 1000 )
-      @cameraPerspective.position.set(0, 0, 350)
-      @scene.add( @cameraPerspective )
-
-
-   # Flat, 2D, no perspective camera.
-   createOrthographicCamera : =>
-
-      @cameraOrthographic = new THREE.OrthographicCamera( - (@SCREEN_WIDTH / 8),
+        @cameraOrthographic = new THREE.OrthographicCamera( - (@SCREEN_WIDTH / 8),
                                                           + (@SCREEN_WIDTH / 8),
                                                           + (@SCREEN_HEIGHT / 4),
                                                           - (@SCREEN_HEIGHT / 4),
                                                           250, 750 )
-      @cameraOrthographic.position.set(0, 500, 0)
-      @scene.add( @cameraOrthographic )
+        @cameraOrthographic.position.set(0, 500, 0)
+        @scene.add( @cameraOrthographic )
 
 
-   # Initialize simulated trackball navigation controls
-   createControls : =>
-      viz_container = document.getElementById( "container" )
+    # Initialize simulated trackball navigation controls
+    createControls : =>
+        viz_container = document.getElementById( "container" )
 
-      @controls = new THREE.TrackballControls( @cameraPerspective, viz_container )
+        @controls = new THREE.TrackballControls( @cameraPerspective, viz_container )
 
-      @controls.rotateSpeed = 1.0
-      @controls.zoomSpeed = 1.0
-      @controls.panSpeed = 0.8
+        @controls.rotateSpeed = 1.0
+        @controls.zoomSpeed = 1.0
+        @controls.panSpeed = 0.8
 
-      @controls.noZoom = false
-      @controls.noPan = false
+        @controls.noZoom = false
+        @controls.noPan = false
 
-      @controls.staticMoving = true
-      @controls.dynamicDampingFactor = 0.3
+        @controls.staticMoving = true
+        @controls.dynamicDampingFactor = 0.3
 
-      @controls.addEventListener('change', @render)
+        @controls.addEventListener('change', @render)
 
-      camera = @cameraPerspective # this.ugh
-      # Also add some zoom events to zoom controls
-      $('#zoom-in').click (event) =>
-        # event.preventDefault()
-        # Note: http://stackoverflow.com/a/33905654/666790
-        camera.zoom = camera.zoom + 0.5
-        camera.updateProjectionMatrix()
-        #controls.dollyOut(1)
-      $('#zoom-out').click (event) =>
-         camera.zoom = camera.zoom - 0.5
-         camera.updateProjectionMatrix()
-
-
-   # Bounding box where the data is displayed.
-   createBox : =>
-
-      @box = new THREE.Mesh(new THREE.CubeGeometry(200, 200, 200),
-                            new THREE.MeshBasicMaterial({ color: 0x404040, wireframe: true }))
-      @scene.add(@box)
+        camera = @cameraPerspective # this.ugh
+        # Also add some zoom events to zoom controls
+        $('#zoom-in').click (event) =>
+            # event.preventDefault()
+            # Note: http://stackoverflow.com/a/33905654/666790
+            camera.zoom = camera.zoom + 0.5
+            camera.updateProjectionMatrix()
+            #controls.dollyOut(1)
+        $('#zoom-out').click (event) =>
+             camera.zoom = camera.zoom - 0.5
+             camera.updateProjectionMatrix()
 
 
-   # Create a set of highlights that indicate ortographic projection in perspective view.
-   # Each rectangle simply indicates where 2D view is within the 3D space.
-   createViews : =>
+    # Bounding box where the data is displayed.
+    createBox : =>
 
-      @viewport = new THREE.Object3D()
-
-      # top view
-      geometry1 = new THREE.Geometry()
-      geometry1.vertices.push( new THREE.Vector3( +100, +101, +100 ) )
-      geometry1.vertices.push( new THREE.Vector3( -100, +101, +100 ) )
-      geometry1.vertices.push( new THREE.Vector3( -100, +101, -100 ) )
-      geometry1.vertices.push( new THREE.Vector3( +100, +101, -100 ) )
-      geometry1.vertices.push( new THREE.Vector3( +100, +101, +100 ) )
-
-      @view1 = new THREE.Line(geometry1, new THREE.LineBasicMaterial(), THREE.LineStrip)
-
-      # front view
-      geometry2 = new THREE.Geometry()
-      geometry2.vertices.push( new THREE.Vector3( +100, +100, +101 ) )
-      geometry2.vertices.push( new THREE.Vector3( -100, +100, +101 ) )
-      geometry2.vertices.push( new THREE.Vector3( -100, -100, +101 ) )
-      geometry2.vertices.push( new THREE.Vector3( +100, -100, +101 ) )
-      geometry2.vertices.push( new THREE.Vector3( +100, +100, +101 ) )
-
-      @view2 = new THREE.Line(geometry2, new THREE.LineBasicMaterial(), THREE.LineStrip)
-
-      # side view
-      geometry3 = new THREE.Geometry()
-      geometry3.vertices.push( new THREE.Vector3( +101, +100, +100 ) )
-      geometry3.vertices.push( new THREE.Vector3( +101, -100, +100 ) )
-      geometry3.vertices.push( new THREE.Vector3( +101, -100, -100 ) )
-      geometry3.vertices.push( new THREE.Vector3( +101, +100, -100 ) )
-      geometry3.vertices.push( new THREE.Vector3( +101, +100, +100 ) )
-
-      @view3 = new THREE.Line(geometry3, new THREE.LineBasicMaterial(), THREE.LineStrip)
-
-      @viewport.add(@view1) # top
-      @viewport.add(@view2) # front
-      @viewport.add(@view3) # side
-
-      @box.add(@viewport)
+        @box = new THREE.Mesh(new THREE.CubeGeometry(200, 200, 200),
+                              new THREE.MeshBasicMaterial({ color: 0x404040, wireframe: true }))
+        @scene.add(@box)
 
 
-   createRenderingEngine : =>
+    # Create a set of highlights that indicate ortographic projection in perspective view.
+    # Each rectangle simply indicates where 2D view is within the 3D space.
+    createViews : =>
 
-      # basically canvas in WebGL mode
-      @renderer = new THREE.WebGLRenderer( { antialias: true, preserveDrawingBuffer: true } )
-      @renderer.setSize( @SCREEN_WIDTH, @SCREEN_HEIGHT )
-      @renderer.setClearColor( Palette.BACKGROUND.getHex(), 1 )
-      @renderer.domElement.style.position = "relative"
-      @renderer.domElement.id = "renderer"
-      @renderer.autoClear = false
+        @viewport = new THREE.Object3D()
 
-      # container is the display area placeholder in HTML
-      container = $('#container').get(0)
-      container.appendChild( @renderer.domElement )
+        # top view
+        geometry1 = new THREE.Geometry()
+        geometry1.vertices.push( new THREE.Vector3( +100, +101, +100 ) )
+        geometry1.vertices.push( new THREE.Vector3( -100, +101, +100 ) )
+        geometry1.vertices.push( new THREE.Vector3( -100, +101, -100 ) )
+        geometry1.vertices.push( new THREE.Vector3( +100, +101, -100 ) )
+        geometry1.vertices.push( new THREE.Vector3( +100, +101, +100 ) )
 
-   # Load JSON data to visualize.
-   load : (@storage) =>
+        @view1 = new THREE.Line(geometry1, new THREE.LineBasicMaterial(), THREE.LineStrip)
 
-      # first, remove visible points
-      # we do not want to remove the first 4 objects in the box
-      @box.remove(@box.children[4]) while @box.children.length > 4
+        # front view
+        geometry2 = new THREE.Geometry()
+        geometry2.vertices.push( new THREE.Vector3( +100, +100, +101 ) )
+        geometry2.vertices.push( new THREE.Vector3( -100, +100, +101 ) )
+        geometry2.vertices.push( new THREE.Vector3( -100, -100, +101 ) )
+        geometry2.vertices.push( new THREE.Vector3( +100, -100, +101 ) )
+        geometry2.vertices.push( new THREE.Vector3( +100, +100, +101 ) )
 
-      data = @storage.getData() # JSON
-      clusters = @storage.getClusters() # number of clusters
+        @view2 = new THREE.Line(geometry2, new THREE.LineBasicMaterial(), THREE.LineStrip)
 
-      # create point clouds first for each cluster
+        # side view
+        geometry3 = new THREE.Geometry()
+        geometry3.vertices.push( new THREE.Vector3( +101, +100, +100 ) )
+        geometry3.vertices.push( new THREE.Vector3( +101, -100, +100 ) )
+        geometry3.vertices.push( new THREE.Vector3( +101, -100, -100 ) )
+        geometry3.vertices.push( new THREE.Vector3( +101, +100, -100 ) )
+        geometry3.vertices.push( new THREE.Vector3( +101, +100, +100 ) )
 
-      @points = new Array()
+        @view3 = new THREE.Line(geometry3, new THREE.LineBasicMaterial(), THREE.LineStrip)
 
-      for c in [0...clusters]
-         @points[c] = new THREE.Geometry()
-         @points[c].colorsNeedUpdate = true
-         @points[c].documents = new Array()
+        @viewport.add(@view1) # top
+        @viewport.add(@view2) # front
+        @viewport.add(@view3) # side
 
-
-      # process JSON data
-      $.each(data.points, @processPoint)
-
-      # create particle systems for each cluster (with point clouds within)
-
-      @particles = new Array()
-
-      for p in [0...clusters]
-         material = new THREE.PointsMaterial( { size: 2.0, sizeAttenuation: false, vertexColors: true } )
-         @particles[p] = new THREE.Points( @points[p], material )
-         @box.add( @particles[p] ) # put them in the data cage
-
-      @notify(Projector.EVENT_DATA_LOADED)
+        @box.add(@viewport)
 
 
+    createRenderingEngine : =>
 
-   # Called for each data point loaded in JSON file.
-   processPoint : (nodeName, nodeData) =>
+        # basically canvas in WebGL mode
+        @renderer = new THREE.WebGLRenderer( { antialias: true, preserveDrawingBuffer: true } )
+        @renderer.setSize( @SCREEN_WIDTH, @SCREEN_HEIGHT )
+        @renderer.setClearColor( Palette.BACKGROUND.getHex(), 1 )
+        @renderer.domElement.style.position = "relative"
+        @renderer.domElement.id = "renderer"
+        @renderer.autoClear = false
 
-      # cluster index
-      index = parseInt(nodeData.cid)
+        # container is the display area placeholder in HTML
+        container = $('#container').get(0)
+        container.appendChild( @renderer.domElement )
 
-      vertex = new THREE.Vector3()
-      vertex.x = parseFloat( nodeData.x )
-      vertex.y = parseFloat( nodeData.y )
-      vertex.z = parseFloat( nodeData.z )
-      vertex.cid = nodeData.cid
-      vertex.name = nodeData.document.id
-      @points[index].vertices.push( vertex )
+    # Load JSON data to visualize.
+    load : (@storage) =>
+        # first, remove visible points
+        # we do not want to remove the first 4 objects in the box
+        @box.remove(@box.children[4]) while @box.children.length > 4
 
-      # NOTE Although initially all points in the same cluster have the same color
-      # they do take individual colors during the selection interactions therefore
-      # each point needs its own individual color object instead of shared one...
+        data = @storage.getData() # JSON
+        clusters = @storage.getClusters() # number of clusters
 
-      color = @colors[index].clone()
-      @points[index].colors.push( color )
+        # create point clouds first for each cluster
 
-      # track corresponding document metadata
-      @points[index].documents.push( nodeData.document )
+        @points = new Array()
 
-
-   # Rendering loop - animate calls itself forever.
-   animate : =>
-
-      requestAnimationFrame( @animate )
-      @controls.update()
-      @render()
-
-
-   # Rendering done on each frame.
-   # Rendering configuration depends on the current view mode.
-   render : =>
-
-      @renderer.clear()
-
-      switch @mode
-
-         # one viewport: perspective camera only
-         when Projector.VIEW.PERSPECTIVE
-            if @spin isnt Projector.SPIN.NONE then @spinCamera()
-            @cameraPerspective.lookAt( @box.position )
-            # RENDERING
-            @renderer.setViewport( 0, 0, @SCREEN_WIDTH, @SCREEN_HEIGHT )
-            @renderer.render( @scene, @cameraPerspective )
-
-         # one viewport: orthographic camera only
-         when Projector.VIEW.ORTHOGRAPHIC
-            # RENDERING
-            @cameraOrthographic.rotation.z = 0
-            @renderer.setViewport( 0, 0, @SCREEN_WIDTH, @SCREEN_HEIGHT )
-            @renderer.render( @scene, @cameraOrthographic )
-
-         # dual perspective and orthographic cameras view
-         when Projector.VIEW.DUAL
-            # synchronize camera with rotation
-            if @spin isnt Projector.SPIN.NONE then @spinCamera()
-            @cameraPerspective.lookAt( @box.position )
-            # RENDERING
-            # left side viewport: perspective camera
-            @renderer.setViewport( 0, 0, @SCREEN_WIDTH/2, @SCREEN_HEIGHT )
-            @renderer.render( @scene, @cameraPerspective )
-            # right side viewport: orthographic camera
-            @cameraOrthographic.rotation.z = 0
-            @renderer.setViewport( @SCREEN_WIDTH/2, 0, @SCREEN_WIDTH/2, @SCREEN_HEIGHT )
-            @renderer.render( @scene, @cameraOrthographic )
+        for c in [0...clusters]
+            @points[c] = new THREE.Geometry()
+            @points[c].colorsNeedUpdate = true
+            @points[c].documents = new Array()
 
 
-   getVisibleDocuments : =>
+        # process JSON data
+        $.each(data.points, @processPoint)
 
-      # algorithm:
-      # loop through all clusters
-      # if cluster is visible then process it
-      # for each point check if it's inside selection
-      # if inside (and selector is active) set color to highlight
-      # else set color to original cluster color
+        # create particle systems for each cluster (with point clouds within)
+        @particles = new Array()
 
-      documents = new Array()
+        for p in [0...clusters]
+            material = new THREE.PointsMaterial( { size: 2.0, sizeAttenuation: false, vertexColors: true } )
+            @particles[p] = new THREE.Points( @points[p], material )
+            @box.add( @particles[p] ) # put them in the data cage
 
-      clusters = @storage.getClusters()
+        @notify(Projector.EVENT_DATA_LOADED)
 
-      #console.log Object.getOwnPropertyNames(clusters)
-      #console.log clusters.className
 
-      #for i in [0...@storage.getClusters()]
-      for i in [0...clusters]
-         #console.log i
-         if @particles[i].visible
-            cloud = @points[i]
-            all = cloud.vertices.length
-            for j in [0...all]
-               vertex = cloud.vertices[j]
-               document = cloud.documents[j]
-               # Add cluster ID because it isn't included by default
-               document.cid = i
-               if not @selector.isActive()
-                  documents.push( document )
-               if @selector.isActive() and @selector.contains(vertex, Utility.DIRECTION.ALL)
-                  documents.push( document )
+    # Called for each data point loaded in JSON file.
+    processPoint : (nodeName, nodeData) =>
+        # cluster index
+        index = parseInt(nodeData.cid)
+
+        vertex = new THREE.Vector3()
+        vertex.x = parseFloat( nodeData.x )
+        vertex.y = parseFloat( nodeData.y )
+        vertex.z = parseFloat( nodeData.z )
+        vertex.cid = nodeData.cid
+        vertex.name = nodeData.document.id
+        @points[index].vertices.push( vertex )
+
+        # NOTE Although initially all points in the same cluster have the same color
+        # they do take individual colors during the selection interactions therefore
+        # each point needs its own individual color object instead of shared one...
+
+        color = @colors[index].clone()
+        @points[index].colors.push( color )
+
+        # track corresponding document metadata
+        @points[index].documents.push( nodeData.document )
+
+
+    # Rendering loop - animate calls itself forever.
+    animate : =>
+
+        requestAnimationFrame( @animate )
+        @controls.update()
+        @render()
+
+
+    # Rendering done on each frame.
+    # Rendering configuration depends on the current view mode.
+    render : =>
+
+        @renderer.clear()
+
+        switch @mode
+
+            # one viewport: perspective camera only
+            when Projector.VIEW.PERSPECTIVE
+                if @spin isnt Projector.SPIN.NONE then @spinCamera()
+                @cameraPerspective.lookAt( @box.position )
+                # RENDERING
+                @renderer.setViewport( 0, 0, @SCREEN_WIDTH, @SCREEN_HEIGHT )
+                @renderer.render( @scene, @cameraPerspective )
+
+            # one viewport: orthographic camera only
+            when Projector.VIEW.ORTHOGRAPHIC
+                # RENDERING
+                @cameraOrthographic.rotation.z = 0
+                @renderer.setViewport( 0, 0, @SCREEN_WIDTH, @SCREEN_HEIGHT )
+                @renderer.render( @scene, @cameraOrthographic )
+
+            # dual perspective and orthographic cameras view
+            when Projector.VIEW.DUAL
+                # synchronize camera with rotation
+                if @spin isnt Projector.SPIN.NONE then @spinCamera()
+                @cameraPerspective.lookAt( @box.position )
+                # RENDERING
+                # left side viewport: perspective camera
+                @renderer.setViewport( 0, 0, @SCREEN_WIDTH/2, @SCREEN_HEIGHT )
+                @renderer.render( @scene, @cameraPerspective )
+                # right side viewport: orthographic camera
+                @cameraOrthographic.rotation.z = 0
+                @renderer.setViewport( @SCREEN_WIDTH/2, 0, @SCREEN_WIDTH/2, @SCREEN_HEIGHT )
+                @renderer.render( @scene, @cameraOrthographic )
+
+
+    getVisibleDocuments : =>
+
+        # algorithm:
+        # loop through all clusters
+        # if cluster is visible then process it
+        # for each point check if it's inside selection
+        # if inside (and selector is active) set color to highlight
+        # else set color to original cluster color
+
+        documents = new Array()
+
+        clusters = @storage.getClusters()
+
+        #console.log Object.getOwnPropertyNames(clusters)
+        #console.log clusters.className
+
+        #for i in [0...@storage.getClusters()]
+        for i in [0...clusters]
+            #console.log i
+            if @particles[i].visible
+                cloud = @points[i]
+                all = cloud.vertices.length
+                for j in [0...all]
+                    vertex = cloud.vertices[j]
+                    document = cloud.documents[j]
+                    # Add cluster ID because it isn't included by default
+                    document.cid = i
+                    if not @selector.isActive()
+                        documents.push( document )
+                    if @selector.isActive() and @selector.contains(vertex, Utility.DIRECTION.ALL)
+                        documents.push( document )
+
+                cloud.colorsNeedUpdate = true;
+
+        return { documents: documents }
+
+
+    updateSelection : =>
+
+        # algorithm:
+        # loop through all clusters
+        # if cluster is visible then process it
+        # for each point check if it's inside selection
+        # if inside (and selector is active) set color to highlight
+        # else set color to original cluster color
+
+        counter = 0
+        documents = new Array()
+
+        for i in [0...@storage.getClusters()]
+            if @particles[i].visible
+                cloud = @points[i]
+                all = cloud.vertices.length
+                for j in [0...all]
+                    vertex = cloud.vertices[j]
+                    color = cloud.colors[j]
+                    document = cloud.documents[j]
+                    if not @selector.isActive()
+                        documents.push( document )
+                    if @selector.isActive() and @selector.contains(vertex, Utility.DIRECTION.ALL)
+                        color.setHex(Palette.HIGHLIGHT.getHex())
+                        counter++
+                        documents.push( document )
+                        # Utility.printVector3(vertex)
+                    else
+                        color.setHex(@colors[i].getHex())
 
             cloud.colorsNeedUpdate = true;
 
-      return { documents: documents }
+        @notify(Projector.EVENT_POINTS_SELECTED, { documents: documents, points : counter })
 
 
-   updateSelection : =>
+    updateMouse3D : =>
 
-      # algorithm:
-      # loop through all clusters
-      # if cluster is visible then process it
-      # for each point check if it's inside selection
-      # if inside (and selector is active) set color to highlight
-      # else set color to original cluster color
+        # NOTE This works only in DUAL mode
+        # TODO Extend this to other modes
 
-      counter = 0
-      documents = new Array()
+        ratio = 100 / 250 # ?
 
-      for i in [0...@storage.getClusters()]
-         if @particles[i].visible
-            cloud = @points[i]
-            all = cloud.vertices.length
-            for j in [0...all]
-               vertex = cloud.vertices[j]
-               color = cloud.colors[j]
-               document = cloud.documents[j]
-               if not @selector.isActive()
-                  documents.push( document )
-               if @selector.isActive() and @selector.contains(vertex, Utility.DIRECTION.ALL)
-                  color.setHex(Palette.HIGHLIGHT.getHex())
-                  counter++
-                  documents.push( document )
-                  # Utility.printVector3(vertex)
-               else
-                  color.setHex(@colors[i].getHex())
-
-            cloud.colorsNeedUpdate = true;
-
-      @notify(Projector.EVENT_POINTS_SELECTED, { documents: documents, points : counter })
-
-
-   updateMouse3D : =>
-
-      # NOTE This works only in DUAL mode
-      # TODO Extend this to other modes
-
-      ratio = 100 / 250 # ?
-
-      switch @direction
-         when Utility.DIRECTION.TOP
-            @mouse.x = (event.pageX - (3 * @SCREEN_WIDTH / 4)) * ratio
-            @mouse.y = 100
-            @mouse.z = (event.pageY - (@SCREEN_HEIGHT / 2)) * ratio
-         when Utility.DIRECTION.FRONT
-            @mouse.x = (event.pageX - (3 * @SCREEN_WIDTH / 4)) * ratio
-            @mouse.y = - (event.pageY - (@SCREEN_HEIGHT / 2)) * ratio
-            @mouse.z = 100
-         when Utility.DIRECTION.SIDE
-            @mouse.x = 100
-            @mouse.y = - (event.pageY - (@SCREEN_HEIGHT / 2)) * ratio
-            @mouse.z = - (event.pageX - (3 * @SCREEN_WIDTH / 4)) * ratio
-
-
-   # Returns 3D camera to its starting orientation and optionally position.
-   # Position is only reset if location argument is true.
-   resetCamera : (location) =>
-
-      if location then TweenLite.to( @cameraPerspective.position, 1, {x:0, y:0, z:550} )
-      TweenLite.to( @cameraPerspective.rotation, 1, {x:0, y:0, z:0} )
-      TweenLite.to( @cameraPerspective.up, 1, {x:0, y:1, z:0} )
-
-
-   # Set the visibility of orthographic view (top, front, side) indicator.
-   updateView : (visible) =>
-
-      @viewport.visible = visible
-
-      # NOTE Changing visibility of the viewport alone does not work as the change
-      # of visibility of the parent is an ongoing bug/issue of the ThreeJS library...
-      # ...so toggle all three separately
-
-      if @viewport.visible
-         switch @direction
+        switch @direction
             when Utility.DIRECTION.TOP
-               @setViewsVisible(true, false, false)
-               @cameraOrthographic.position.set(0, 500, 0)
+                @mouse.x = (event.pageX - (3 * @SCREEN_WIDTH / 4)) * ratio
+                @mouse.y = 100
+                @mouse.z = (event.pageY - (@SCREEN_HEIGHT / 2)) * ratio
             when Utility.DIRECTION.FRONT
-               @setViewsVisible(false, true, false)
-               @cameraOrthographic.position.set(0, 0, 500)
+                @mouse.x = (event.pageX - (3 * @SCREEN_WIDTH / 4)) * ratio
+                @mouse.y = - (event.pageY - (@SCREEN_HEIGHT / 2)) * ratio
+                @mouse.z = 100
             when Utility.DIRECTION.SIDE
-               @setViewsVisible(false, false, true)
-               @cameraOrthographic.position.set(500, 0, 0)
-         @cameraOrthographic.lookAt(@box.position)
-      else
-         @setViewsVisible(false, false, false)
-
-      return @viewport.visible
+                @mouse.x = 100
+                @mouse.y = - (event.pageY - (@SCREEN_HEIGHT / 2)) * ratio
+                @mouse.z = - (event.pageX - (3 * @SCREEN_WIDTH / 4)) * ratio
 
 
-   # Set visibility of view indicators.
-   setViewsVisible : (top, front, side) =>
+    # Returns 3D camera to its starting orientation and optionally position.
+    # Position is only reset if location argument is true.
+    resetCamera : (location) =>
 
-         @view1.visible = top
-         @view2.visible = front
-         @view3.visible = side
-
-
-   changeView : (@direction) =>
-
-      @updateView(@viewport.visible)
-      @selector.setDirection(@direction)
+        if location then TweenLite.to( @cameraPerspective.position, 1, {x:0, y:0, z:550} )
+        TweenLite.to( @cameraPerspective.rotation, 1, {x:0, y:0, z:0} )
+        TweenLite.to( @cameraPerspective.up, 1, {x:0, y:1, z:0} )
 
 
-   toggleAnimation : =>
+    # Set the visibility of orthographic view (top, front, side) indicator.
+    updateView : (visible) =>
 
-      @animateOn = not @animateOn
+        @viewport.visible = visible
 
-      if @animateOn
-         @setAllClustersVisible(false)
-         @startTimer(0)
-      else
-         @setAllClustersVisible(true)
+        # NOTE Changing visibility of the viewport alone does not work as the change
+        # of visibility of the parent is an ongoing bug/issue of the ThreeJS library...
+        # ...so toggle all three separately
 
-      return @animateOn
+        if @viewport.visible
+            switch @direction
+                when Utility.DIRECTION.TOP
+                    @setViewsVisible(true, false, false)
+                    @cameraOrthographic.position.set(0, 500, 0)
+                when Utility.DIRECTION.FRONT
+                    @setViewsVisible(false, true, false)
+                    @cameraOrthographic.position.set(0, 0, 500)
+                when Utility.DIRECTION.SIDE
+                    @setViewsVisible(false, false, true)
+                    @cameraOrthographic.position.set(500, 0, 0)
+            @cameraOrthographic.lookAt(@box.position)
+        else
+            @setViewsVisible(false, false, false)
 
-
-   toggleSpin : =>
-
-      if @spinOn
-         @setSpin(Projector.SPIN.RIGHT)
-      else
-         @setSpin(Projector.SPIN.NONE)
-
-      @spinOn = not @spinOn
-
-
-   setSpin : (@spin) =>
-
-      switch @spin
-
-         when Projector.SPIN.LEFT
-            @resetCamera(false)
-
-         when Projector.SPIN.NONE
-            @timeStamp = 0
-
-         when Projector.SPIN.RIGHT
-            @resetCamera(false)
+        return @viewport.visible
 
 
-   # Spin camera in a circle around the center.
-   spinCamera : =>
+    # Set visibility of view indicators.
+    setViewsVisible : (top, front, side) =>
 
-      STEP = @getSpinStep()
-
-      cx = @cameraPerspective.position.x
-      cy = -1 * @cameraPerspective.position.z
-      radians = Math.atan2(cy, cx)
-      radius = Math.sqrt(cx * cx + cy * cy)
-
-      switch @spin
-
-         when Projector.SPIN.LEFT
-            radians += STEP
-            if radians > Math.PI then radians = radians - (2 * Math.PI)
-
-         when Projector.SPIN.RIGHT
-            radians -= STEP
-            if radians < -Math.PI then radians = (2 * Math.PI) + radians
-
-      x = radius * Math.cos(radians)
-      y = radius * Math.sin(radians)
-
-      @cameraPerspective.position.x = x
-      @cameraPerspective.position.z = -1 * y
+        @view1.visible = top
+        @view2.visible = front
+        @view3.visible = side
 
 
-   # Adjust the rotation step depending on time elapsed between the frames.
-   getSpinStep : =>
+    changeView : (@direction) =>
 
-      step = Projector.SPIN_STEP # default
-
-      if @timeStamp isnt 0
-         date = new Date()
-         timeNow = date.getTime()
-         delta = timeNow - @timeStamp
-         @timeStamp = timeNow
-         step = delta * step / 10
-
-      return step
+        @updateView(@viewport.visible)
+        @selector.setDirection(@direction)
 
 
-   # Toggle visibility of the cluster given by its index.
-   toggleClusterVisibility : (index) =>
+    toggleAnimation : =>
 
-      @particles[index].visible = not @particles[index].visible
+        @animateOn = not @animateOn
 
+        if @animateOn
+            @setAllClustersVisible(false)
+            @startTimer(0)
+        else
+            @setAllClustersVisible(true)
 
-   setAllClustersVisible : (visible) =>
-
-      p.visible = visible for p in @particles
-
-
-   # Select or unselect cluster of given index.
-   toggleClusterSelection : (index) =>
-
-      # clear old selected
-      if @selected > -1
-         # restore color coding on previous selection
-         hexColor = @colors[@selected].getHex()
-         @updatePoints(@selected, hexColor)
-
-      if @selected is index
-         # unselecting
-         @selected = -1
-      else
-         # selecting
-         @selected = index
-         # highlight new selected
-         @updatePoints(@selected, Palette.HIGHLIGHT.getHex())
-
-      if @selected > -1
-         @notify(Projector.EVENT_CLUSTER_SELECTED, { id : index })
-      else
-         @notify(Projector.EVENT_CLUSTER_SELECTED, { id : -1 })
+        return @animateOn
 
 
-   # Color code given points cloud (cluster).
-   updatePoints : (index, color) =>
+    toggleSpin : =>
 
-      cloud = @points[index]
-      all = cloud.vertices.length
+        if @spinOn
+            @setSpin(Projector.SPIN.RIGHT)
+        else
+            @setSpin(Projector.SPIN.NONE)
 
-      for i in [0...all]
-         cloud.colors[i].setHex(color)
-
-      @points[index].colorsNeedUpdate = true
+        @spinOn = not @spinOn
 
 
-   startTimer : (index) =>
+    setSpin : (@spin) =>
 
-      @toggleClusterVisibility(index)
-      window.setTimeout(@onTimer, 2 * Utility.SECOND, index)
+        switch @spin
+
+            when Projector.SPIN.LEFT
+                @resetCamera(false)
+
+            when Projector.SPIN.NONE
+                @timeStamp = 0
+
+            when Projector.SPIN.RIGHT
+                @resetCamera(false)
 
 
-   # Count visible clusters.
-   clustersVisible : =>
+    # Spin camera in a circle around the center.
+    spinCamera : =>
 
-      result = 0
+        STEP = @getSpinStep()
 
-      result++ for cloud in @particles when cloud.visible
+        cx = @cameraPerspective.position.x
+        cy = -1 * @cameraPerspective.position.z
+        radians = Math.atan2(cy, cx)
+        radius = Math.sqrt(cx * cx + cy * cy)
 
-      return result
+        switch @spin
+
+            when Projector.SPIN.LEFT
+                radians += STEP
+                if radians > Math.PI then radians = radians - (2 * Math.PI)
+
+            when Projector.SPIN.RIGHT
+                radians -= STEP
+                if radians < -Math.PI then radians = (2 * Math.PI) + radians
+
+        x = radius * Math.cos(radians)
+        y = radius * Math.sin(radians)
+
+        @cameraPerspective.position.x = x
+        @cameraPerspective.position.z = -1 * y
+
+
+    # Adjust the rotation step depending on time elapsed between the frames.
+    getSpinStep : =>
+
+        step = Projector.SPIN_STEP # default
+
+        if @timeStamp isnt 0
+            date = new Date()
+            timeNow = date.getTime()
+            delta = timeNow - @timeStamp
+            @timeStamp = timeNow
+            step = delta * step / 10
+
+        return step
+
+
+    # Toggle visibility of the cluster given by its index.
+    toggleClusterVisibility : (index) =>
+
+        @particles[index].visible = not @particles[index].visible
+
+
+    setAllClustersVisible : (visible) =>
+
+        p.visible = visible for p in @particles
+
+
+    # Select or unselect cluster of given index.
+    toggleClusterSelection : (index) =>
+
+        # clear old selected
+        if @selected > -1
+            # restore color coding on previous selection
+            hexColor = @colors[@selected].getHex()
+            @updatePoints(@selected, hexColor)
+
+        if @selected is index
+            # unselecting
+            @selected = -1
+        else
+            # selecting
+            @selected = index
+            # highlight new selected
+            @updatePoints(@selected, Palette.HIGHLIGHT.getHex())
+
+        if @selected > -1
+            @notify(Projector.EVENT_CLUSTER_SELECTED, { id : index })
+        else
+            @notify(Projector.EVENT_CLUSTER_SELECTED, { id : -1 })
+
+
+    # Color code given points cloud (cluster).
+    updatePoints : (index, color) =>
+
+        cloud = @points[index]
+        all = cloud.vertices.length
+
+        for i in [0...all]
+            cloud.colors[i].setHex(color)
+
+        @points[index].colorsNeedUpdate = true
+
+
+    startTimer : (index) =>
+
+        @toggleClusterVisibility(index)
+        window.setTimeout(@onTimer, 2 * Utility.SECOND, index)
+
+
+    # Count visible clusters.
+    clustersVisible : =>
+
+        result = 0
+
+        result++ for cloud in @particles when cloud.visible
+
+        return result
 
 
 module.exports = Projector

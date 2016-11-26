@@ -7,10 +7,10 @@
 
 class Observer
 
-	# M E T H O D S
+    # M E T H O D S
 
-   # Concrete observer classes should implement and use this method.
-   update: (subject, type, data) ->
+    # Concrete observer classes should implement and use this method.
+    update: (subject, type, data) ->
 
 
 module.exports = Observer

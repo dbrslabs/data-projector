@@ -13,42 +13,42 @@ Subject = require('./Subject.coffee')
 
 class Panel extends Subject
 
-   # E V E N T S
+    # E V E N T S
 
-   @EVENT_PANEL_SHOWN : "EVENT_PANEL_SHOWN"
-   @EVENT_PANEL_HIDDEN : "EVENT_PANEL_HIDDEN"
+    @EVENT_PANEL_SHOWN : "EVENT_PANEL_SHOWN"
+    @EVENT_PANEL_HIDDEN : "EVENT_PANEL_HIDDEN"
 
-   visible: true # default
+    visible: true # default
 
-   # C O N S T R U C T O R
+    # C O N S T R U C T O R
 
-   # Create panel. The id parameter is the id of the element in HTML (example: "#Menu")
-   constructor: (@id) ->
+    # Create panel. The id parameter is the id of the element in HTML (example: "#Menu")
+    constructor: (@id) ->
 
-      super()
-
-
-   # Show this panel.
-   show: ->
-
-      $(@id).show()
-      @visible = true
-      @notify(Panel.EVENT_PANEL_SHOWN)
+        super()
 
 
-   # Hide this panel.
-   hide: ->
+    # Show this panel.
+    show: ->
 
-      $(@id).hide()
-      @visible = false
-      @notify(Panel.EVENT_PANEL_HIDDEN)
+        $(@id).show()
+        @visible = true
+        @notify(Panel.EVENT_PANEL_SHOWN)
 
 
-   # Toggle visibility.
-   toggle: ->
+    # Hide this panel.
+    hide: ->
 
-      if @visible then @hide() else @show()
-      return @visible   
+        $(@id).hide()
+        @visible = false
+        @notify(Panel.EVENT_PANEL_HIDDEN)
+
+
+    # Toggle visibility.
+    toggle: ->
+
+        if @visible then @hide() else @show()
+        return @visible   
 
 
 module.exports = Panel

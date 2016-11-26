@@ -10,457 +10,450 @@ Palette = require('./Palette.coffee')
 
 class Selector
 
-   # M E M B E R S
+    # M E M B E R S
 
-   active : false # visible and active when true
+    active : false # visible and active when true
 
-   direction : Utility.DIRECTION.TOP # default 2D view is from top
+    direction : Utility.DIRECTION.TOP # default 2D view is from top
 
-   selectorTop : null # THREE.Line - top (along y axis) view selector
-   selectorFront : null # THREE.Line - front (along z axis) view selector
-   selectorSide : null # THREE.Line - top (along x axis) view selector
+    selectorTop : null # THREE.Line - top (along y axis) view selector
+    selectorFront : null # THREE.Line - front (along z axis) view selector
+    selectorSide : null # THREE.Line - top (along x axis) view selector
 
-   mouseStart : null # mouse touch down
-   mouse : null # mouse moving updates
-   mouseEnd : null # mouse take off
+    mouseStart : null # mouse touch down
+    mouse : null # mouse moving updates
+    mouseEnd : null # mouse take off
 
-   min : null # 3D selection bounds - minimum
-   max : null # 3D selection bounds - maximum
-
-
-   # C O N S T R U C T O R
-
-   # Create selector and add it to the parent in 3D world.
-   constructor : (parent) ->
-
-      @mouseStart = new THREE.Vector3()
-      @mouse = new THREE.Vector3()
-      @mouseEnd = new THREE.Vector3()
-
-      @min = new THREE.Vector3()
-      @max = new THREE.Vector3()
-
-      # top view
-      @selectorTop = @createSelector(Utility.DIRECTION.TOP)
-      parent.add(@selectorTop)
-
-      # front view
-      @selectorFront = @createSelector(Utility.DIRECTION.FRONT)
-      parent.add(@selectorFront)
-
-      # side view
-      @selectorSide = @createSelector(Utility.DIRECTION.SIDE)
-      parent.add(@selectorSide)
-
-      @setActive(false)
+    min : null # 3D selection bounds - minimum
+    max : null # 3D selection bounds - maximum
 
 
-   # M E T H D O S   
+    # C O N S T R U C T O R
 
-   # Set selector active/visible on/off.
-   # All side components work together.
-   setActive : (@active) ->
+    # Create selector and add it to the parent in 3D world.
+    constructor : (parent) ->
 
-      @selectorTop.visible = @active
-      @selectorFront.visible = @active
-      @selectorSide.visible = @active
+        @mouseStart = new THREE.Vector3()
+        @mouse = new THREE.Vector3()
+        @mouseEnd = new THREE.Vector3()
 
-      return @active
+        @min = new THREE.Vector3()
+        @max = new THREE.Vector3()
+
+        # top view
+        @selectorTop = @createSelector(Utility.DIRECTION.TOP)
+        parent.add(@selectorTop)
+
+        # front view
+        @selectorFront = @createSelector(Utility.DIRECTION.FRONT)
+        parent.add(@selectorFront)
+
+        # side view
+        @selectorSide = @createSelector(Utility.DIRECTION.SIDE)
+        parent.add(@selectorSide)
+
+        @setActive(false)
 
 
-   # Set direction.
-   setDirection : (@direction) ->
+    # M E T H D O S   
 
-      #console.log "Selector.setDirection " + @direction
+    # Set selector active/visible on/off.
+    # All side components work together.
+    setActive : (@active) ->
+
+        @selectorTop.visible = @active
+        @selectorFront.visible = @active
+        @selectorSide.visible = @active
+
+        return @active
 
 
-   # Check if currently active/visible.
-   isActive : => return @active   
+    # Set direction.
+    setDirection : (@direction) ->
+
+        #console.log "Selector.setDirection " + @direction
 
 
-   # Toggle selector on/off
-   toggle : => return @setActive(not @active)
+    # Check if currently active/visible.
+    isActive : => return @active   
 
 
-   # Called at the start of the selection.
-   start : (@mouse) ->
+    # Toggle selector on/off
+    toggle : => return @setActive(not @active)
 
-      @setActive(true) # automatically enable
+
+    # Called at the start of the selection.
+    start : (@mouse) ->
+
+        @setActive(true) # automatically enable
       
-      # two options: start new selection or adjust existing...
+        # two options: start new selection or adjust existing...
+        if not @contains(mouse, @direction)
+            # mouse outside the selector - restart anew
+            @mouseStart = mouse
 
-      if not @contains(mouse, @direction)
+        else
+            # mouse inside the selector - make adjustment
+            # determine which corner is closest to the mouse
+            switch @direction
+                when Utility.DIRECTION.TOP
+                    @mouseStart = @getStart(mouse, @selectorTop)
+                when Utility.DIRECTION.FRONT
+                    @mouseStart = @getStart(mouse, @selectorFront)
+                when Utility.DIRECTION.SIDE
+                    @mouseStart = @getStart(mouse, @selectorSide)
 
-         # mouse outside the selector - restart anew
-         @mouseStart = mouse
 
-      else    
+    getStart : (mouse, selector) ->
+   
+        # determine which corner is closest to the mouse
 
-         # mouse inside the selector - make adjustment
+        # TODO Set up array + loop...
+        distanceTo0 = mouse.distanceTo(selector.geometry.vertices[0])
+        distanceTo1 = mouse.distanceTo(selector.geometry.vertices[1])
+        distanceTo2 = mouse.distanceTo(selector.geometry.vertices[2])
+        distanceTo3 = mouse.distanceTo(selector.geometry.vertices[3])
 
-         # determine which corner is closest to the mouse
+        shortest = Math.min(distanceTo0, distanceTo1, distanceTo2, distanceTo3)
 
-         switch @direction
+        # make the closest corner the end point and the opposite one the start point
+
+        if shortest is distanceTo0 then start = selector.geometry.vertices[2].clone()
+        if shortest is distanceTo1 then start = selector.geometry.vertices[3].clone()
+        if shortest is distanceTo2 then start = selector.geometry.vertices[0].clone()
+        if shortest is distanceTo3 then start = selector.geometry.vertices[1].clone()
+
+        return start
+
+
+    # Called when selection in progress to update mouse position.
+    update : (@mouse) ->
+
+        switch @direction
             when Utility.DIRECTION.TOP
-               @mouseStart = @getStart(mouse, @selectorTop)
+
+                # Modifying : Top
+                @selectorTop.geometry.vertices[0].x = @mouseStart.x
+                @selectorTop.geometry.vertices[0].y = 100
+                @selectorTop.geometry.vertices[0].z = @mouseStart.z
+
+                @selectorTop.geometry.vertices[1].x = @mouse.x
+                @selectorTop.geometry.vertices[1].y = 100
+                @selectorTop.geometry.vertices[1].z = @mouseStart.z
+
+                @selectorTop.geometry.vertices[2].x = @mouse.x
+                @selectorTop.geometry.vertices[2].y = 100
+                @selectorTop.geometry.vertices[2].z = @mouse.z
+
+                @selectorTop.geometry.vertices[3].x = @mouseStart.x
+                @selectorTop.geometry.vertices[3].y = 100
+                @selectorTop.geometry.vertices[3].z = @mouse.z
+
+                @selectorTop.geometry.vertices[4].x = @mouseStart.x
+                @selectorTop.geometry.vertices[4].y = 100
+                @selectorTop.geometry.vertices[4].z = @mouseStart.z
+
+                # Adjusting : Front
+
+                @selectorFront.geometry.vertices[0].x = @mouseStart.x
+                @selectorFront.geometry.vertices[0].z = 100
+
+                @selectorFront.geometry.vertices[1].x = @mouse.x
+                @selectorFront.geometry.vertices[1].z = 100
+
+                @selectorFront.geometry.vertices[2].x = @mouse.x
+                @selectorFront.geometry.vertices[2].z = 100
+
+                @selectorFront.geometry.vertices[3].x = @mouseStart.x
+                @selectorFront.geometry.vertices[3].z = 100
+
+                @selectorFront.geometry.vertices[4].x = @mouseStart.x
+                @selectorFront.geometry.vertices[4].z = 100
+
+                # Adjusting : Side
+
+                @selectorSide.geometry.vertices[0].x = 100
+                @selectorSide.geometry.vertices[0].z = @mouseStart.z
+
+                @selectorSide.geometry.vertices[1].x = 100
+                @selectorSide.geometry.vertices[1].z = @mouseStart.z
+
+                @selectorSide.geometry.vertices[2].x = 100
+                @selectorSide.geometry.vertices[2].z = @mouse.z
+
+                @selectorSide.geometry.vertices[3].x = 100
+                @selectorSide.geometry.vertices[3].z = @mouse.z
+
+                @selectorSide.geometry.vertices[4].x = 100
+                @selectorSide.geometry.vertices[4].z = @mouseStart.z
+
             when Utility.DIRECTION.FRONT
-               @mouseStart = @getStart(mouse, @selectorFront)
+
+                # Modifying : FRONT
+
+                @selectorFront.geometry.vertices[0].x = @mouseStart.x
+                @selectorFront.geometry.vertices[0].y = @mouseStart.y
+                @selectorFront.geometry.vertices[0].z = 100
+
+                @selectorFront.geometry.vertices[1].x = @mouse.x
+                @selectorFront.geometry.vertices[1].y = @mouseStart.y
+                @selectorFront.geometry.vertices[1].z = 100
+
+                @selectorFront.geometry.vertices[2].x = @mouse.x
+                @selectorFront.geometry.vertices[2].y = @mouse.y
+                @selectorFront.geometry.vertices[2].z = 100
+
+                @selectorFront.geometry.vertices[3].x = @mouseStart.x
+                @selectorFront.geometry.vertices[3].y = @mouse.y
+                @selectorFront.geometry.vertices[3].z = 100
+
+                @selectorFront.geometry.vertices[4].x = @mouseStart.x
+                @selectorFront.geometry.vertices[4].y = @mouseStart.y
+                @selectorFront.geometry.vertices[4].z = 100
+
+                # Adjusting : TOP
+
+                @selectorTop.geometry.vertices[0].x = @mouseStart.x
+                @selectorTop.geometry.vertices[0].y = 100
+
+                @selectorTop.geometry.vertices[1].x = @mouse.x
+                @selectorTop.geometry.vertices[1].y = 100
+
+                @selectorTop.geometry.vertices[2].x = @mouse.x
+                @selectorTop.geometry.vertices[2].y = 100
+
+                @selectorTop.geometry.vertices[3].x = @mouseStart.x
+                @selectorTop.geometry.vertices[3].y = 100
+
+                @selectorTop.geometry.vertices[4].x = @mouseStart.x
+                @selectorTop.geometry.vertices[4].y = 100
+
+                # Adjusting : SIDE
+
+                @selectorSide.geometry.vertices[0].x = 100
+                @selectorSide.geometry.vertices[0].y = @mouseStart.y
+
+                @selectorSide.geometry.vertices[1].x = 100
+                @selectorSide.geometry.vertices[1].y = @mouse.y
+
+                @selectorSide.geometry.vertices[2].x = 100
+                @selectorSide.geometry.vertices[2].y = @mouse.y
+
+                @selectorSide.geometry.vertices[3].x = 100
+                @selectorSide.geometry.vertices[3].y = @mouseStart.y
+
+                @selectorSide.geometry.vertices[4].x = 100
+                @selectorSide.geometry.vertices[4].y = @mouseStart.y
+
+
             when Utility.DIRECTION.SIDE
-               @mouseStart = @getStart(mouse, @selectorSide)
 
+                # Modifying : SIDE
 
-   getStart : (mouse, selector) ->
-   
-      # determine which corner is closest to the mouse
+                @selectorSide.geometry.vertices[0].x = 100
+                @selectorSide.geometry.vertices[0].y = @mouseStart.y
+                @selectorSide.geometry.vertices[0].z = @mouseStart.z
 
-      # TODO Set up array + loop...
-      distanceTo0 = mouse.distanceTo(selector.geometry.vertices[0])
-      distanceTo1 = mouse.distanceTo(selector.geometry.vertices[1])
-      distanceTo2 = mouse.distanceTo(selector.geometry.vertices[2])
-      distanceTo3 = mouse.distanceTo(selector.geometry.vertices[3])
+                @selectorSide.geometry.vertices[1].x = 100
+                @selectorSide.geometry.vertices[1].y = @mouse.y
+                @selectorSide.geometry.vertices[1].z = @mouseStart.z
 
-      shortest = Math.min(distanceTo0, distanceTo1, distanceTo2, distanceTo3)
+                @selectorSide.geometry.vertices[2].x = 100
+                @selectorSide.geometry.vertices[2].y = @mouse.y
+                @selectorSide.geometry.vertices[2].z = @mouse.z
 
-      # make the closest corner the end point and the opposite one the start point
+                @selectorSide.geometry.vertices[3].x = 100
+                @selectorSide.geometry.vertices[3].y = @mouseStart.y
+                @selectorSide.geometry.vertices[3].z = @mouse.z
 
-      if shortest is distanceTo0 then start = selector.geometry.vertices[2].clone()
-      if shortest is distanceTo1 then start = selector.geometry.vertices[3].clone()
-      if shortest is distanceTo2 then start = selector.geometry.vertices[0].clone()
-      if shortest is distanceTo3 then start = selector.geometry.vertices[1].clone()
+                @selectorSide.geometry.vertices[4].x = 100
+                @selectorSide.geometry.vertices[4].y = @mouseStart.y
+                @selectorSide.geometry.vertices[4].z = @mouseStart.z
 
-      return start
+                # Adjusting : TOP
 
+                @selectorTop.geometry.vertices[0].y = 100
+                @selectorTop.geometry.vertices[0].z = @mouseStart.z
 
-   # Called when selection in progress to update mouse position.
-   update : (@mouse) ->
+                @selectorTop.geometry.vertices[1].y = 100
+                @selectorTop.geometry.vertices[1].z = @mouseStart.z
 
-      switch @direction
-         when Utility.DIRECTION.TOP
+                @selectorTop.geometry.vertices[2].y = 100
+                @selectorTop.geometry.vertices[2].z = @mouse.z
 
-            # Modifying : Top
+                @selectorTop.geometry.vertices[3].y = 100
+                @selectorTop.geometry.vertices[3].z = @mouse.z
 
-            @selectorTop.geometry.vertices[0].x = @mouseStart.x
-            @selectorTop.geometry.vertices[0].y = 100
-            @selectorTop.geometry.vertices[0].z = @mouseStart.z
+                @selectorTop.geometry.vertices[4].y = 100
+                @selectorTop.geometry.vertices[4].z = @mouseStart.z
 
-            @selectorTop.geometry.vertices[1].x = @mouse.x
-            @selectorTop.geometry.vertices[1].y = 100
-            @selectorTop.geometry.vertices[1].z = @mouseStart.z
+                # Adjusting : FRONT
 
-            @selectorTop.geometry.vertices[2].x = @mouse.x
-            @selectorTop.geometry.vertices[2].y = 100
-            @selectorTop.geometry.vertices[2].z = @mouse.z
+                @selectorFront.geometry.vertices[0].y = @mouseStart.y
+                @selectorFront.geometry.vertices[0].z = 100
 
-            @selectorTop.geometry.vertices[3].x = @mouseStart.x
-            @selectorTop.geometry.vertices[3].y = 100
-            @selectorTop.geometry.vertices[3].z = @mouse.z
+                @selectorFront.geometry.vertices[1].y = @mouseStart.y
+                @selectorFront.geometry.vertices[1].z = 100
 
-            @selectorTop.geometry.vertices[4].x = @mouseStart.x
-            @selectorTop.geometry.vertices[4].y = 100
-            @selectorTop.geometry.vertices[4].z = @mouseStart.z
+                @selectorFront.geometry.vertices[2].y = @mouse.y
+                @selectorFront.geometry.vertices[2].z = 100
 
-            # Adjusting : Front
+                @selectorFront.geometry.vertices[3].y = @mouse.y
+                @selectorFront.geometry.vertices[3].z = 100
 
-            @selectorFront.geometry.vertices[0].x = @mouseStart.x
-            @selectorFront.geometry.vertices[0].z = 100
+                @selectorFront.geometry.vertices[4].y = @mouseStart.y
+                @selectorFront.geometry.vertices[4].z = 100
 
-            @selectorFront.geometry.vertices[1].x = @mouse.x
-            @selectorFront.geometry.vertices[1].z = 100
 
-            @selectorFront.geometry.vertices[2].x = @mouse.x
-            @selectorFront.geometry.vertices[2].z = 100
+        @selectorTop.geometry.verticesNeedUpdate = true
+        @selectorFront.geometry.verticesNeedUpdate = true
+        @selectorSide.geometry.verticesNeedUpdate = true
 
-            @selectorFront.geometry.vertices[3].x = @mouseStart.x
-            @selectorFront.geometry.vertices[3].z = 100
 
-            @selectorFront.geometry.vertices[4].x = @mouseStart.x
-            @selectorFront.geometry.vertices[4].z = 100
+    # Called at the end of the selection.
+    end : (mouseEnd) ->
 
-            # Adjusting : Side
+        @mouseEnd = mouseEnd
+        @updateBounds()
 
-            @selectorSide.geometry.vertices[0].x = 100
-            @selectorSide.geometry.vertices[0].z = @mouseStart.z
 
-            @selectorSide.geometry.vertices[1].x = 100
-            @selectorSide.geometry.vertices[1].z = @mouseStart.z
+    updateBounds : ->
 
-            @selectorSide.geometry.vertices[2].x = 100
-            @selectorSide.geometry.vertices[2].z = @mouse.z
+        @min.x = Math.min( @getMinX(@selectorTop), @getMinX(@selectorFront) )
+        @max.x = Math.max( @getMaxX(@selectorTop), @getMaxX(@selectorFront) )
 
-            @selectorSide.geometry.vertices[3].x = 100
-            @selectorSide.geometry.vertices[3].z = @mouse.z
+        @min.y = Math.min( @getMinY(@selectorFront), @getMinY(@selectorSide) )
+        @max.y = Math.max( @getMaxY(@selectorFront), @getMaxY(@selectorSide) )
 
-            @selectorSide.geometry.vertices[4].x = 100
-            @selectorSide.geometry.vertices[4].z = @mouseStart.z
+        @min.z = Math.min( @getMinZ(@selectorTop), @getMinZ(@selectorSide) )
+        @max.z = Math.max( @getMaxZ(@selectorTop), @getMaxZ(@selectorSide) )
 
-         when Utility.DIRECTION.FRONT
+        # DEBUG
+        # Utility.printVector3(@min)
+        # Utility.printVector3(@max)
 
-            # Modifying : FRONT
 
-            @selectorFront.geometry.vertices[0].x = @mouseStart.x
-            @selectorFront.geometry.vertices[0].y = @mouseStart.y
-            @selectorFront.geometry.vertices[0].z = 100
+    # Return true if given point is within the selector, false otherwise.
+    # NOTE For each individual direction only two coordinates are checked.
+    # NOTE In case of direction ALL, all three coordinates are tested.
+    contains : (point, direction) ->
 
-            @selectorFront.geometry.vertices[1].x = @mouse.x
-            @selectorFront.geometry.vertices[1].y = @mouseStart.y
-            @selectorFront.geometry.vertices[1].z = 100
+        inside = true
 
-            @selectorFront.geometry.vertices[2].x = @mouse.x
-            @selectorFront.geometry.vertices[2].y = @mouse.y
-            @selectorFront.geometry.vertices[2].z = 100
+        switch direction
+            when Utility.DIRECTION.ALL
+                if point.x < @min.x or point.x > @max.x then inside = false
+                if point.y < @min.y or point.y > @max.y then inside = false
+                if point.z < @min.z or point.z > @max.z then inside = false
+            when Utility.DIRECTION.TOP
+                if point.x < @min.x or point.x > @max.x then inside = false
+                if point.z < @min.z or point.z > @max.z then inside = false
+            when Utility.DIRECTION.FRONT
+                if point.x < @min.x or point.x > @max.x then inside = false
+                if point.y < @min.y or point.y > @max.y then inside = false
+            when Utility.DIRECTION.SIDE
+                if point.z < @min.z or point.z > @max.z then inside = false
+                if point.y < @min.y or point.y > @max.y then inside = false
 
-            @selectorFront.geometry.vertices[3].x = @mouseStart.x
-            @selectorFront.geometry.vertices[3].y = @mouse.y
-            @selectorFront.geometry.vertices[3].z = 100
+        return inside
 
-            @selectorFront.geometry.vertices[4].x = @mouseStart.x
-            @selectorFront.geometry.vertices[4].y = @mouseStart.y
-            @selectorFront.geometry.vertices[4].z = 100
 
-            # Adjusting : TOP
+    getMinX : (selector) ->
 
-            @selectorTop.geometry.vertices[0].x = @mouseStart.x
-            @selectorTop.geometry.vertices[0].y = 100
+        vertices = selector.geometry.vertices
+        minX = vertices[0].x
 
-            @selectorTop.geometry.vertices[1].x = @mouse.x
-            @selectorTop.geometry.vertices[1].y = 100
+        for i in [1..4]
+            if vertices[i].x < minX then minX = vertices[i].x
 
-            @selectorTop.geometry.vertices[2].x = @mouse.x
-            @selectorTop.geometry.vertices[2].y = 100
+        return minX
 
-            @selectorTop.geometry.vertices[3].x = @mouseStart.x
-            @selectorTop.geometry.vertices[3].y = 100
 
-            @selectorTop.geometry.vertices[4].x = @mouseStart.x
-            @selectorTop.geometry.vertices[4].y = 100
+    getMaxX : (selector) ->
 
-            # Adjusting : SIDE
+        vertices = selector.geometry.vertices
+        maxX = vertices[0].x
 
-            @selectorSide.geometry.vertices[0].x = 100
-            @selectorSide.geometry.vertices[0].y = @mouseStart.y
+        for i in [1..4]
+            if vertices[i].x > maxX then maxX = vertices[i].x
 
-            @selectorSide.geometry.vertices[1].x = 100
-            @selectorSide.geometry.vertices[1].y = @mouse.y
+        return maxX
 
-            @selectorSide.geometry.vertices[2].x = 100
-            @selectorSide.geometry.vertices[2].y = @mouse.y
 
-            @selectorSide.geometry.vertices[3].x = 100
-            @selectorSide.geometry.vertices[3].y = @mouseStart.y
+    getMinY : (selector) ->
 
-            @selectorSide.geometry.vertices[4].x = 100
-            @selectorSide.geometry.vertices[4].y = @mouseStart.y
+        vertices = selector.geometry.vertices
+        minY = vertices[0].y
 
+        for i in [1..4]
+            if vertices[i].y < minY then minY = vertices[i].y
 
-         when Utility.DIRECTION.SIDE
+        return minY
 
-            # Modifying : SIDE
 
-            @selectorSide.geometry.vertices[0].x = 100
-            @selectorSide.geometry.vertices[0].y = @mouseStart.y
-            @selectorSide.geometry.vertices[0].z = @mouseStart.z
+    getMaxY : (selector) ->
 
-            @selectorSide.geometry.vertices[1].x = 100
-            @selectorSide.geometry.vertices[1].y = @mouse.y
-            @selectorSide.geometry.vertices[1].z = @mouseStart.z
+        vertices = selector.geometry.vertices
+        maxY = vertices[0].y
 
-            @selectorSide.geometry.vertices[2].x = 100
-            @selectorSide.geometry.vertices[2].y = @mouse.y
-            @selectorSide.geometry.vertices[2].z = @mouse.z
+        for i in [1..4]
+            if vertices[i].y > maxY then maxY = vertices[i].y
 
-            @selectorSide.geometry.vertices[3].x = 100
-            @selectorSide.geometry.vertices[3].y = @mouseStart.y
-            @selectorSide.geometry.vertices[3].z = @mouse.z
+        return maxY
 
-            @selectorSide.geometry.vertices[4].x = 100
-            @selectorSide.geometry.vertices[4].y = @mouseStart.y
-            @selectorSide.geometry.vertices[4].z = @mouseStart.z
 
-            # Adjusting : TOP
+    getMinZ : (selector) ->
 
-            @selectorTop.geometry.vertices[0].y = 100
-            @selectorTop.geometry.vertices[0].z = @mouseStart.z
+        vertices = selector.geometry.vertices
+        minZ = vertices[0].z
 
-            @selectorTop.geometry.vertices[1].y = 100
-            @selectorTop.geometry.vertices[1].z = @mouseStart.z
+        for i in [1..4]
+            if vertices[i].z < minZ then minZ = vertices[i].z
 
-            @selectorTop.geometry.vertices[2].y = 100
-            @selectorTop.geometry.vertices[2].z = @mouse.z
+        return minZ
 
-            @selectorTop.geometry.vertices[3].y = 100
-            @selectorTop.geometry.vertices[3].z = @mouse.z
 
-            @selectorTop.geometry.vertices[4].y = 100
-            @selectorTop.geometry.vertices[4].z = @mouseStart.z
+    getMaxZ : (selector) ->
 
-            # Adjusting : FRONT
+        vertices = selector.geometry.vertices
+        maxZ = vertices[0].z
 
-            @selectorFront.geometry.vertices[0].y = @mouseStart.y
-            @selectorFront.geometry.vertices[0].z = 100
+        for i in [1..4]
+            if vertices[i].z > maxZ then maxZ = vertices[i].z
 
-            @selectorFront.geometry.vertices[1].y = @mouseStart.y
-            @selectorFront.geometry.vertices[1].z = 100
+        return maxZ
 
-            @selectorFront.geometry.vertices[2].y = @mouse.y
-            @selectorFront.geometry.vertices[2].z = 100
 
-            @selectorFront.geometry.vertices[3].y = @mouse.y
-            @selectorFront.geometry.vertices[3].z = 100
+    # Create selector rectangle line for given direction.
+    createSelector : (direction) ->
 
-            @selectorFront.geometry.vertices[4].y = @mouseStart.y
-            @selectorFront.geometry.vertices[4].z = 100
+        SIZE = 100
 
+        geometry = new THREE.Geometry()
 
-      @selectorTop.geometry.verticesNeedUpdate = true
-      @selectorFront.geometry.verticesNeedUpdate = true
-      @selectorSide.geometry.verticesNeedUpdate = true
+        # five points in each case, last one is the first one
+        switch direction
+            when Utility.DIRECTION.TOP
+                geometry.vertices.push( new THREE.Vector3( +SIZE, +SIZE, +SIZE ) )
+                geometry.vertices.push( new THREE.Vector3( -SIZE, +SIZE, +SIZE ) )
+                geometry.vertices.push( new THREE.Vector3( -SIZE, +SIZE, -SIZE ) )
+                geometry.vertices.push( new THREE.Vector3( +SIZE, +SIZE, -SIZE ) )
+                geometry.vertices.push( new THREE.Vector3( +SIZE, +SIZE, +SIZE ) )
+            when Utility.DIRECTION.FRONT
+                geometry.vertices.push( new THREE.Vector3( +SIZE, +SIZE, +SIZE ) )
+                geometry.vertices.push( new THREE.Vector3( -SIZE, +SIZE, +SIZE ) )
+                geometry.vertices.push( new THREE.Vector3( -SIZE, -SIZE, +SIZE ) )
+                geometry.vertices.push( new THREE.Vector3( +SIZE, -SIZE, +SIZE ) )
+                geometry.vertices.push( new THREE.Vector3( +SIZE, +SIZE, +SIZE ) )
+            when Utility.DIRECTION.SIDE
+                geometry.vertices.push( new THREE.Vector3( +SIZE, +SIZE, +SIZE ) )
+                geometry.vertices.push( new THREE.Vector3( +SIZE, -SIZE, +SIZE ) )
+                geometry.vertices.push( new THREE.Vector3( +SIZE, -SIZE, -SIZE ) )
+                geometry.vertices.push( new THREE.Vector3( +SIZE, +SIZE, -SIZE ) )
+                geometry.vertices.push( new THREE.Vector3( +SIZE, +SIZE, +SIZE ) )
 
-
-   # Called at the end of the selection.
-   end : (mouseEnd) ->
-
-      @mouseEnd = mouseEnd
-      @updateBounds()
-
-
-   updateBounds : ->
-
-      @min.x = Math.min( @getMinX(@selectorTop), @getMinX(@selectorFront) )
-      @max.x = Math.max( @getMaxX(@selectorTop), @getMaxX(@selectorFront) )
-
-      @min.y = Math.min( @getMinY(@selectorFront), @getMinY(@selectorSide) )
-      @max.y = Math.max( @getMaxY(@selectorFront), @getMaxY(@selectorSide) )
-
-      @min.z = Math.min( @getMinZ(@selectorTop), @getMinZ(@selectorSide) )
-      @max.z = Math.max( @getMaxZ(@selectorTop), @getMaxZ(@selectorSide) )
-
-      # DEBUG
-      # Utility.printVector3(@min)
-      # Utility.printVector3(@max)
-
-
-   # Return true if given point is within the selector, false otherwise.
-   # NOTE For each individual direction only two coordinates are checked.
-   # NOTE In case of direction ALL, all three coordinates are tested.
-   contains : (point, direction) ->
-
-      inside = true
-
-      switch direction
-         when Utility.DIRECTION.ALL
-            if point.x < @min.x or point.x > @max.x then inside = false
-            if point.y < @min.y or point.y > @max.y then inside = false
-            if point.z < @min.z or point.z > @max.z then inside = false
-         when Utility.DIRECTION.TOP
-            if point.x < @min.x or point.x > @max.x then inside = false
-            if point.z < @min.z or point.z > @max.z then inside = false
-         when Utility.DIRECTION.FRONT
-            if point.x < @min.x or point.x > @max.x then inside = false
-            if point.y < @min.y or point.y > @max.y then inside = false
-         when Utility.DIRECTION.SIDE
-            if point.z < @min.z or point.z > @max.z then inside = false
-            if point.y < @min.y or point.y > @max.y then inside = false
-
-      return inside
-
-   
-   getMinX : (selector) ->
-
-      vertices = selector.geometry.vertices
-      minX = vertices[0].x
-
-      for i in [1..4]
-         if vertices[i].x < minX then minX = vertices[i].x
-
-      return minX
-
-
-   getMaxX : (selector) ->
-
-      vertices = selector.geometry.vertices
-      maxX = vertices[0].x
-
-      for i in [1..4]
-         if vertices[i].x > maxX then maxX = vertices[i].x
-
-      return maxX
-
-
-   getMinY : (selector) ->
-
-      vertices = selector.geometry.vertices
-      minY = vertices[0].y
-
-      for i in [1..4]
-         if vertices[i].y < minY then minY = vertices[i].y
-
-      return minY
-
-
-   getMaxY : (selector) ->
-
-      vertices = selector.geometry.vertices
-      maxY = vertices[0].y
-
-      for i in [1..4]
-         if vertices[i].y > maxY then maxY = vertices[i].y
-
-      return maxY
-
-
-   getMinZ : (selector) ->
-
-      vertices = selector.geometry.vertices
-      minZ = vertices[0].z
-
-      for i in [1..4]
-         if vertices[i].z < minZ then minZ = vertices[i].z
-
-      return minZ
-
-
-   getMaxZ : (selector) ->
-
-      vertices = selector.geometry.vertices
-      maxZ = vertices[0].z
-
-      for i in [1..4]
-         if vertices[i].z > maxZ then maxZ = vertices[i].z
-
-      return maxZ
-
-
-   # Create selector rectangle line for given direction.
-   createSelector : (direction) ->
-
-      SIZE = 100
-
-      geometry = new THREE.Geometry()
-
-      # five points in each case, last one is the first one
-
-      switch direction
-         when Utility.DIRECTION.TOP
-            geometry.vertices.push( new THREE.Vector3( +SIZE, +SIZE, +SIZE ) )
-            geometry.vertices.push( new THREE.Vector3( -SIZE, +SIZE, +SIZE ) )
-            geometry.vertices.push( new THREE.Vector3( -SIZE, +SIZE, -SIZE ) )
-            geometry.vertices.push( new THREE.Vector3( +SIZE, +SIZE, -SIZE ) )
-            geometry.vertices.push( new THREE.Vector3( +SIZE, +SIZE, +SIZE ) )
-         when Utility.DIRECTION.FRONT
-            geometry.vertices.push( new THREE.Vector3( +SIZE, +SIZE, +SIZE ) )
-            geometry.vertices.push( new THREE.Vector3( -SIZE, +SIZE, +SIZE ) )
-            geometry.vertices.push( new THREE.Vector3( -SIZE, -SIZE, +SIZE ) )
-            geometry.vertices.push( new THREE.Vector3( +SIZE, -SIZE, +SIZE ) )
-            geometry.vertices.push( new THREE.Vector3( +SIZE, +SIZE, +SIZE ) )
-         when Utility.DIRECTION.SIDE
-            geometry.vertices.push( new THREE.Vector3( +SIZE, +SIZE, +SIZE ) )
-            geometry.vertices.push( new THREE.Vector3( +SIZE, -SIZE, +SIZE ) )
-            geometry.vertices.push( new THREE.Vector3( +SIZE, -SIZE, -SIZE ) )
-            geometry.vertices.push( new THREE.Vector3( +SIZE, +SIZE, -SIZE ) )
-            geometry.vertices.push( new THREE.Vector3( +SIZE, +SIZE, +SIZE ) )
-
-      selector = new THREE.Line(geometry,
-                                new THREE.LineBasicMaterial( { color : Palette.SELECTOR.getHex() } ),
-                                THREE.LineStrip)
+        selector = new THREE.Line(geometry,
+                                  new THREE.LineBasicMaterial( { color : Palette.SELECTOR.getHex() } ),
+                                  THREE.LineStrip)
 
 module.exports = Selector

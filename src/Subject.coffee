@@ -7,38 +7,38 @@
 
 class Subject
 
-   # M E M B E R S
+    # M E M B E R S
 
-   observers : null # list of listeners
-
-
-   # C O N S T R U C T O R
-
-   constructor: () ->
-
-      @observers = new Array()
+    observers : null # list of listeners
 
 
-   # M E T H O D S
+    # C O N S T R U C T O R
 
-   # Attach observer to this subject.
-   attach: (o) ->
+    constructor: () ->
 
-      @observers.push(o)
-
-
-   # Remove observer from this subject.
-   detach: (o) ->
-
-      index = @observers.indexOf(o)
-      if index >= 0 then @observers.splice(index, 1)
+        @observers = new Array()
 
 
-   # Notify all observers.
-   notify: (type, data = null) ->
+    # M E T H O D S
 
-      for o in @observers
-         o.update(@, type, data)
+    # Attach observer to this subject.
+    attach: (o) ->
+
+        @observers.push(o)
+
+
+    # Remove observer from this subject.
+    detach: (o) ->
+
+        index = @observers.indexOf(o)
+        if index >= 0 then @observers.splice(index, 1)
+
+
+    # Notify all observers.
+    notify: (type, data = null) ->
+
+        for o in @observers
+            o.update(@, type, data)
 
 
 module.exports = Subject

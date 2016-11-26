@@ -6,33 +6,33 @@
 
 class Utility
 
-   # C O N S T A N T S   
+    # C O N S T A N T S   
 
-   # three orthographic view directions (ALL is used when all three need to be considered)
-   @DIRECTION : { ALL: 0, TOP: 1, FRONT: 2, SIDE: 3 }
+    # three orthographic view directions (ALL is used when all three need to be considered)
+    @DIRECTION : { ALL: 0, TOP: 1, FRONT: 2, SIDE: 3 }
 
-   @DEGREE : Math.PI / 180 # one degree
+    @DEGREE : Math.PI / 180 # one degree
 
-   @SECOND : 1000 # second in milliseconds
+    @SECOND : 1000 # second in milliseconds
 
-   # modifier keys used in shortcuts
-   @NO_KEY : "NO_KEY"
-   @SHIFT_KEY : "SHIFT_KEY"
-   @CTRL_KEY : "CTRL_KEY"
-   @ALT_KEY : "ALT_KEY"
+    # modifier keys used in shortcuts
+    @NO_KEY : "NO_KEY"
+    @SHIFT_KEY : "SHIFT_KEY"
+    @CTRL_KEY : "CTRL_KEY"
+    @ALT_KEY : "ALT_KEY"
 
-   # screen sizes in px
-   # Using 769 instead of 768 because ugh iPads
-   @SCREEN : { MOBILE: 769 }
+    # screen sizes in px
+    # Using 769 instead of 768 because ugh iPads
+    @SCREEN : { MOBILE: 769 }
 
-   # S T A T I C   M E T H O D S   
+    # S T A T I C   M E T H O D S   
 
-   @isMobile: -> window.innerWidth <= @SCREEN.MOBILE
+    @isMobile: -> window.innerWidth <= @SCREEN.MOBILE
 
 
-   # Debug utility. Prints out THREE.Vector3 component values.
-   @printVector3: (vector) ->
+    # Debug utility. Prints out THREE.Vector3 component values.
+    @printVector3: (vector) ->
 
-      #console.log vector.x.toFixed(1) + " : " + vector.y.toFixed(1) + " : " + vector.z.toFixed(1)
+        #console.log vector.x.toFixed(1) + " : " + vector.y.toFixed(1) + " : " + vector.z.toFixed(1)
 
 module.exports = Utility
